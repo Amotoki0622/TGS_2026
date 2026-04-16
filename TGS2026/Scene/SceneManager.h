@@ -14,10 +14,14 @@ public:
 public:
 	// 初期化処理
 	void Initialize();
-	// 更新処理
+	// 実行処理
 	void Update();
 	// 終了時処理
 	void Finalize();
+
+private:
+	// 描画処理
+	void Draw() const;
 
 public:
 	// loop_flgの値を返す

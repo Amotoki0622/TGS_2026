@@ -27,7 +27,7 @@ public:
 	// ‰Šú‰»ˆ—
 	virtual void Initialize();
 	// XVˆ—
-	virtual eSceneType Update();
+	virtual eSceneType Update(const float& delta_second);
 	// •`‰æˆ—
 	virtual void Draw() const;
 	// I—¹ˆ—

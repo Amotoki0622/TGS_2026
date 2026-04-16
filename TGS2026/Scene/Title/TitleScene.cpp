@@ -17,7 +17,7 @@ void TitleScene::Initialize()
 }
 
 // XVˆ—
-eSceneType TitleScene::Update()
+eSceneType TitleScene::Update(const float& delta_second)
 {
 	return GetNowSceneType();
 }

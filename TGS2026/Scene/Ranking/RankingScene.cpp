@@ -16,7 +16,7 @@ void RankingScene::Initialize()
 }
 
 // XVˆ—
-eSceneType RankingScene::Update()
+eSceneType RankingScene::Update(const float& delta_second)
 {
 	return GetNowSceneType();
 }

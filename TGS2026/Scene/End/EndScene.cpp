@@ -16,7 +16,7 @@ void EndScene::Initialize()
 }
 
 // XVˆ—
-eSceneType EndScene::Update()
+eSceneType EndScene::Update(const float& delta_second)
 {
 	return GetNowSceneType();
 }

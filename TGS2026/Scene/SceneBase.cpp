@@ -17,7 +17,7 @@ void SceneBase::Initialize()
 
 }
 
-eSceneType SceneBase::Update()
+eSceneType SceneBase::Update(const float& delta_second)
 {
 	// objects‚ÌXVˆ—‚ğ‚Ü‚Æ‚ß‚ÄŒÄ‚Ô
 	for (GameObject* obj : objects)

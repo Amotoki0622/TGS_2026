@@ -16,7 +16,7 @@ void ResultScene::Initialize()
 }
 
 // XVˆ—
-eSceneType ResultScene::Update()
+eSceneType ResultScene::Update(const float& delta_second)
 {
 	return GetNowSceneType();
 }

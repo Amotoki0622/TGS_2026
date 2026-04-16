@@ -1,4 +1,5 @@
 #include "InGameScene.h"
+#include "DxLib.h"
 
 // コンストラクタ
 InGameScene::InGameScene()
@@ -16,7 +17,7 @@ void InGameScene::Initialize()
 }
 
 // 更新処理
-eSceneType InGameScene::Update()
+eSceneType InGameScene::Update(const float& delta_second)
 {
 	return GetNowSceneType();
 }
@@ -24,6 +25,8 @@ eSceneType InGameScene::Update()
 // 描画処理
 void InGameScene::Draw() const
 {
+	SetFontSize(20);
+	DrawString(10, 10, "INGAME", 0xffffff);
 }
 
 // 終了時処理

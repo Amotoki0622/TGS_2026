@@ -15,7 +15,7 @@ public:
 	// ‰Šú‰»ˆ—
 	virtual void Initialize() override;
 	// XVˆ—
-	virtual eSceneType Update() override;
+	virtual eSceneType Update(const float& delta_second) override;
 	// •`‰æˆ—
 	virtual void Draw() const override;
 	// I—¹ˆ—
