@@ -22,7 +22,7 @@ eSceneType SceneBase::Update(const float& delta_second)
 	// objects‚ÌXVˆ—‚ð‚Ü‚Æ‚ß‚ÄŒÄ‚Ô
 	for (GameObject* obj : objects)
 	{
-		obj->Update();
+		obj->Update(delta_second);
 	}
 
 	return GetNowSceneType();

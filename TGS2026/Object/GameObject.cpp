@@ -14,7 +14,7 @@ void GameObject::Initialize()
 {
 }
 
-void GameObject::Update()
+void GameObject::Update(float delta_second)
 {
 }
 

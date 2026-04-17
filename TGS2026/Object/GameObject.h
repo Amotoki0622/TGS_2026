@@ -18,7 +18,7 @@ public:
 	// ‰Šú‰»ˆ—
 	virtual void Initialize();
 	// XVˆ—
-	virtual void Update();
+	virtual void Update(float delta_second);
 	// •`‰æˆ—
 	virtual void Draw() const;
 	// I—¹ˆ—
