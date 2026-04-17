@@ -132,6 +132,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AppMaincpp.cpp" />
+    <ClCompile Include="Utility\CollisionManager.cpp" />
     <ClCompile Include="Object\GameObject.cpp" />
     <ClCompile Include="Scene\End\EndScene.cpp" />
     <ClCompile Include="Scene\InGame\InGameScene.cpp" />
@@ -146,6 +147,7 @@
     <ClCompile Include="Utility\Vector2D.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Utility\CollisionManager.h" />
     <ClInclude Include="Object\GameObject.h" />
     <ClInclude Include="Scene\End\EndScene.h" />
     <ClInclude Include="Scene\InGame\InGameScene.h" />
