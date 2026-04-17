@@ -1,28 +1,21 @@
-#pragma once
-
+#include "../../Object/Player/Player.h" 
 #include "../SceneBase.h"
 
 class TitleScene : public SceneBase
 {
+private:
+    Player player;   // ←追加
 
 public:
-	// コンストラクタ
-	TitleScene();
-	// デストラクタ
-	~TitleScene();
+    TitleScene();
+    ~TitleScene();
 
 public:
-	// 初期化処理
-	virtual void Initialize() override;
-	// 更新処理
-	virtual eSceneType Update(const float& delta_second) override;
-	// 描画処理
-	virtual void Draw() const override;
-	// 終了時処理
-	virtual void Finalize() override;
+    virtual void Initialize() override;
+    virtual eSceneType Update(const float& delta_second) override;
+    virtual void Draw() const override;
+    virtual void Finalize() override;
 
 public:
-	// 現在のシーン情報を返す
-	virtual eSceneType GetNowSceneType() const override;
-
+    virtual eSceneType GetNowSceneType() const override;
 };

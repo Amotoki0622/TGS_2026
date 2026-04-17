@@ -14,11 +14,15 @@ TitleScene::~TitleScene()
 // ‰Šú‰»ˆ—
 void TitleScene::Initialize()
 {
+	player.Initialize();  // ©’Ç‰Á
+
 }
 
 // XVˆ—
 eSceneType TitleScene::Update(const float& delta_second)
 {
+	player.Update();  // ©’Ç‰Á
+
 	return GetNowSceneType();
 }
 
@@ -27,6 +31,8 @@ void TitleScene::Draw() const
 {
 	SetFontSize(20);
 	DrawString(10, 10, "TITLE", 0xffffff);
+
+	player.Draw(); // ©’Ç‰Á
 }
 
 // I—¹ˆ—
