@@ -1,9 +1,13 @@
 #pragma once
 
+#include "../../Object/Player/Player.h" 
 #include "../SceneBase.h"
 
 class InGameScene : public SceneBase
 {
+
+private:
+	Player player;
 
 public:
 	// コンストラクタ

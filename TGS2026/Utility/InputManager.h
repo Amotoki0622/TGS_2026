@@ -1,16 +1,15 @@
 #pragma once
-#pragma once
+#include "../Utility/Vector2D.h"
 
-#include "Vector2D.h"
-
-#define   D_KEYCODE_MAX  (256)
+#define		PAD_BUTTON_MAX	(16)						// ゲームパッドのボタンの最大数
+#define		PAD_STICK_MAX	(32767.0f)					// スティックを傾けたときの最大値
 
 enum class eInputState : unsigned char
 {
-	eNone,
-	ePress,
-	eRelease,
-	eHeld,
+	eNone,					// 入力無し
+	ePress,					// ボタンを押した瞬間
+	eRelease,				// ボタンを離した瞬間
+	eHold,					// ボタンを押し続けている
 };
 
 class InputManager
@@ -18,61 +17,65 @@ class InputManager
 private:
 	static InputManager* instance;
 
-	char now_key[D_KEYCODE_MAX] = {};  // 現在のフレーム入力値
-	char old_key[D_KEYCODE_MAX] = {};  // 過去のフレーム入力値
+	char now_key[256];
+	char old_key[256];
 
-	bool now_button[16]; // 現在のフレーム入力値
-	bool old_button[16]; // 過去のフレーム入力値
-	float trigger[2];    // 左右トリガーの入力値
-	Vector2D stick[2];   // 左右スティックの入力値
+	unsigned char now_button[PAD_BUTTON_MAX] = {};		// 現在のボタンの入力
+	unsigned char old_button[PAD_BUTTON_MAX] = {};		// 前回のボタンの入力
+
+	Vector2D left_stick = 0.0f;							// 左スティック
+	Vector2D right_stick = 0.0f;						// 右スティック
+
+	int left_trigger = 0;								// 左トリガー
+	int right_trigger = 0;								// 右トリガー
 
 private:
-	// コンストラクタをprivateにする
-	InputManager() = default;
-	// コピーガードの作成
-	// コピーコンストラクタ禁止
+	// 他のところからオブジェクト化できないようにコンストラクタはprivate
+	InputManager();
+	// コピーガード
+	// コピーコンストラクタの削除
 	InputManager(const InputManager&) = delete;
-	// 代入演算子禁止
+	// コピー代入演算子の削除
 	InputManager& operator = (const InputManager&) = delete;
 
 public:
-	// デストラクタ
 	~InputManager() = default;
 
 public:
-	// コンストラクタとデストラクタとして機能する静的メンバ関数を作成する
-	// 初回呼び出しの際に新しいオブジェクトを生成し、関数は常にそのインスタンスを返すようにする
+	// インスタンスを取得
 	static InputManager* GetInstance();
+	// インスタンスの削除
 	static void DeleteInstance();
 
 public:
-	// 更新処理
 	void Update();
 
 public:
-	// 引数(keycode)キーの状態を取得して返す
-	eInputState GetKeyInputState(int keycode);
+	// ボタンの入力状態を取得
+	eInputState GetButtonInputState(int button);
 
-	// ボタンの入力取得処理
-	bool GetButton(int button);     // 押し続けている間
-	bool GetButtonDown(int button); // 押した瞬間
-	bool GetButtonUp(int button);   // 離した瞬間
+	// 左スティックの値を取得
+	Vector2D GetLeftStick() const;
+	// 右スティックの値を取得
+	Vector2D GetRightStick() const;
 
-	// トリガー入力取得処理
-	float GetLeftTrigger();  // 左トリガー
-	float GetRightTrigger(); // 右トリガー
+	// 左トリガーの値を取得
+	int GetLeftTrigger() const;
+	// 右トリガーの値を取得
+	int GetRightTrigger() const;
 
-	// スティック入力取得処理
-	Vector2D GetLeftStick();  // 左スティック
-	Vector2D GetRightStick(); // 右スティック
+	// 左スティックの傾きの割合を取得
+	Vector2D GetLeftStickTiltPercentage();
+	// 右スティックの傾きの割合を取得
+	Vector2D GetRightStickTiltPercentage();
+
+
+	eInputState GetKeyInputState(int key) const;
+	bool CheckKeycodeRange(int key) const;
 
 private:
-	// キー配列範囲チェック
-	bool CheckKeycodeRange(int keycode);
-
-	// ボタン配列範囲チェック
+	// 入力が有効な範囲かチェック
 	bool CheckButtonRange(int button);
+
 };
 
-// 静的メンバ関数の中では、静的メンバ変数しか呼べない
-// 普通のメンバ関数の中で、静的メンバを呼ぶのはOK

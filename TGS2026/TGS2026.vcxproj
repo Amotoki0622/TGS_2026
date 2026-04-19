@@ -131,7 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AppMaincpp.cpp" />
+    <ClCompile Include="AppMain.cpp" />
     <ClCompile Include="Object\Player\Player.cpp" />
     <ClCompile Include="Utility\CollisionManager.cpp" />
     <ClCompile Include="Object\GameObject.cpp" />

@@ -102,13 +102,13 @@ void SceneManager::Update()
 		// 描画処理
 		Draw();
 
-		// ゲームを終了するか確認する
-		if ((next_scene_type == eSceneType::eEnd) ||
-			(input->GetButtonUp(XINPUT_BUTTON_BACK)) ||
-			(input->GetKeyInputState(KEY_INPUT_ESCAPE) == eInputState::ePress))
-		{
-			break;
-		}
+		//// ゲームを終了するか確認する
+		//if ((next_scene_type == eSceneType::eEnd) ||
+		//	(input->GetButtonInputState(XINPUT_BUTTON_BACK)) ||
+		//	(input->GetButtonInputState(KEY_INPUT_ESCAPE) == ePadInputState::ePress))
+		//{
+		//	break;
+		//}
 
 		// 現在のシーンタイプが次のシーンタイプと違っているか？
 		if (current_scene->GetNowSceneType() != next_scene_type)
@@ -118,6 +118,7 @@ void SceneManager::Update()
 		}
 	}
 
+
 #endif // DEBUG
 
 }
@@ -126,8 +127,11 @@ void SceneManager::Finalize()
 {
 	if (current_scene != nullptr)
 	{
+		// current_sceneの終了処理
 		current_scene->Finalize();
+		// current_sceneが確保したメモリを解放
 		delete current_scene;
+		// current_sceneのポインタを無効化
 		current_scene = nullptr;
 	}
 }

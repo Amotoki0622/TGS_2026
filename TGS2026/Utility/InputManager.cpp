@@ -1,114 +1,103 @@
 #include "InputManager.h"
 #include "DxLib.h"
 
+// 静的メンバ変数の初期化
 InputManager* InputManager::instance = nullptr;
 
+InputManager::InputManager()
+	: now_key{}
+	, old_key{}
+{
+}
+
+// インスタンスを取得
 InputManager* InputManager::GetInstance()
 {
-	// 初回呼び出しの際に新しいオブジェクトを生成
 	if (instance == nullptr)
 	{
+		// 最初の1回だけオブジェクトを生成する
 		instance = new InputManager();
 	}
 
-	// 常にインスタンスを返す
+	// 実体を返す
 	return instance;
 }
 
-// instance削除処理
+// インスタンスの削除
 void InputManager::DeleteInstance()
 {
-	// インスタンス削除
 	if (instance != nullptr)
 	{
+		// メモリの開放
 		delete instance;
 		instance = nullptr;
 	}
 }
 
-// 更新処理
 void InputManager::Update()
 {
-	// キー入力値の更新
-	memcpy(old_key, now_key, (sizeof(char) * D_KEYCODE_MAX));
+	// ゲームパッドの情報
+	XINPUT_STATE input;
+
+	// キーボード
+	memcpy(old_key, now_key, sizeof(char) * 256);
 	GetHitKeyStateAll(now_key);
 
-	// XInputコントローラーの入力値を取得する
-	XINPUT_STATE input_state = {};
-	GetJoypadXInputState(DX_INPUT_PAD1, &input_state);
+	// ゲームパッドの状態を取得
+	GetJoypadXInputState(DX_INPUT_PAD1, &input);
 
-	// ボタン入力値の更新
-	for (int i = 0; i < 16; i++)
+	// メモリ領域をコピー
+	memcpy(old_button, now_button, (sizeof(char) * PAD_BUTTON_MAX));
+	for (int i = 0; i < PAD_BUTTON_MAX; i++)
 	{
-		old_button[i] = now_button[i];
-		now_button[i] = (bool)input_state.Buttons[i];
-	}
-
-	// トリガー入力値の更新(0.0f～1.0fに範囲を制限する)
-	trigger[0] = (float)input_state.LeftTrigger / (float)UCHAR_MAX;
-	trigger[1] = (float)input_state.RightTrigger / (float)UCHAR_MAX;
-
-	// 左スティック入力値の更新(-1.0f～1.0fに範囲を制限する)
-	if (input_state.ThumbLX > 0.0f)
-	{
-		stick[0].x = (float)input_state.ThumbLX / (float)SHRT_MAX;
-	}
-	else
-	{
-		stick[0].x = -((float)input_state.ThumbLX / (float)SHRT_MIN);
-	}
-	if (input_state.ThumbLY > 0.0f)
-	{
-		stick[0].y = (float)input_state.ThumbLY / (float)SHRT_MAX;
-	}
-	else
-	{
-		stick[0].y = -((float)input_state.ThumbLY / (float)SHRT_MIN);
+		// 現在押しているボタンの更新
+		now_button[i] = input.Buttons[i];
 	}
 
-	// 右スティック入力値の更新(-1.0f～1.0fに範囲を制限する)
-	if (input_state.ThumbRX > 0.0f)
-	{
-		stick[1].x = (float)input_state.ThumbRX / (float)SHRT_MAX;
-	}
-	else
-	{
-		stick[1].x = -((float)input_state.ThumbRX / (float)SHRT_MIN);
-	}
-	if (input_state.ThumbRY > 0.0f)
-	{
-		stick[1].y = (float)input_state.ThumbRY / (float)SHRT_MAX;
-	}
-	else
-	{
-		stick[1].y = -((float)input_state.ThumbRY / (float)SHRT_MIN);
-	}
+	// 左スティックの更新
+	left_stick.x = input.ThumbLX;
+	left_stick.y = input.ThumbLY;
+
+	// 右スティックの更新
+	right_stick.x = input.ThumbRX;
+	right_stick.y = input.ThumbRY;
+
+	// 左トリガーの更新
+	left_trigger = (int)input.LeftTrigger;
+
+	// 右トリガーの更新
+	right_trigger = (int)input.RightTrigger;
 }
 
-// 引数(keycode)キーの状態を取得して返す
-eInputState InputManager::GetKeyInputState(int keycode)
+// ボタンの入力状態を取得
+eInputState InputManager::GetButtonInputState(int button)
 {
-	if (CheckKeycodeRange(keycode))
+	// ボタン入力が有効な範囲だったら処理を行う
+	if (CheckButtonRange(button))
 	{
-		if (old_key[keycode] == TRUE)
+		if (old_button[button] == TRUE)
 		{
-			if (now_key[keycode] == TRUE)
+			if (now_button[button] == TRUE)
 			{
-				return eInputState::eHeld;
+				// 押し続けている
+				return eInputState::eHold;
 			}
 			else
 			{
+				// 離した瞬間
 				return eInputState::eRelease;
 			}
 		}
 		else
 		{
-			if (now_key[keycode] == TRUE)
+			if (now_button[button] == TRUE)
 			{
+				// 押した瞬間
 				return eInputState::ePress;
 			}
 			else
 			{
+				// 入力無し
 				return eInputState::eNone;
 			}
 		}
@@ -117,56 +106,111 @@ eInputState InputManager::GetKeyInputState(int keycode)
 	return eInputState::eNone;
 }
 
-// ボタンの入力取得処理（押し続けている間）
-bool InputManager::GetButton(int button)
+// 左スティックの値を取得
+Vector2D InputManager::GetLeftStick() const
 {
-	return CheckButtonRange(button) && (now_button[button] && old_button[button]);
+	return left_stick;
 }
 
-// ボタンの入力取得処理（押した瞬間）
-bool InputManager::GetButtonDown(int button)
+// 右スティックの値を取得
+Vector2D InputManager::GetRightStick() const
 {
-	return CheckButtonRange(button) && (now_button[button] && !old_button[button]);
+	return right_stick;
 }
 
-// ボタンの入力取得処理（離した瞬間）
-bool InputManager::GetButtonUp(int button)
+// 左トリガーの値を取得
+int InputManager::GetLeftTrigger() const
 {
-	return CheckButtonRange(button) && (!now_button[button] && old_button[button]);
+	return left_trigger;
 }
 
-// 左トリガー入力取得処理
-float InputManager::GetLeftTrigger()
+// 右トリガーの値を取得
+int InputManager::GetRightTrigger() const
 {
-	return trigger[0];
+	return right_trigger;
 }
 
-// 右トリガー入力取得処理
-float InputManager::GetRightTrigger()
+// 左スティックの傾きの割合を取得
+Vector2D InputManager::GetLeftStickTiltPercentage()
 {
-	return trigger[1];
+	// 左スティックの傾き
+	Vector2D left_stick_tilt;
+
+	// 左スティックの傾きを-1.0f ～ 1.0fの間に変換
+	// x軸値の変換
+	left_stick_tilt.x = left_stick.x / PAD_STICK_MAX;
+	if (left_stick_tilt.x < -1.0f)
+	{
+		left_stick_tilt.x = -1.0f;
+	}
+	// y軸値の変換
+	left_stick_tilt.y = left_stick.y / PAD_STICK_MAX;
+	if (left_stick_tilt.y < -1.0f)
+	{
+		left_stick_tilt.y = -1.0f;
+	}
+
+	return left_stick_tilt;
 }
 
-// 左スティック入力取得処理
-Vector2D InputManager::GetLeftStick()
+// 右スティックの傾きの割合を取得
+Vector2D InputManager::GetRightStickTiltPercentage()
 {
-	return stick[0];
+	// 右スティックの傾き
+	Vector2D right_stick_tilt;
+
+	// 右スティックの傾きを-1.0f ～ 1.0fの間に変換
+	// x軸値の変換
+	right_stick_tilt.x = right_stick.x / PAD_STICK_MAX;
+	if (right_stick_tilt.x < -1.0f)
+	{
+		right_stick_tilt.x = -1.0f;
+	}
+	// y軸値の変換
+	right_stick_tilt.y = right_stick.y / PAD_STICK_MAX;
+	if (right_stick_tilt.y < -1.0f)
+	{
+		right_stick_tilt.y = -1.0f;
+	}
+
+	return right_stick_tilt;
 }
 
-// 右スティック入力取得処理
-Vector2D InputManager::GetRightStick()
-{
-	return stick[1];
-}
-
-// キー配列範囲チェック
-bool InputManager::CheckKeycodeRange(int keycode)
-{
-	return (0 <= keycode && keycode < D_KEYCODE_MAX);
-}
-
-// ボタン配列範囲チェック
+// 入力が有効な範囲かチェック
 bool InputManager::CheckButtonRange(int button)
 {
-	return (0 <= button && button < 16);
+	// 現在の入力値がtrueかfalseか返す
+	return (0 <= button && button < PAD_BUTTON_MAX);
+}
+
+
+eInputState InputManager::GetKeyInputState(int key) const
+{
+	if (CheckKeycodeRange(key))
+	{
+		if (old_key[key] == TRUE)
+		{
+			if (now_key[key] == TRUE)
+			{
+				return eInputState::eHold;
+			}
+			else
+			{
+				return eInputState::eRelease;
+			}
+		}
+		else
+		{
+			if (now_key[key] == TRUE)
+			{
+				return eInputState::ePress;
+			}
+		}
+	}
+	return eInputState::eNone;
+}
+
+bool InputManager::CheckKeycodeRange(int key) const
+{
+	return (0 <= key && key < 256);
 }

@@ -1,74 +1,64 @@
 #include "Player.h"
 #include "../../Utility/InputManager.h"
 
-// ===============================
-// 初期化
-// ===============================
+// 初期化処理
 void Player::Initialize()
 {
-    x = 640;  // 画面中央（1280想定）
-    y = 360;
+    // 初期出現位置
+    x = 1180;
+    y = 120;
 
     radius = 30;
-    speed = 1.0;
+    speed = 150; // 1マス分
 
-    color = GetColor(255, 0, 0); // 赤
+    state = State::Normal;
+
+    UpdateColor();
 }
 
-// ===============================
-// 更新
-// ===============================
+// 更新処理
 void Player::Update()
+{
+    ChangeState(); // 状態切り替え
+    Move();        // 移動
+    UpdateColor(); // 見た目更新
+}
+
+// 移動処理
+void Player::Move()
 {
     InputManager* input = InputManager::GetInstance();
 
-    // =========================
-    // キーボード移動（十字キー）
-    // =========================
-    if (input->GetButton(XINPUT_BUTTON_DPAD_UP))
+    int moveX = 0;
+    int moveY = 0;
+
+    if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_UP) == eInputState::ePress)
+        moveY = -speed;
+
+    if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_DOWN) == eInputState::ePress)
+        moveY = speed;
+
+    if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_LEFT) == eInputState::ePress)
+        moveX = -speed;
+
+    if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_RIGHT) == eInputState::ePress)
+        moveX = speed;
+
+    // 状態ごとの処理（今は同じ）
+    switch (state)
     {
-        y -= speed;
+    case State::Normal:
+        x += moveX;
+        y += moveY;
+        break;
+
+    case State::Shadow:
+        x += moveX;
+        y += moveY;
+        break;
     }
 
-    if (input->GetButton(XINPUT_BUTTON_DPAD_DOWN))
-    {
-        y += speed;
-    }
-
-    if (input->GetButton(XINPUT_BUTTON_DPAD_LEFT))
-    {
-        x -= speed;
-    }
-
-    if (input->GetButton(XINPUT_BUTTON_DPAD_RIGHT))
-    {
-        x += speed;
-    }
-
-    // =========================
-    // コントローラー移動（スティック）
-    // =========================
-    Vector2D stick = input->GetLeftStick();
-
-    x += (int)(stick.x * speed);
-    y -= (int)(stick.y * speed);
-
-    // =========================
-    // 色変更（LB / RB）
-    // =========================
-    if (input->GetButtonDown(XINPUT_BUTTON_LEFT_SHOULDER))
-    {
-        color = GetColor(0, 255, 0); // 緑
-    }
-
-    if (input->GetButtonDown(XINPUT_BUTTON_RIGHT_SHOULDER))
-    {
-        color = GetColor(255, 0, 0); // 赤
-    }
-
-    // =========================
-    // 画面外に出ないように制限
-    // =========================
+    // 画面外制限
     if (x < radius) x = radius;
     if (x > 1280 - radius) x = 1280 - radius;
 
@@ -76,11 +66,56 @@ void Player::Update()
     if (y > 720 - radius) y = 720 - radius;
 }
 
-// ===============================
-// 描画
-// ===============================
+// 状態切り替え処理
+void Player::ChangeState()
+{
+    InputManager* input = InputManager::GetInstance();
+
+
+    // LBボタン
+    if (input->GetButtonInputState(XINPUT_BUTTON_LEFT_SHOULDER) == eInputState::ePress)
+    {
+        if (state == State::Normal)
+        {
+            state = State::Shadow;
+        }
+        else
+        {
+            state = State::Normal;
+        }
+    }
+
+    // RBボタン
+    if (input->GetButtonInputState(XINPUT_BUTTON_RIGHT_SHOULDER) == eInputState::ePress)
+    {
+        if (state == State::Normal)
+        {
+            state = State::Shadow;
+        }
+        else
+        {
+            state = State::Normal;
+        }
+    }
+}
+
+// 色更新処理
+void Player::UpdateColor()
+{
+    switch (state)
+    {
+    case State::Normal:
+        color = GetColor(255, 0, 0);
+        break;
+
+    case State::Shadow:
+        color = GetColor(100, 100, 255);
+        break;
+    }
+}
+
+// 描画処理
 void Player::Draw() const
 {
-
     DrawCircle(x, y, radius, color, TRUE);
 }
