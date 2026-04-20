@@ -1,7 +1,17 @@
+#include "../Player/Player.h"
+#include "../../Utility/Vector2D.h"
+
 #pragma once
 //ゴールクラス
 class Goal
 {
+public:
+	Vector2D pos;
+	float width;
+	float height;
+
+private:
+	Player player;
 
 public:
 	// 初期化処理
@@ -12,5 +22,7 @@ public:
 	void Draw() const;
 	//終了処理
 	void Finalize();
+
+	bool CheckCollision(const Vector2D& playerPos, float playerW, float playerH) const;
 };
 
