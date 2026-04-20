@@ -58,7 +58,9 @@ void Player::Move()
         break;
     }
 
-    // 画面外制限
+    // =========================
+    // 画面内制限（シンプル）
+    // =========================
     if (x < radius) x = radius;
     if (x > 1280 - radius) x = 1280 - radius;
 
@@ -118,4 +120,12 @@ void Player::UpdateColor()
 void Player::Draw() const
 {
     DrawCircle(x, y, radius, color, TRUE);
+}
+
+
+
+void Player::GetLocation(int& outX, int& outY) const
+{
+    outX = x;
+    outY = y;
 }
