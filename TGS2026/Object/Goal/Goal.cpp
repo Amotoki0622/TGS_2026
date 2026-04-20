@@ -1,13 +1,15 @@
 #include "Goal.h"
-#include "../Player/Player.h"
-#include "../../Utility/CollisionManager.h"
 #include "DxLib.h"
+
+// プレイヤーをセット
+void Goal::SetPlayer(Player* p)
+{
+    player = p;
+}
 
 void Goal::Initialize()
 {
-	pos = { 280, 570 };   // 中心座標
-	width = 80;
-	height = 80;
+
 }
 
 void Goal::Update()
@@ -18,7 +20,20 @@ void Goal::Update()
 void Goal::Draw() const
 {
 	DrawBox(240, 530, 320, 610, GetColor(255, 255, 255), true);
-	//DrawFormatString(10, 100, GetColor(255, 255, 255), "x: %.2f y: %.2f", player.x, player.y);
+
+    // =========================
+// プレイヤー座標表示
+// =========================
+    if (player != nullptr)
+    {
+        int px, py;
+        player->GetLocation(px, py);
+
+        char text[64];
+        sprintf_s(text, "Player : (%d , %d)", px, py);
+
+        DrawString(10, 50, text, GetColor(255, 255, 255));
+    }
 }
 
 void Goal::Finalize()

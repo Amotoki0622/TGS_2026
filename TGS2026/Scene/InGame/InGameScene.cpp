@@ -15,6 +15,7 @@ InGameScene::~InGameScene()
 void InGameScene::Initialize()
 {
 	player.Initialize();  // ©’Ç‰Á
+	goal.SetPlayer(&player);
 	
 	//oŒ»ˆÊ’uİ’è«
 	//player.x = 500;
