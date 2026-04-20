@@ -4,14 +4,17 @@
 // 初期化処理
 void Player::Initialize()
 {
-    // 初期出現位置
     x = 1180;
     y = 120;
 
     radius = 30;
-    speed = 150; // 1マス分
+    speed = 150;
 
     state = State::Normal;
+
+    // 矩形コリジョンサイズ設定
+    collisionWidth = radius * 2.0f;
+    collisionHeight = radius * 2.0f;
 
     UpdateColor();
 }
@@ -19,9 +22,9 @@ void Player::Initialize()
 // 更新処理
 void Player::Update()
 {
-    ChangeState(); // 状態切り替え
-    Move();        // 移動
-    UpdateColor(); // 見た目更新
+    ChangeState();
+    Move();
+    UpdateColor();
 }
 
 // 移動処理
@@ -32,6 +35,7 @@ void Player::Move()
     int moveX = 0;
     int moveY = 0;
 
+    // コントローラー
     if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_UP) == eInputState::ePress)
         moveY = -speed;
 
@@ -44,23 +48,24 @@ void Player::Move()
     if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_RIGHT) == eInputState::ePress)
         moveX = speed;
 
-    // 状態ごとの処理（今は同じ）
-    switch (state)
-    {
-    case State::Normal:
-        x += moveX;
-        y += moveY;
-        break;
+    // キーボード（デバッグ）
+    if (input->GetKeyInputState(KEY_INPUT_UP) == eInputState::ePress)
+        moveY = -speed;
 
-    case State::Shadow:
-        x += moveX;
-        y += moveY;
-        break;
-    }
+    if (input->GetKeyInputState(KEY_INPUT_DOWN) == eInputState::ePress)
+        moveY = speed;
 
-    // =========================
-    // 画面内制限（シンプル）
-    // =========================
+    if (input->GetKeyInputState(KEY_INPUT_LEFT) == eInputState::ePress)
+        moveX = -speed;
+
+    if (input->GetKeyInputState(KEY_INPUT_RIGHT) == eInputState::ePress)
+        moveX = speed;
+
+    // 座標更新
+    x += moveX;
+    y += moveY;
+
+    // 画面制限
     if (x < radius) x = radius;
     if (x > 1280 - radius) x = 1280 - radius;
 
@@ -68,40 +73,20 @@ void Player::Move()
     if (y > 720 - radius) y = 720 - radius;
 }
 
-// 状態切り替え処理
+// 状態切り替え
 void Player::ChangeState()
 {
     InputManager* input = InputManager::GetInstance();
 
-
-    // LBボタン
-    if (input->GetButtonInputState(XINPUT_BUTTON_LEFT_SHOULDER) == eInputState::ePress)
+    if (input->GetButtonInputState(XINPUT_BUTTON_LEFT_SHOULDER) == eInputState::ePress ||
+        input->GetButtonInputState(XINPUT_BUTTON_RIGHT_SHOULDER) == eInputState::ePress ||
+        input->GetKeyInputState(KEY_INPUT_RETURN) == eInputState::ePress)
     {
-        if (state == State::Normal)
-        {
-            state = State::Shadow;
-        }
-        else
-        {
-            state = State::Normal;
-        }
-    }
-
-    // RBボタン
-    if (input->GetButtonInputState(XINPUT_BUTTON_RIGHT_SHOULDER) == eInputState::ePress)
-    {
-        if (state == State::Normal)
-        {
-            state = State::Shadow;
-        }
-        else
-        {
-            state = State::Normal;
-        }
+        state = (state == State::Normal) ? State::Shadow : State::Normal;
     }
 }
 
-// 色更新処理
+// 色更新
 void Player::UpdateColor()
 {
     switch (state)
@@ -116,14 +101,39 @@ void Player::UpdateColor()
     }
 }
 
-// 描画処理
+// 描画
 void Player::Draw() const
 {
     DrawCircle(x, y, radius, color, TRUE);
+
+    // デバッグ：コリジョン矩形表示
+    int left = (int)(x - collisionWidth / 2);
+    int right = (int)(x + collisionWidth / 2);
+    int top = (int)(y - collisionHeight / 2);
+    int bottom = (int)(y + collisionHeight / 2);
+
+    DrawBox(left, top, right, bottom, GetColor(0, 255, 0), FALSE);
 }
 
+// =========================================
+// コリジョン取得
+// =========================================
+Vector2D Player::GetCollisionPos() const
+{
+    return Vector2D{ (float)x, (float)y };
+}
 
+float Player::GetCollisionWidth() const
+{
+    return collisionWidth;
+}
 
+float Player::GetCollisionHeight() const
+{
+    return collisionHeight;
+}
+
+// 座標取得
 void Player::GetLocation(int& outX, int& outY) const
 {
     outX = x;
