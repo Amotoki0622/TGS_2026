@@ -31,6 +31,13 @@ private:
     int radius;
     int color;
 
+    // =========================
+    // 画像関連（追加）
+    // =========================
+    static const int IMAGE_NUM = 2; // 分割数（例：4枚）
+    int images[IMAGE_NUM];          // 分割画像を格納
+    int currentImage;               // 現在表示している画像
+
     // -----------------------------------------
     // 移動関連
     // -----------------------------------------
@@ -66,4 +73,9 @@ private:
     void Move();
     void ChangeState();
     void UpdateColor();
+
+    // =========================
+    // アニメーション更新（追加）
+    // =========================
+    void UpdateAnimation();
 };
