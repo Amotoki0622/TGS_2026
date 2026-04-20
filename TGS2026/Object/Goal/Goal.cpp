@@ -1,4 +1,5 @@
 #include "Goal.h"
+#include "../../Utility/CollisionManager.h"
 #include "DxLib.h"
 
 // プレイヤーをセット
@@ -40,3 +41,13 @@ void Goal::Finalize()
 {
 
 }
+
+bool Goal::CheckCollision(const Vector2D& playerPos, float playerW, float playerH) const
+{
+    return CollisionManager::CheckBoxCollision(
+        pos, width, height,
+        playerPos, playerW, playerH
+    );
+}
+
+
