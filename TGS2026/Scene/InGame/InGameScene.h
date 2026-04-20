@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../Object/Player/Player.h" 
+#include "../../Object/Goal/Goal.h"
 #include "../SceneBase.h"
 
 class InGameScene : public SceneBase
@@ -8,6 +9,7 @@ class InGameScene : public SceneBase
 
 private:
 	Player player;
+	Goal goal;
 
 public:
 	// コンストラクタ
