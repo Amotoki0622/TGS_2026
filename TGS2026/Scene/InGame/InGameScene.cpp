@@ -35,6 +35,7 @@ void InGameScene::Draw() const
 	SetFontSize(20);
 	DrawString(10, 10, "INGAME", 0xffffff);
 
+	goal.Draw();
 	player.Draw(); // Å©í«â¡
 }
 
