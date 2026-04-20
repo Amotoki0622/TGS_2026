@@ -1,9 +1,14 @@
 #pragma once
+#include "../Player/Player.h"
 //ゴールクラス
 class Goal
 {
+private:
+	Player* player; // プレイヤー参照
 
 public:
+	void SetPlayer(Player* p); // 追加
+
 	// 初期化処理
 	void Initialize();
 	//更新処理
