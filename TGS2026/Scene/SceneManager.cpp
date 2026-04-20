@@ -5,6 +5,7 @@
 #include "DxLib.h"
 
 #include "Title/TitleScene.h"
+#include "Question/Question.h"
 #include "InGame/InGameScene.h"
 #include "Ranking/RankingScene.h"
 #include "Result/ResultScene.h"
@@ -188,7 +189,7 @@ SceneBase* SceneManager::CreateScene(eSceneType new_scene_type)
 	case eSceneType::eTitle:
 		return dynamic_cast<SceneBase*>(new TitleScene());
 
-	case eSceneType::eQuestion
+	case eSceneType::eQuestion:
 		return dynamic_cast<SceneBase*>(new Question());
 
 	case eSceneType::eInGame:
