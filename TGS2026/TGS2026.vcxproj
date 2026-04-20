@@ -132,7 +132,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AppMain.cpp" />
+    <ClCompile Include="Object\Goal\Goal.cpp" />
     <ClCompile Include="Object\Player\Player.cpp" />
+    <ClCompile Include="Scene\Question\Question.cpp" />
     <ClCompile Include="Utility\CollisionManager.cpp" />
     <ClCompile Include="Object\GameObject.cpp" />
     <ClCompile Include="Scene\End\EndScene.cpp" />
@@ -148,7 +150,9 @@
     <ClCompile Include="Utility\Vector2D.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Object\Goal\Goal.h" />
     <ClInclude Include="Object\Player\Player.h" />
+    <ClInclude Include="Scene\Question\Question.h" />
     <ClInclude Include="Utility\CollisionManager.h" />
     <ClInclude Include="Object\GameObject.h" />
     <ClInclude Include="Scene\End\EndScene.h" />

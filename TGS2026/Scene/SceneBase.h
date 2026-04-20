@@ -7,6 +7,7 @@
 enum class eSceneType
 {
 	eTitle,
+	eQuestion,
 	eInGame,
 	eResult,
 	eRanking,

@@ -96,6 +96,7 @@ void TitleScene::Draw() const
     int cursorY = 250 + (menu_cursor * 50);
 
     DrawString(450, cursorY, ">", 0xffff00); // 黄色カーソル
+    DrawString(595, cursorY, "<", 0xffff00); // 黄色カーソル
 }
 
 // 終了時処理

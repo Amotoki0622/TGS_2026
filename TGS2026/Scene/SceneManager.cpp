@@ -188,6 +188,9 @@ SceneBase* SceneManager::CreateScene(eSceneType new_scene_type)
 	case eSceneType::eTitle:
 		return dynamic_cast<SceneBase*>(new TitleScene());
 
+	case eSceneType::eQuestion
+		return dynamic_cast<SceneBase*>(new Question());
+
 	case eSceneType::eInGame:
 		return dynamic_cast<SceneBase*>(new InGameScene());
 
