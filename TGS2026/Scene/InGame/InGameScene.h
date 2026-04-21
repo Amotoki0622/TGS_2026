@@ -2,6 +2,7 @@
 
 #include "../../Object/Player/Player.h" 
 #include "../../Object/Goal/Goal.h"
+#include "../../Object/Wall/Wall.h"
 #include "../SceneBase.h"
 
 class InGameScene : public SceneBase
@@ -10,6 +11,7 @@ class InGameScene : public SceneBase
 private:
 	Player player;
 	Goal goal;
+	Wall wall;
 
 public:
 	// コンストラクタ

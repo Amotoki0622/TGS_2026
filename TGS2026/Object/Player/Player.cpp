@@ -196,3 +196,9 @@ void Player::GetLocation(int& outX, int& outY) const
     outX = x;
     outY = y;
 }
+
+void Player::SetPosition(float newX, float newY)
+{
+    x = newX;
+    y = newY;
+}

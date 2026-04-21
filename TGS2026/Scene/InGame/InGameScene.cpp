@@ -17,6 +17,9 @@ void InGameScene::Initialize()
 	player.Initialize();  // Å©í«â¡
 	goal.Initialize();
 	goal.SetPlayer(&player);
+	wall.Initialize();
+	wall.SetPlayer(&player);
+
 	
 	//èoåªà íuê›íËÅ´
 	//player.x = 500;
@@ -28,6 +31,7 @@ eSceneType InGameScene::Update(const float& delta_second)
 {
 	player.Update();  // Å©í«â¡
 	goal.Update(delta_second);
+	wall.Update(delta_second);
 
 	// ÉSÅ[ÉãîªíË
 	if (goal.IsGoal())
@@ -45,6 +49,7 @@ void InGameScene::Draw() const
 	SetFontSize(20);
 	DrawString(10, 10, "INGAME", 0xffffff);
 
+	wall.Draw();
 	goal.Draw();
 	player.Draw(); // Å©í«â¡
 }

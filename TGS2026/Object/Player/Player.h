@@ -68,6 +68,7 @@ public:
 
     // 座標取得
     void GetLocation(int& outX, int& outY) const;
+    void SetPosition(float x, float y);  //プレイヤーの座標設定
 
 private:
     void Move();
