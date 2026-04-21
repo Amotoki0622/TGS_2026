@@ -29,6 +29,13 @@ eSceneType InGameScene::Update(const float& delta_second)
 	player.Update();  // ©’Ç‰Á
 	goal.Update(delta_second);
 
+	// ƒS[ƒ‹”»’è
+	if (goal.IsGoal())
+	{
+		// ƒV[ƒ“‚Ì‘JˆÚ
+		return eSceneType::eTitle;
+	}
+
 	return GetNowSceneType();
 }
 

@@ -27,5 +27,7 @@ public:
 	void Finalize() override;
 
 	bool CheckCollision() const;
+
+	bool IsGoal() const;
 };
 
