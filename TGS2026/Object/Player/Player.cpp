@@ -1,6 +1,8 @@
 #include "Player.h"
 #include "../../Utility/InputManager.h"
 
+// もしPlayer.hで定義していなければ、ここで定義してください
+// 今回の画像は横2枚、縦1枚の構成です
 #define IMAGE_NUM 2
 
 // =========================
@@ -8,44 +10,33 @@
 // =========================
 void Player::Initialize()
 {
+    // 初期位置
     x = 1180;
     y = 120;
 
-    radius = 30;
-    speed = 150;
+
+    radius = 70;
+    speed = 150; 
 
     state = State::Normal;
+    currentImage = 0; // 最初は通常ポーズ
 
-    // =========================
-    // 画像読み込み（分割）
-    // ※マルチバイトなのでそのまま文字列でOK
-    // =========================
+    // プレイヤーキャラ画像分割読み込み
     int result = LoadDivGraph(
         "Resource/Images/Player/player_01.png",
-        IMAGE_NUM,
-        2, 1,
-        256, 256,
+        2,      // 総枚数
+        2, 1,   // 横に2枚、縦に1枚
+        768,    // 1枚あたりの横幅 (1536 / 2)
+        1024,   // 1枚あたりの縦幅 (そのまま)
         images
     );
 
-    currentImage = 0;
-
-    if (result == -1)
-    {
+    if (result == -1) {
         printfDx("画像読み込み失敗\n");
-
-        // ★絶対に入れる（保険）
-        images[0] = LoadGraph("Resource/Images/Player/player_01.png");
-        images[1] = images[0];
-    }
-    else
-    {
-        printfDx("画像読み込み成功\n");
     }
 
-    // =========================
+    currentImage = 0;
     // コリジョンサイズ
-    // =========================
     collisionWidth = radius * 2.0f;
     collisionHeight = radius * 2.0f;
 
@@ -132,15 +123,16 @@ void Player::UpdateAnimation()
 {
     InputManager* input = InputManager::GetInstance();
 
-    // 押してる間だけキック
-    if (input->GetButtonInputState(XINPUT_BUTTON_A) == eInputState::ePress ||
-        input->GetKeyInputState(KEY_INPUT_SPACE) == eInputState::ePress)
+    // 判定を「ePress（押した瞬間）」から「eOn（押している間）」に変更してください。
+    // ※ePressだと1フレーム（1/60秒）しか切り替わらないため、反映されていないように見えます。
+    if (input->GetButtonInputState(XINPUT_BUTTON_A) == eInputState::eHold ||
+        input->GetKeyInputState(KEY_INPUT_SPACE) == eInputState::eHold)
     {
-        currentImage = 1;
+        currentImage = 1; // キックなどのアクション画像
     }
     else
     {
-        currentImage = 0;
+        currentImage = 0; // 通常立ち
     }
 }
 
@@ -161,22 +153,20 @@ void Player::UpdateColor()
     }
 }
 
-// =========================
-// 描画処理
-// =========================
 void Player::Draw() const
 {
-    // 中心表示（256画像 → 半分128）
-    DrawGraph(x - 128, y - 128, images[currentImage], TRUE);
+    if (images[currentImage] != -1)
+    {
+        // 0.1f (10%の大きさ) で描画。
+        // キャラが小さい場合は 0.2f、大きい場合は 0.05f などに調整してください。
+        DrawRotaGraph(x, y, 0.2, 0.0, images[currentImage], TRUE);
+    }
 
-    DrawGraph(50, 50, images[currentImage], TRUE);
-
-    // コリジョン矩形
+    // 緑の当たり判定枠もそのまま表示しておくと、中心が合っているか確認しやすいです
     int left = (int)(x - collisionWidth / 2);
     int right = (int)(x + collisionWidth / 2);
     int top = (int)(y - collisionHeight / 2);
     int bottom = (int)(y + collisionHeight / 2);
-
     DrawBox(left, top, right, bottom, GetColor(0, 255, 0), FALSE);
 }
 
