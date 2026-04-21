@@ -16,19 +16,30 @@ void Player::Initialize()
 
 
     radius = 70;
-    speed = 100; 
+    speed = 90; 
 
     state = State::Normal;
     currentImage = 0; // 最初は通常ポーズ
 
     // プレイヤーキャラ画像分割読み込み
-    int result = LoadDivGraph(
+    // 1. 通常状態の画像読み込み（player_01.png）
+    // （前回の設定のまま：1536x1024を想定）
+    LoadDivGraph(
         "Resource/Images/Player/player_01.png",
+        2, 2, 1, 768, 1024, images
+    );
+
+    // =============================================================
+    // 【重要】2. シャドウ状態の画像読み込み（shadow.png）の修正
+    // =============================================================
+    // プロパティで確認した 612x408 の画像に合わせて引数を修正します。
+    int result = LoadDivGraph(
+        "Resource/Images/Player/shadow2.png",
         2,      // 総枚数
-        2, 1,   // 横に2枚、縦に1枚
-        768,    // 1枚あたりの横幅 (1536 / 2)
-        1024,   // 1枚あたりの縦幅 (そのまま)
-        images
+        2, 1,   // 横2, 縦1
+        768,    // 【ここを修正】1枚あたりの横幅 (612 / 2)
+        1024,    // 【ここを修正】1枚あたりの縦幅 (そのまま)
+        images2 // shadow用配列に格納
     );
 
     if (result == -1) {
@@ -37,8 +48,8 @@ void Player::Initialize()
 
     currentImage = 0;
     // コリジョンサイズ
-    collisionWidth = radius * 2.0f;
-    collisionHeight = radius * 2.0f;
+    collisionWidth = radius * 1.5f;
+    collisionHeight = radius * 1.5f;
 
     UpdateColor();
 }
@@ -155,19 +166,33 @@ void Player::UpdateColor()
 
 void Player::Draw() const
 {
-    if (images[currentImage] != -1)
+    if (state == State::Normal)
     {
-        // 0.1f (10%の大きさ) で描画。
-        // キャラが小さい場合は 0.2f、大きい場合は 0.05f などに調整してください。
-        DrawRotaGraph(x, y, 0.16, 0.0, images[currentImage], TRUE);
+        // 通常状態（player_01.png は大きいので 0.17倍）
+        if (images[currentImage] != -1)
+        {
+            DrawRotaGraph(x, y, 0.17, 0.0, images[currentImage], TRUE);
+        }
+    }
+    else // state == State::Shadow
+    {
+        // シャドウ状態（shadow.png は小さいので、もっと大きくする）
+        if (images2[currentImage] != -1)
+        {
+            // player_01.pngの横幅(768)とshadow.pngの横幅(306)の比率を考えると、
+            // 0.17 * (768 / 306) = 約 0.42 倍くらい。
+            // 0.4 ～ 0.45 あたりで、通常時と同じ大きさに見えるように調整してください。
+            float shadowExRate = 0.16f;
+            DrawRotaGraph(x, y, (double)shadowExRate, 0.0, images2[currentImage], TRUE);
+        }
     }
 
-    // 緑の当たり判定枠もそのまま表示しておくと、中心が合っているか確認しやすいです
-    int left = (int)(x - collisionWidth / 2);
-    int right = (int)(x + collisionWidth / 2);
-    int top = (int)(y - collisionHeight / 2);
-    int bottom = (int)(y + collisionHeight / 2);
-    DrawBox(left, top, right, bottom, GetColor(0, 255, 0), FALSE);
+    //// 緑の当たり判定枠もそのまま表示しておくと、中心が合っているか確認しやすいです
+    //int left = (int)(x - collisionWidth / 2);
+    //int right = (int)(x + collisionWidth / 2);
+    //int top = (int)(y - collisionHeight / 2);
+    //int bottom = (int)(y + collisionHeight / 2);
+    //DrawBox(left, top, right, bottom, GetColor(0, 255, 0), FALSE);
 }
 
 // =========================

@@ -4,6 +4,10 @@
 #include "../../Object/Goal/Goal.h"
 #include "../../Object/Wall/Wall.h"
 #include "../SceneBase.h"
+#include "../../Utility/ResourceManager.h"
+#include "../../Object/Detective/DetectiveObject.h" // 親クラス
+#include "../../Object/Cam/Cam.h"             // 子クラス
+#include "../../Object/Light/Light.h"           // 子クラス
 
 class InGameScene : public SceneBase
 {
@@ -12,6 +16,15 @@ private:
 	Player player;
 	Goal goal;
 	Wall wall;
+
+	// リソースマネージャー
+	ResourceManager* resource;      
+
+	// 検知オブジェクト（カメラ・照明）をまとめて管理
+	std::vector<DetectiveObject*> detectors;
+
+
+	int background;
 
 public:
 	// コンストラクタ

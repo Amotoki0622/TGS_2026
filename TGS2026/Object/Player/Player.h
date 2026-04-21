@@ -18,6 +18,12 @@ public:
         Shadow
     };
 
+
+    // 現在の状態（Normal / Shadow）を返す
+    State GetState() const {
+        return state; 
+    }
+
 private:
     // -----------------------------------------
     // 位置情報
@@ -36,6 +42,7 @@ private:
     // =========================
     static const int IMAGE_NUM = 2; // 分割数（例：4枚）
     int images[IMAGE_NUM];          // 分割画像を格納
+    int images2[IMAGE_NUM];          // 分割画像を格納
     int currentImage;               // 現在表示している画像
 
     // -----------------------------------------
@@ -69,6 +76,8 @@ public:
     // 座標取得
     void GetLocation(int& outX, int& outY) const;
     void SetPosition(float x, float y);  //プレイヤーの座標設定
+
+
 
 private:
     void Move();
