@@ -16,7 +16,7 @@ void Player::Initialize()
 
 
     radius = 70;
-    speed = 150; 
+    speed = 100; 
 
     state = State::Normal;
     currentImage = 0; // 最初は通常ポーズ
@@ -159,7 +159,7 @@ void Player::Draw() const
     {
         // 0.1f (10%の大きさ) で描画。
         // キャラが小さい場合は 0.2f、大きい場合は 0.05f などに調整してください。
-        DrawRotaGraph(x, y, 0.2, 0.0, images[currentImage], TRUE);
+        DrawRotaGraph(x, y, 0.16, 0.0, images[currentImage], TRUE);
     }
 
     // 緑の当たり判定枠もそのまま表示しておくと、中心が合っているか確認しやすいです
