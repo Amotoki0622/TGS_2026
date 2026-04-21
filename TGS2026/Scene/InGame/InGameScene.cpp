@@ -15,6 +15,7 @@ InGameScene::~InGameScene()
 void InGameScene::Initialize()
 {
 	player.Initialize();  // Å©í«â¡
+	goal.Initialize();
 	goal.SetPlayer(&player);
 	
 	//èoåªà íuê›íËÅ´
@@ -26,6 +27,7 @@ void InGameScene::Initialize()
 eSceneType InGameScene::Update(const float& delta_second)
 {
 	player.Update();  // Å©í«â¡
+	goal.Update(delta_second);
 
 	return GetNowSceneType();
 }
