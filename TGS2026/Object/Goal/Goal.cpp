@@ -101,3 +101,8 @@ bool Goal::CheckCollision() const
         pBottom > gTop
         );
 }
+
+bool Goal::IsGoal() const
+{
+    return isGoal;
+}
