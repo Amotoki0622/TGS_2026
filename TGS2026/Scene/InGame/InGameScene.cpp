@@ -19,8 +19,23 @@ void InGameScene::Initialize()
 	player.Initialize();  // ←追加
 	goal.Initialize();
 	goal.SetPlayer(&player);
-	wall.Initialize();
-	wall.SetPlayer(&player);
+
+	// 壁を配置
+	walls.emplace_back(100, 100, 80, 80);
+	walls.emplace_back(205, 100, 80, 80);
+	//walls.emplace_back(300, 100, 80, 80);
+
+	//walls.emplace_back(100, 200, 80, 80);
+	//walls.emplace_back(300, 200, 80, 80);
+
+	//wall.Initialize();
+	//wall.SetPlayer(&player);
+
+		// プレイヤーをセット
+	for (auto& wall : walls)
+	{
+		wall.SetPlayer(&player);
+	}
 
 
 	background = LoadGraph("Resource/Images/GameMain/background2.png");   // 背景画像
@@ -50,26 +65,30 @@ eSceneType InGameScene::Update(const float& delta_second)
 {
 	player.Update();  
 	goal.Update(delta_second);
-	wall.Update(delta_second);
+
+	for (auto& wall : walls)
+	{
+		wall.Update(delta_second);
+	}
 
 	// --- カメラ・照明の更新と検知判定 ---
-	bool isDetected = false;
-	for (auto d : detectors)
-	{
-		d->Update(player);
-		if (d->IsDetected())
-		{
-			isDetected = true;
-			break; // 誰かが見つけたらループ終了
-		}
-	}
+	//bool isDetected = false;
+	//for (auto d : detectors)
+	//{
+	//	d->Update(player);
+	//	if (d->IsDetected())
+	//	{
+	//		isDetected = true;
+	//		break; // 誰かが見つけたらループ終了
+	//	}
+	//}
 
 	// 見つかったらやり直し
-	if (isDetected)
-	{
-		Initialize(); // 初期位置・初期状態にリセット
-		return GetNowSceneType();
-	}
+	//if (isDetected)
+	//{
+	//	Initialize(); // 初期位置・初期状態にリセット
+	//	return GetNowSceneType();
+	//}
 
 	// カメラのみ
 	//for (auto d : detectors)
@@ -118,7 +137,11 @@ void InGameScene::Draw() const
 	// タイトル画像の描画
 	DrawExtendGraph(0, 0, 1280, 720, background, TRUE);
 
-	wall.Draw();
+	for (auto& wall : walls)
+	{
+		wall.Draw();
+	}
+	
 	goal.Draw();
 	player.Draw(); // ←追加
 

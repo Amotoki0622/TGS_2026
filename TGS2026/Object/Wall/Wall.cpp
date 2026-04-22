@@ -10,14 +10,27 @@ void Wall::SetPlayer(Player* p)
     player = p;
 }
 
+Wall::Wall(float x, float y, float w, float h)
+{
+    this->x = x;
+    this->y = y;
+    this->width = w;
+    this->height = h;
+}
+
+Wall::~Wall()
+{
+
+}
+
 // 初期化
 void Wall::Initialize()
 {
-    x = 700;
-    y = 530;
+    //x = 700;
+    //y = 530;
 
-    width = 80;
-    height = 80;
+    //width = 80;
+    //height = 80;
 }
 
 // 更新
@@ -25,45 +38,69 @@ void Wall::Update(float delta_second)
 {
     if (player == nullptr) return;
 
-    if (CheckCollision())
+    width = player->GetCollisionWidth();
+    height = player->GetCollisionHeight();
+
+    if (!CheckCollision()) return;
+
+    Vector2D pPos = player->GetCollisionPos();
+    float pW = player->GetCollisionWidth();
+    float pH = player->GetCollisionHeight();
+
+    float pLeft = pPos.x - pW / 2;
+    float pRight = pPos.x + pW / 2;
+    float pTop = pPos.y - pH / 2;
+    float pBottom = pPos.y + pH / 2;
+
+    float wLeft = x - width / 2;
+    float wRight = x + width / 2;
+    float wTop = y - height / 2;
+    float wBottom = y + height / 2;
+
+    // 各方向のめり込み量
+    float overlapLeft = pRight - wLeft;
+    float overlapRight = wRight - pLeft;
+    float overlapTop = pBottom - wTop;
+    float overlapBottom = wBottom - pTop;
+
+    // 最小の押し戻し量を探す
+    float minOverlap = overlapLeft;
+    int direction = 0; // 0:左,1:右,2:上,3:下
+
+    if (overlapRight < minOverlap)
     {
-        Vector2D pPos = player->GetCollisionPos();
-        float pW = player->GetCollisionWidth();
-        float pH = player->GetCollisionHeight();
+        minOverlap = overlapRight;
+        direction = 1;
+    }
+    if (overlapTop < minOverlap)
+    {
+        minOverlap = overlapTop;
+        direction = 2;
+    }
+    if (overlapBottom < minOverlap)
+    {
+        minOverlap = overlapBottom;
+        direction = 3;
+    }
 
-        // プレイヤー矩形
-        float pLeft = pPos.x - pW / 2;
-        float pRight = pPos.x + pW / 2;
-        float pTop = pPos.y - pH / 2;
-        float pBottom = pPos.y + pH / 2;
+    // 押し戻し
+    switch (direction)
+    {
+    case 0: // 左から当たった
+        player->SetPosition(wLeft - pW / 2, pPos.y);
+        break;
 
-        // 壁矩形
-        float wLeft = x;
-        float wRight = x + width;
-        float wTop = y;
-        float wBottom = y + height;
+    case 1: // 右から当たった
+        player->SetPosition(wRight + pW / 2, pPos.y);
+        break;
 
-        // 押し戻し量を計算
-        float overlapX1 = wRight - pLeft;   // 左から当たった
-        float overlapX2 = pRight - wLeft;   // 右から当たった
-        float overlapY1 = wBottom - pTop;   // 上から当たった
-        float overlapY2 = pBottom - wTop;   // 下から当たった
+    case 2: // 上から当たった
+        player->SetPosition(pPos.x, wTop - pH / 2);
+        break;
 
-        // 最小の押し戻しを選ぶ
-        float minX = (overlapX1 < overlapX2) ? overlapX1 : -overlapX2;
-        float minY = (overlapY1 < overlapY2) ? overlapY1 : -overlapY2;
-
-        // 小さい方で押し戻す（軸分離）
-        if (abs(minX) < abs(minY))
-        {
-            // X方向
-            player->SetPosition(pPos.x + minX, pPos.y);
-        }
-        else
-        {
-            // Y方向
-            player->SetPosition(pPos.x, pPos.y + minY);
-        }
+    case 3: // 下から当たった
+        player->SetPosition(pPos.x, wBottom + pH / 2);
+        break;
     }
 }
 
@@ -71,14 +108,12 @@ void Wall::Update(float delta_second)
 void Wall::Draw() const
 {
     DrawBox(
-        (int)x,
-        (int)y,
-        (int)(x + width),
-        (int)(y + height),
+        (int)(x - width / 2),
+        (int)(y - height / 2),
+        (int)(x + width / 2),
+        (int)(y + height / 2),
         GetColor(0, 0, 255),
-        TRUE
-
-
+        FALSE
     );
 
 }
@@ -95,28 +130,24 @@ bool Wall::CheckCollision() const
 {
     if (player == nullptr) return false;
 
-    // プレイヤー（中心）
     Vector2D pPos = player->GetCollisionPos();
     float pW = player->GetCollisionWidth();
     float pH = player->GetCollisionHeight();
 
-    // プレイヤーを「左上基準」に変換
     float pLeft = pPos.x - pW / 2;
     float pRight = pPos.x + pW / 2;
     float pTop = pPos.y - pH / 2;
     float pBottom = pPos.y + pH / 2;
 
-    // ゴール（左上基準）
-    float gLeft = x;
-    float gRight = x + width;
-    float gTop = y;
-    float gBottom = y + height;
+    float wLeft = x - width / 2;
+    float wRight = x + width / 2;
+    float wTop = y - height / 2;
+    float wBottom = y + height / 2;
 
-    // AABB判定
     return (
-        pLeft < gRight &&
-        pRight > gLeft &&
-        pTop < gBottom &&
-        pBottom > gTop
+        pLeft < wRight &&
+        pRight > wLeft &&
+        pTop < wBottom &&
+        pBottom > wTop
         );
 }

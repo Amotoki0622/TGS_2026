@@ -8,6 +8,7 @@
 #include "../../Object/Detective/DetectiveObject.h" // 親クラス
 #include "../../Object/Cam/Cam.h"             // 子クラス
 #include "../../Object/Light/Light.h"           // 子クラス
+#include <vector>
 
 class InGameScene : public SceneBase
 {
@@ -15,7 +16,8 @@ class InGameScene : public SceneBase
 private:
 	Player player;
 	Goal goal;
-	Wall wall;
+	/*Wall wall;*/
+	std::vector<Wall> walls;
 
 	// リソースマネージャー
 	ResourceManager* resource;      

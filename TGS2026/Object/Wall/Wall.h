@@ -16,6 +16,9 @@ private:
 public:
 	void SetPlayer(Player* p); // ’Ç‰Á
 
+	Wall(float x, float y, float w, float h);
+	~Wall();
+
 	// ‰Šú‰»ˆ—
 	void Initialize() override;
 	//XVˆ—
