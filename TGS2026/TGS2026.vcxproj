@@ -173,6 +173,7 @@
     <ClInclude Include="Scene\SceneBase.h" />
     <ClInclude Include="Scene\SceneManager.h" />
     <ClInclude Include="Scene\Title\TitleScene.h" />
+    <ClInclude Include="Utility\GridManager\GridManager.h" />
     <ClInclude Include="Utility\InputManager.h" />
     <ClInclude Include="Utility\ProjectConfig.h" />
     <ClInclude Include="Utility\ResourceManager.h" />
