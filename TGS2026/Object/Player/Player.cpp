@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "../../Utility/InputManager.h"
 
+
 // もしPlayer.hで定義していなければ、ここで定義してください
 // 今回の画像は横2枚、縦1枚の構成です
 #define IMAGE_NUM 2
@@ -51,6 +52,8 @@ void Player::Initialize()
     collisionWidth = radius * 1.5f;
     collisionHeight = radius * 1.5f;
 
+    tekazu = 18;
+
     UpdateColor();
 }
 
@@ -75,30 +78,51 @@ void Player::Move()
     int moveY = 0;
 
     // コントローラー
-    if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_UP) == eInputState::ePress)
+    if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_UP) == eInputState::ePress) {
         moveY = -speed;
+        tekazu--;
+    }
+        
 
-    if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_DOWN) == eInputState::ePress)
+    if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_DOWN) == eInputState::ePress) {
         moveY = speed;
+        tekazu--;
+    }
+        
 
-    if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_LEFT) == eInputState::ePress)
+    if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_LEFT) == eInputState::ePress){
         moveX = -speed;
+        tekazu--;
+    }
 
-    if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_RIGHT) == eInputState::ePress)
+    if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_RIGHT) == eInputState::ePress) {
         moveX = speed;
-
+        tekazu--;
+    }
+        
     // キーボード
-    if (input->GetKeyInputState(KEY_INPUT_UP) == eInputState::ePress)
+    if (input->GetKeyInputState(KEY_INPUT_UP) == eInputState::ePress) {
         moveY = -speed;
+        tekazu--;
+    }
+     
 
-    if (input->GetKeyInputState(KEY_INPUT_DOWN) == eInputState::ePress)
+    if (input->GetKeyInputState(KEY_INPUT_DOWN) == eInputState::ePress) {
         moveY = speed;
+        tekazu--;
+    }
 
-    if (input->GetKeyInputState(KEY_INPUT_LEFT) == eInputState::ePress)
+    if (input->GetKeyInputState(KEY_INPUT_LEFT) == eInputState::ePress) {
         moveX = -speed;
+        tekazu--;
+    }
+        
 
-    if (input->GetKeyInputState(KEY_INPUT_RIGHT) == eInputState::ePress)
+    if (input->GetKeyInputState(KEY_INPUT_RIGHT) == eInputState::ePress) {
         moveX = speed;
+        tekazu--;
+    }
+        
 
     // 座標更新
     x += moveX;
@@ -124,6 +148,8 @@ void Player::ChangeState()
         input->GetKeyInputState(KEY_INPUT_RETURN) == eInputState::ePress)
     {
         state = (state == State::Normal) ? State::Shadow : State::Normal;
+        tekazu--;
+       
     }
 }
 
@@ -134,16 +160,22 @@ void Player::UpdateAnimation()
 {
     InputManager* input = InputManager::GetInstance();
 
-    // 判定を「ePress（押した瞬間）」から「eOn（押している間）」に変更してください。
-    // ※ePressだと1フレーム（1/60秒）しか切り替わらないため、反映されていないように見えます。
+    // 1. 画像の切り替え判定（eOn：ボタンを押している間ずっと）
     if (input->GetButtonInputState(XINPUT_BUTTON_A) == eInputState::eHold ||
         input->GetKeyInputState(KEY_INPUT_SPACE) == eInputState::eHold)
     {
-        currentImage = 1; // キックなどのアクション画像
+        currentImage = 1; // 押している間はアクション画像
     }
     else
     {
-        currentImage = 0; // 通常立ち
+        currentImage = 0; // 離せば通常立ち
+    }
+
+    // 2. 手数の減算判定（ePress：押した瞬間だけ1回）
+    if (input->GetButtonInputState(XINPUT_BUTTON_A) == eInputState::ePress ||
+        input->GetKeyInputState(KEY_INPUT_SPACE) == eInputState::ePress)
+    {
+        tekazu--; // 押した瞬間に1回だけマイナス
     }
 }
 
@@ -186,6 +218,9 @@ void Player::Draw() const
             DrawRotaGraph(x, y, (double)shadowExRate, 0.0, images2[currentImage], TRUE);
         }
     }
+
+    // (x座標, y座標, 色, "書式文字列", 変数);
+    DrawFormatString(0, 100, GetColor(255, 255, 255), "手数は %d です", tekazu);
 
     //// 緑の当たり判定枠もそのまま表示しておくと、中心が合っているか確認しやすいです
     //int left = (int)(x - collisionWidth / 2);
