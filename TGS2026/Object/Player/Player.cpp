@@ -6,6 +6,8 @@
 // 今回の画像は横2枚、縦1枚の構成です
 #define IMAGE_NUM 2
 
+
+
 // =========================
 // 初期化処理
 // =========================
@@ -91,11 +93,13 @@ void Player::Move()
         
 
     if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_LEFT) == eInputState::ePress){
+        revers = FALSE;
         moveX = -speed;
         tekazu--;
     }
 
     if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_RIGHT) == eInputState::ePress) {
+        revers = TRUE;
         moveX = speed;
         tekazu--;
     }
@@ -113,12 +117,14 @@ void Player::Move()
     }
 
     if (input->GetKeyInputState(KEY_INPUT_LEFT) == eInputState::ePress) {
+        revers = FALSE;
         moveX = -speed;
         tekazu--;
     }
         
 
     if (input->GetKeyInputState(KEY_INPUT_RIGHT) == eInputState::ePress) {
+        revers = TRUE;
         moveX = speed;
         tekazu--;
     }
@@ -203,7 +209,7 @@ void Player::Draw() const
         // 通常状態（player_01.png は大きいので 0.17倍）
         if (images[currentImage] != -1)
         {
-            DrawRotaGraph(x, y, 0.2, 0.0, images[currentImage], TRUE);
+            DrawRotaGraph(x, y, 0.2, 0.0, images[currentImage], TRUE, revers);
         }
     }
     else // state == State::Shadow
@@ -215,7 +221,7 @@ void Player::Draw() const
             // 0.17 * (768 / 306) = 約 0.42 倍くらい。
             // 0.4 ～ 0.45 あたりで、通常時と同じ大きさに見えるように調整してください。
             float shadowExRate = 0.2f;
-            DrawRotaGraph(x, y, (double)shadowExRate, 0.0, images2[currentImage], TRUE);
+            DrawRotaGraph(x, y, (double)shadowExRate, 0.0, images2[currentImage], TRUE, revers);
         }
     }
 

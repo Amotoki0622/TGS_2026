@@ -64,6 +64,9 @@ private:
     float collisionWidth;
     float collisionHeight;
 
+    // ‰æ‘œ”½“]
+    bool revers = TRUE;
+
 public:
     void Initialize();
     void Update();
