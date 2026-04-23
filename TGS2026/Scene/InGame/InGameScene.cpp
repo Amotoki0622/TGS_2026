@@ -21,8 +21,9 @@ void InGameScene::Initialize()
 	goal.SetPlayer(&player);
 
 	// •Ç‚ð”z’u
-	walls.emplace_back(640, 170, 1280, 100);
-	walls.emplace_back(640, 590, 1280, 100);
+	walls.emplace_back(640, 120, 1280, 200);
+	walls.emplace_back(640, 635, 1280, 200);
+	walls.emplace_back(630, 320, 150, 220);
 
 	//wall.Initialize();
 	//wall.SetPlayer(&player);

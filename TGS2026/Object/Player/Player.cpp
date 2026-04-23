@@ -16,7 +16,7 @@ void Player::Initialize()
     y = 381;
 
 
-    radius = 75;
+    radius = 70;
     speed = 105; 
 
     state = State::Normal;

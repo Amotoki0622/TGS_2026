@@ -15,8 +15,8 @@ void Goal::Initialize()
     y = 350;
     isGoal = false;
 
-    width = 80;
-    height = 80;
+    width = 70;
+    height = 70;
 }
 
 // çXêV
