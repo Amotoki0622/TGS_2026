@@ -166,7 +166,7 @@ void Player::UpdateAnimation()
 {
     InputManager* input = InputManager::GetInstance();
 
-    // 1. 画像の切り替え判定（eOn：ボタンを押している間ずっと）
+    // 1. 画像の切り替え判定（eHold：ボタンを押している間ずっと）
     if (input->GetButtonInputState(XINPUT_BUTTON_A) == eInputState::eHold ||
         input->GetKeyInputState(KEY_INPUT_SPACE) == eInputState::eHold)
     {
