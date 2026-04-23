@@ -38,8 +38,8 @@ void Wall::Update(float delta_second)
 {
     if (player == nullptr) return;
 
-    width = player->GetCollisionWidth();
-    height = player->GetCollisionHeight();
+    //width = player->GetCollisionWidth();
+    //height = player->GetCollisionHeight();
 
     if (!CheckCollision()) return;
 
