@@ -12,12 +12,12 @@
 void Player::Initialize()
 {
     // 初期位置
-    x = 1180;
-    y = 120;
+    x = 20;
+    y = 381;
 
 
-    radius = 70;
-    speed = 90; 
+    radius = 75;
+    speed = 105; 
 
     state = State::Normal;
     currentImage = 0; // 最初は通常ポーズ
@@ -203,7 +203,7 @@ void Player::Draw() const
         // 通常状態（player_01.png は大きいので 0.17倍）
         if (images[currentImage] != -1)
         {
-            DrawRotaGraph(x, y, 0.17, 0.0, images[currentImage], TRUE);
+            DrawRotaGraph(x, y, 0.2, 0.0, images[currentImage], TRUE);
         }
     }
     else // state == State::Shadow
@@ -214,7 +214,7 @@ void Player::Draw() const
             // player_01.pngの横幅(768)とshadow.pngの横幅(306)の比率を考えると、
             // 0.17 * (768 / 306) = 約 0.42 倍くらい。
             // 0.4 ～ 0.45 あたりで、通常時と同じ大きさに見えるように調整してください。
-            float shadowExRate = 0.16f;
+            float shadowExRate = 0.2f;
             DrawRotaGraph(x, y, (double)shadowExRate, 0.0, images2[currentImage], TRUE);
         }
     }
@@ -222,12 +222,12 @@ void Player::Draw() const
     // (x座標, y座標, 色, "書式文字列", 変数);
     DrawFormatString(0, 100, GetColor(255, 255, 255), "手数は %d です", tekazu);
 
-    //// 緑の当たり判定枠もそのまま表示しておくと、中心が合っているか確認しやすいです
-    //int left = (int)(x - collisionWidth / 2);
-    //int right = (int)(x + collisionWidth / 2);
-    //int top = (int)(y - collisionHeight / 2);
-    //int bottom = (int)(y + collisionHeight / 2);
-    //DrawBox(left, top, right, bottom, GetColor(0, 255, 0), FALSE);
+    // 緑の当たり判定枠もそのまま表示しておくと、中心が合っているか確認しやすいです
+    int left = (int)(x - collisionWidth / 2);
+    int right = (int)(x + collisionWidth / 2);
+    int top = (int)(y - collisionHeight / 2);
+    int bottom = (int)(y + collisionHeight / 2);
+    DrawBox(left, top, right, bottom, GetColor(0, 255, 0), FALSE);
 }
 
 // =========================
