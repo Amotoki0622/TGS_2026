@@ -136,7 +136,7 @@ void Player::Move()
 
     // âÊñ êßå¿
     if (x < radius) x = radius;
-    if (x > 1280 - radius) x = 1280 - radius;
+    if (x > 1280 - radius) x = 1225;
 
     if (y < radius) y = radius;
     if (y > 720 - radius) y = 720 - radius;
