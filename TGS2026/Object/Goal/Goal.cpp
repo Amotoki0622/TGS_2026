@@ -11,8 +11,8 @@ void Goal::SetPlayer(Player* p)
 // ‰Šú‰»
 void Goal::Initialize()
 {
-    x = 240;
-    y = 530;
+    x = 1200;
+    y = 350;
     isGoal = false;
 
     width = 80;
