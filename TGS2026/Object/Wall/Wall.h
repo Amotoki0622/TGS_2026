@@ -1,7 +1,8 @@
 #pragma once
-#include "../Player/Player.h"
 #include "../../Utility/Vector2D.h"
 #include "../GameObject.h"
+
+class Player;
 
 //•ÇƒNƒ‰ƒX
 class Wall :public GameObject
@@ -28,7 +29,7 @@ public:
 	//I—¹ˆ—
 	void Finalize() override;
 
-	bool CheckCollision() const;
+	bool IsHit(int nextX, int nextY, float pW, float pH) const;
 
 };
 

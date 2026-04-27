@@ -36,72 +36,72 @@ void Wall::Initialize()
 // 更新
 void Wall::Update(float delta_second)
 {
-    if (player == nullptr) return;
+    //if (player == nullptr) return;
 
-    //width = player->GetCollisionWidth();
-    //height = player->GetCollisionHeight();
+    ////width = player->GetCollisionWidth();
+    ////height = player->GetCollisionHeight();
 
-    if (!CheckCollision()) return;
+    //if (!CheckCollision()) return;
 
-    Vector2D pPos = player->GetCollisionPos();
-    float pW = player->GetCollisionWidth();
-    float pH = player->GetCollisionHeight();
+    //Vector2D pPos = player->GetCollisionPos();
+    //float pW = player->GetCollisionWidth();
+    //float pH = player->GetCollisionHeight();
 
-    float pLeft = pPos.x - pW / 2;
-    float pRight = pPos.x + pW / 2;
-    float pTop = pPos.y - pH / 2;
-    float pBottom = pPos.y + pH / 2;
+    //float pLeft = pPos.x - pW / 2;
+    //float pRight = pPos.x + pW / 2;
+    //float pTop = pPos.y - pH / 2;
+    //float pBottom = pPos.y + pH / 2;
 
-    float wLeft = x - width / 2;
-    float wRight = x + width / 2;
-    float wTop = y - height / 2;
-    float wBottom = y + height / 2;
+    //float wLeft = x - width / 2;
+    //float wRight = x + width / 2;
+    //float wTop = y - height / 2;
+    //float wBottom = y + height / 2;
 
-    // 各方向のめり込み量
-    float overlapLeft = pRight - wLeft;
-    float overlapRight = wRight - pLeft;
-    float overlapTop = pBottom - wTop;
-    float overlapBottom = wBottom - pTop;
+    //// 各方向のめり込み量
+    //float overlapLeft = pRight - wLeft;
+    //float overlapRight = wRight - pLeft;
+    //float overlapTop = pBottom - wTop;
+    //float overlapBottom = wBottom - pTop;
 
-    // 最小の押し戻し量を探す
-    float minOverlap = overlapLeft;
-    int direction = 0; // 0:左,1:右,2:上,3:下
+    //// 最小の押し戻し量を探す
+    //float minOverlap = overlapLeft;
+    //int direction = 0; // 0:左,1:右,2:上,3:下
 
-    if (overlapRight < minOverlap)
-    {
-        minOverlap = overlapRight;
-        direction = 1;
-    }
-    if (overlapTop < minOverlap)
-    {
-        minOverlap = overlapTop;
-        direction = 2;
-    }
-    if (overlapBottom < minOverlap)
-    {
-        minOverlap = overlapBottom;
-        direction = 3;
-    }
+    //if (overlapRight < minOverlap)
+    //{
+    //    minOverlap = overlapRight;
+    //    direction = 1;
+    //}
+    //if (overlapTop < minOverlap)
+    //{
+    //    minOverlap = overlapTop;
+    //    direction = 2;
+    //}
+    //if (overlapBottom < minOverlap)
+    //{
+    //    minOverlap = overlapBottom;
+    //    direction = 3;
+    //}
 
-    // 押し戻し
-    switch (direction)
-    {
-    case 0: // 左から当たった
-        player->SetPosition(wLeft - pW / 2, pPos.y);
-        break;
+    //// 押し戻し
+    //switch (direction)
+    //{
+    //case 0: // 左から当たった
+    //    player->SetPosition(wLeft - pW / 2, pPos.y);
+    //    break;
 
-    case 1: // 右から当たった
-        player->SetPosition(wRight + pW / 2, pPos.y);
-        break;
+    //case 1: // 右から当たった
+    //    player->SetPosition(wRight + pW / 2, pPos.y);
+    //    break;
 
-    case 2: // 上から当たった
-        player->SetPosition(pPos.x, wTop - pH / 2);
-        break;
+    //case 2: // 上から当たった
+    //    player->SetPosition(pPos.x, wTop - pH / 2);
+    //    break;
 
-    case 3: // 下から当たった
-        player->SetPosition(pPos.x, wBottom + pH / 2);
-        break;
-    }
+    //case 3: // 下から当たった
+    //    player->SetPosition(pPos.x, wBottom + pH / 2);
+    //    break;
+    //}
 }
 
 // 描画
@@ -126,18 +126,12 @@ void Wall::Finalize()
 // =========================
 // 当たり判定（中心座標対応）
 // =========================
-bool Wall::CheckCollision() const
+bool Wall::IsHit(int nextX, int nextY, float pW, float pH) const
 {
-    if (player == nullptr) return false;
-
-    Vector2D pPos = player->GetCollisionPos();
-    float pW = player->GetCollisionWidth();
-    float pH = player->GetCollisionHeight();
-
-    float pLeft = pPos.x - pW / 2;
-    float pRight = pPos.x + pW / 2;
-    float pTop = pPos.y - pH / 2;
-    float pBottom = pPos.y + pH / 2;
+    float pLeft = nextX - pW / 2;
+    float pRight = nextX + pW / 2;
+    float pTop = nextY - pH / 2;
+    float pBottom = nextY + pH / 2;
 
     float wLeft = x - width / 2;
     float wRight = x + width / 2;
