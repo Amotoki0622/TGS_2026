@@ -1,13 +1,20 @@
 #pragma once
 #include "DxLib.h"
 #include "../../Utility/Vector2D.h"
+#include "../Wall/Wall.h"
+
+#include <vector>
+
+class Wall;
 
 // =============================================
 // Playerクラス
 // プレイヤーの座標・状態・描画を管理するクラス
 // =============================================
+
 class Player
 {
+
 public:
     // -----------------------------------------
     // プレイヤーの状態
@@ -83,10 +90,9 @@ public:
     void GetLocation(int& outX, int& outY) const;
     void SetPosition(float x, float y);  //プレイヤーの座標設定
 
-
+    void Move(const std::vector<Wall>& walls);
 
 private:
-    void Move();
     void ChangeState();
     void UpdateColor();
 

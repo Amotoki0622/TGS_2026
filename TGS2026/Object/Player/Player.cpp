@@ -1,4 +1,5 @@
 #include "Player.h"
+//#include "../Wall/Wall.h"
 #include "../../Utility/InputManager.h"
 
 
@@ -14,12 +15,12 @@
 void Player::Initialize()
 {
     // 初期位置
-    x = 20;
+    x = 70;
     y = 381;
 
 
-    radius = 70;
-    speed = 105; 
+    radius = 60;
+    speed = 90; 
 
     state = State::Normal;
     currentImage = 0; // 最初は通常ポーズ
@@ -51,8 +52,11 @@ void Player::Initialize()
 
     currentImage = 0;
     // コリジョンサイズ
-    collisionWidth = radius * 1.5f;
-    collisionHeight = radius * 1.5f;
+    /*collisionWidth = radius * 1.5f;
+    collisionHeight = radius * 1.5f;*/
+
+    collisionWidth = radius;
+    collisionHeight = radius;
 
     tekazu = 18;
 
@@ -65,81 +69,88 @@ void Player::Initialize()
 void Player::Update()
 {
     ChangeState();
-    Move();
+    //Move(walls);
     UpdateAnimation();
 }
 
 // =========================
 // 移動処理
 // =========================
-void Player::Move()
-{
+void Player::Move(const std::vector<Wall>& walls) {
     InputManager* input = InputManager::GetInstance();
 
     int moveX = 0;
     int moveY = 0;
 
-    // コントローラー
-    if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_UP) == eInputState::ePress) {
-        moveY = -speed;
-        tekazu--;
-    }
-        
-
-    if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_DOWN) == eInputState::ePress) {
-        moveY = speed;
-        tekazu--;
-    }
-        
-
-    if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_LEFT) == eInputState::ePress){
-        revers = FALSE;
+    // =========================
+    // 入力（1方向だけに制限）
+    // =========================
+    if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_LEFT) == eInputState::ePress ||
+        input->GetKeyInputState(KEY_INPUT_LEFT) == eInputState::ePress)
+    {
         moveX = -speed;
-        tekazu--;
-    }
-
-    if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_RIGHT) == eInputState::ePress) {
-        revers = TRUE;
-        moveX = speed;
-        tekazu--;
-    }
-        
-    // キーボード
-    if (input->GetKeyInputState(KEY_INPUT_UP) == eInputState::ePress) {
-        moveY = -speed;
-        tekazu--;
-    }
-     
-
-    if (input->GetKeyInputState(KEY_INPUT_DOWN) == eInputState::ePress) {
-        moveY = speed;
-        tekazu--;
-    }
-
-    if (input->GetKeyInputState(KEY_INPUT_LEFT) == eInputState::ePress) {
         revers = FALSE;
-        moveX = -speed;
-        tekazu--;
     }
-        
-
-    if (input->GetKeyInputState(KEY_INPUT_RIGHT) == eInputState::ePress) {
-        revers = TRUE;
+    else if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_RIGHT) == eInputState::ePress ||
+        input->GetKeyInputState(KEY_INPUT_RIGHT) == eInputState::ePress)
+    {
         moveX = speed;
+        revers = TRUE;
+    }
+    else if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_UP) == eInputState::ePress ||
+        input->GetKeyInputState(KEY_INPUT_UP) == eInputState::ePress)
+    {
+        moveY = -speed;
+    }
+    else if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_DOWN) == eInputState::ePress ||
+        input->GetKeyInputState(KEY_INPUT_DOWN) == eInputState::ePress)
+    {
+        moveY = speed;
+    }
+
+    // 入力がなければ何もしない
+    if (moveX == 0 && moveY == 0) return;
+
+    // =========================
+    // 次の座標を計算
+    // =========================
+    int nextX = x + moveX;
+    int nextY = y + moveY;
+
+    // =========================
+    // 画面外チェック
+    // =========================
+    if (nextX < radius || nextX > 1280 ||
+        nextY < radius || nextY > 720 - radius)
+    {
+        return;
+    }
+
+    // =========================
+    // 壁との当たり判定（移動前チェック）
+    // =========================
+    bool hitWall = false;
+
+    for (const auto& wall : walls)
+    {
+        if (wall.IsHit(nextX, nextY, collisionWidth, collisionHeight))
+        {
+            hitWall = true;
+            break;
+        }
+    }
+
+    // =========================
+    // 移動処理
+    // =========================
+    if (!hitWall)
+    {
+        x = nextX;
+        y = nextY;
+
+        // 成功したときだけ手数減少
         tekazu--;
     }
-        
-
-    // 座標更新
-    x += moveX;
-    y += moveY;
-
-    // 画面制限
-    if (x < radius) x = radius;
-    if (x > 1280 - radius) x = 1225;
-
-    if (y < radius) y = radius;
-    if (y > 720 - radius) y = 720 - radius;
 }
 
 // =========================
