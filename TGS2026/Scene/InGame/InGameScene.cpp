@@ -69,7 +69,7 @@ eSceneType InGameScene::Update(const float& delta_second)
 	}
 
 	// --- カメラ・照明の更新と検知判定 ---
-	//bool isDetected = false;
+	bool isDetected = false;
 	//for (auto d : detectors)
 	//{
 	//	d->Update(player);
@@ -88,18 +88,18 @@ eSceneType InGameScene::Update(const float& delta_second)
 	//}
 
 	// カメラのみ
-	//for (auto d : detectors)
-	//{
-	//	// カメラの時だけ更新・判定を行う
-	//	if (d->GetType() == DetectiveType::Camera)
-	//	{
-	//		d->Update(player);
-	//		if (d->IsDetected()) {
-	//			Initialize();
-	//			break;
-	//		}
-	//	}
-	//}
+	for (auto d : detectors)
+	{
+		// カメラの時だけ更新・判定を行う
+		if (d->GetType() == DetectiveType::Camera)
+		{
+			d->Update(player);
+			if (d->IsDetected()) {
+				Initialize();
+				break;
+			}
+		}
+	}
 
 	//// 照明のみ
 	//for (auto d : detectors)
@@ -144,10 +144,10 @@ void InGameScene::Draw() const
 
 	//// --- カメラ・照明の描画 ---
 	//// プレイヤーより後に描くことで、視界範囲をプレイヤーの上に重ねて確認しやすくする
-	for (auto d : detectors)
+	/*for (auto d : detectors)
 	{
 		d->Draw();
-	}
+	}*/
 
 	//// 照明のみ
 	//for (auto d : detectors)
@@ -160,14 +160,14 @@ void InGameScene::Draw() const
 	//}
 
 	//// カメラのみ
-	//for (auto d : detectors)
-	//{
-	//	// 自分のタイプが Light の時だけ Camera を呼ぶ
-	//	if (d->GetType() == DetectiveType::Camera)
-	//	{
-	//		d->Draw();
-	//	}
-	//}
+	for (auto d : detectors)
+	{
+		// 自分のタイプが Light の時だけ Camera を呼ぶ
+		if (d->GetType() == DetectiveType::Camera)
+		{
+			d->Draw();
+		}
+	}
 }
 
 // 終了時処理
