@@ -8,10 +8,18 @@
 #include "../../Object/Detective/DetectiveObject.h" // 親クラス
 #include "../../Object/Cam/Cam.h"             // 子クラス
 #include "../../Object/Light/Light.h"           // 子クラス
+#include "../../Utility/Fade/Fade.h"
 #include <vector>
 
 class InGameScene : public SceneBase
 {
+	
+	// インゲーム内状態用列挙型
+	enum class SceneState {
+		Playing,    // 通常時
+		Detected,   // 検知猶予中
+		Restarting  // フェード中・リセット待ち
+	};
 
 private:
 	Player player;
@@ -27,6 +35,11 @@ private:
 
 
 	int background;
+
+	SceneState state = SceneState::Playing;
+	Fade* fade = nullptr;          // フェードクラス
+	float detectionTimer = 0.0f;   // 猶予タイマー
+	const float LIMIT_TIME = 2.0f; // 3秒でアウト
 
 public:
 	// コンストラクタ

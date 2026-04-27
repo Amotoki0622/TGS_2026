@@ -28,6 +28,10 @@ void InGameScene::Initialize()
 	//wall.Initialize();
 	//wall.SetPlayer(&player);
 
+	if (!fade) fade = new Fade(); // 生成
+	state = SceneState::Playing;
+	detectionTimer = 0.0f;
+
 		// プレイヤーをセット
 	for (auto& wall : walls)
 	{
@@ -60,7 +64,23 @@ void InGameScene::Initialize()
 // 更新処理
 eSceneType InGameScene::Update(const float& delta_second)
 {
+	// フェードの更新を常に行う
+	fade->Update();
+
+	// フェードアウト中（リスタート待機中）の処理
+	if (state == SceneState::Restarting)
+	{
+		if (fade->IsFinished())
+		{
+			Initialize(); // 暗転しきったら初期化
+			fade->Start(FadeType::IrisOut, false, 0.0005f); // フェードイン開始
+			state = SceneState::Playing;
+		}
+		return GetNowSceneType(); // リスタート中は以下の処理をスキップ
+	}
+
 	player.Update();  
+	player.Move(walls);
 	goal.Update(delta_second);
 
 	for (auto& wall : walls)
@@ -76,44 +96,67 @@ eSceneType InGameScene::Update(const float& delta_second)
 	//	if (d->IsDetected())
 	//	{
 	//		isDetected = true;
-	//		break; // 誰かが見つけたらループ終了
 	//	}
 	//}
 
-	// 見つかったらやり直し
-	//if (isDetected)
-	//{
-	//	Initialize(); // 初期位置・初期状態にリセット
-	//	return GetNowSceneType();
-	//}
 
-	// カメラのみ
+	// カメラのみの判定
 	for (auto d : detectors)
 	{
-		// カメラの時だけ更新・判定を行う
 		if (d->GetType() == DetectiveType::Camera)
 		{
 			d->Update(player);
 			if (d->IsDetected()) {
-				Initialize();
-				break;
+				isDetected = true;
+				// ここで「カメラに見つかった」固有のフラグを立てることも可能
 			}
 		}
 	}
 
-	//// 照明のみ
-	//for (auto d : detectors)
-	//{
-	//	// カメラの時だけ更新・判定を行う
-	//	if (d->GetType() == DetectiveType::Light)
-	//	{
-	//		d->Update(player);
-	//		if (d->IsDetected()) {
-	//			Initialize();
-	//			break;
-	//		}
-	//	}
-	//}
+	// 照明のみの判定
+	for (auto d : detectors)
+	{
+		if (d->GetType() == DetectiveType::Light)
+		{
+			d->Update(player);
+			if (d->IsDetected()) {
+				isDetected = true;
+				// 照明は見つかった瞬間にタイマーを最大にする(即アウト)
+				detectionTimer = LIMIT_TIME; 
+			}
+		}
+	}
+
+	// --- 検知ステート管理 ---
+	if (isDetected)
+	{
+		if (state == SceneState::Playing)
+		{
+			state = SceneState::Detected;
+			detectionTimer = 0.0f;
+			// ここで検知開始SEを鳴らす予定
+		}
+
+		detectionTimer += delta_second;
+
+		// 猶予時間を超えたらフェードアウトへ
+		if (detectionTimer >= LIMIT_TIME)
+		{
+			state = SceneState::Restarting;
+			fade->Start(FadeType::IrisOut, true, 0.02f);
+			// ここで捕まったSEを鳴らす予定
+		}
+	}
+	else
+	{
+		// 範囲外に出たら猶予状態を解除
+		if (state == SceneState::Detected)
+		{
+			state = SceneState::Playing;
+			detectionTimer = 0.0f;
+			// ここで検知SEを止める予定
+		}
+	}
 
 	// ゴール判定
 	if (goal.IsGoal())
@@ -168,6 +211,18 @@ void InGameScene::Draw() const
 			d->Draw();
 		}
 	}
+
+	for (auto d : detectors) d->Draw();
+
+	// 猶予期間中の演出（画面を少し赤くする等）
+	if (state == SceneState::Detected) {
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 60);
+		DrawBox(0, 0, 1280, 720, GetColor(255, 0, 0), TRUE);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	}
+
+	// フェードを最前面に描画
+	if (fade) fade->Draw();
 }
 
 // 終了時処理
