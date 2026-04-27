@@ -66,11 +66,11 @@ void Player::Initialize()
 // =========================
 // 更新処理
 // =========================
-void Player::Update()
+void Player::Update(const float& delta_second)
 {
     ChangeState();
     //Move(walls);
-    UpdateAnimation();
+    UpdateAnimation(delta_second);
 }
 
 // =========================
@@ -173,26 +173,41 @@ void Player::ChangeState()
 // =========================
 // アニメーション処理
 // =========================
-void Player::UpdateAnimation()
+void Player::UpdateAnimation(float delta_second)
 {
     InputManager* input = InputManager::GetInstance();
 
-    // 1. 画像の切り替え判定（eHold：ボタンを押している間ずっと）
-    if (input->GetButtonInputState(XINPUT_BUTTON_A) == eInputState::eHold ||
-        input->GetKeyInputState(KEY_INPUT_SPACE) == eInputState::eHold)
+    // --- 1. 入力判定 ---
+    bool isPushing = (input->GetButtonInputState(XINPUT_BUTTON_B) == eInputState::eHold ||
+        input->GetKeyInputState(KEY_INPUT_SPACE) == eInputState::eHold);
+
+    bool isPressed = (input->GetButtonInputState(XINPUT_BUTTON_B) == eInputState::ePress ||
+        input->GetKeyInputState(KEY_INPUT_SPACE) == eInputState::ePress);
+
+    // --- 2. タイマーと画像の制御 ---
+    if (isPushing)
     {
-        currentImage = 1; // 押している間はアクション画像
+        currentImage = 1;      // 押している間は画像1
+        actionTimer = 0.25f;    // 常に「余韻タイマー」を最大値（例：0.25秒）にリセットし続ける
     }
     else
     {
-        currentImage = 0; // 離せば通常立ち
+        // ボタンを離しているとき
+        if (actionTimer > 0.0f)
+        {
+            currentImage = 1;           // タイマーが残っていれば画像1を維持
+            actionTimer -= delta_second; // タイマーを減らしていく
+        }
+        else
+        {
+            currentImage = 0;           // タイマーが切れたら通常画像に戻る
+        }
     }
 
-    // 2. 手数の減算判定（ePress：押した瞬間だけ1回）
-    if (input->GetButtonInputState(XINPUT_BUTTON_A) == eInputState::ePress ||
-        input->GetKeyInputState(KEY_INPUT_SPACE) == eInputState::ePress)
+    // --- 3. 手数の減算（変更なし） ---
+    if (isPressed)
     {
-        tekazu--; // 押した瞬間に1回だけマイナス
+        tekazu--;
     }
 }
 

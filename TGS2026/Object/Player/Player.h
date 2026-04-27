@@ -74,9 +74,11 @@ private:
     // 画像反転
     bool revers = TRUE;
 
+    float actionTimer = 0.0f; // アクション画像の維持タイマー
+
 public:
     void Initialize();
-    void Update();
+    void Update(const float& delta_second);
     void Draw() const;
 
     // =========================================
@@ -99,5 +101,5 @@ private:
     // =========================
     // アニメーション更新（追加）
     // =========================
-    void UpdateAnimation();
+    void UpdateAnimation(float delta_second);
 };

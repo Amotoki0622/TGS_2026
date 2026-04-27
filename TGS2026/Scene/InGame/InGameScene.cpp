@@ -79,7 +79,7 @@ eSceneType InGameScene::Update(const float& delta_second)
 		return GetNowSceneType(); // リスタート中は以下の処理をスキップ
 	}
 
-	player.Update();  
+	player.Update(delta_second);  
 	player.Move(walls);
 	goal.Update(delta_second);
 
