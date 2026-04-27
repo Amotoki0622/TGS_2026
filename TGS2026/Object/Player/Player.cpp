@@ -177,6 +177,24 @@ void Player::UpdateAnimation(float delta_second)
 {
     InputManager* input = InputManager::GetInstance();
 
+    //// 1. 画像の切り替え判定（eHold：ボタンを押している間ずっと）
+    //if (input->GetButtonInputState(XINPUT_BUTTON_A) == eInputState::eHold ||
+    //    input->GetKeyInputState(KEY_INPUT_SPACE) == eInputState::eHold)
+    //{
+    //    currentImage = 1; // 押している間はアクション画像
+    //}
+    //else
+    //{
+    //    currentImage = 0; // 離せば通常立ち
+    //}
+
+    //// 2. 手数の減算判定（ePress：押した瞬間だけ1回）
+    //if (input->GetButtonInputState(XINPUT_BUTTON_A) == eInputState::ePress ||
+    //    input->GetKeyInputState(KEY_INPUT_SPACE) == eInputState::ePress)
+    //{
+    //    tekazu--; // 押した瞬間に1回だけマイナス
+    //}
+
     // --- 1. 入力判定 ---
     bool isPushing = (input->GetButtonInputState(XINPUT_BUTTON_B) == eInputState::eHold ||
         input->GetKeyInputState(KEY_INPUT_SPACE) == eInputState::eHold);
