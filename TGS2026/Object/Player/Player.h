@@ -44,7 +44,7 @@ private:
     int color;
 
     // 画像関連
-    static const int IMAGE_NUM = 2; // 分割数（例：4枚）
+    static const int IMAGE_NUM = 3; // 分割数（例：4枚）
     int images[IMAGE_NUM];          // 分割画像を格納
     int images2[IMAGE_NUM];          // 分割画像を格納
     int currentImage;               // 現在表示している画像
@@ -69,6 +69,7 @@ private:
     bool revers = TRUE;
 
     float actionTimer = 0.0f; // アクション画像の維持タイマー
+    int motionTimer = 0; // 移動アニメーション維持用
 
 
 
