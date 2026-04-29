@@ -21,7 +21,7 @@ private:
 public:
     Fade();
     void Start(FadeType type, bool isOut, float speed = 0.02f);
-    void Update();
+    void Update(float delta_second);
     void Draw();
 
     bool IsFinished() const { return !isFading; }

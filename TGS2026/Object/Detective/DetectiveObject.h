@@ -22,7 +22,7 @@ public:
 
     virtual ~DetectiveObject() {}
 
-    virtual void Update(const Player& player) = 0;
+    virtual void Update(const Player& player, float delta_second) = 0;
     virtual void Draw() const = 0;
 
     bool IsDetected() const { return detected; }

@@ -4,7 +4,7 @@ Light::Light(float x, float y, float radius)
     : DetectiveObject(x, y, DetectiveType::Light), radius(radius) {
 }
 
-void Light::Update(const Player& player) {
+void Light::Update(const Player& player, float delta_second) {
     detected = false;
 
     if (player.GetState() == Player::State::Normal) return;

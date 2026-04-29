@@ -50,7 +50,7 @@ void InGameScene::Initialize()
 	// カメラ配置: (x, y, 角度, 距離, 視野角)
 	// 向き(角度)はラジアン: 0=右, PI/2=下, PI=左, PI*1.5=上
 	detectors.push_back(new Cam(400.0f, 150.0f, DX_PI_F / 2.0f, 350.0f, 0.8f));
-	detectors.push_back(new Cam(800.0f, 600.0f, DX_PI_F * 1.5f, 400.0f, 1.2f));
+	detectors.push_back(new Cam(800.0f, 600.0f, DX_PI_F * 1.5f, 400.0f, 0.7f));
 
 	//// 照明配置: (x, y, 半径)
 	//detectors.push_back(new Light(640.0f, 360.0f, 120.0f));
@@ -65,15 +65,14 @@ void InGameScene::Initialize()
 eSceneType InGameScene::Update(const float& delta_second)
 {
 	// フェードの更新を常に行う
-	fade->Update();
+	fade->Update(delta_second);
 
 	// フェードアウト中（リスタート待機中）の処理
 	if (state == SceneState::Restarting)
 	{
-		if (fade->IsFinished())
-		{
+		if (fade->IsFinished()) {
 			Initialize(); // 暗転しきったら初期化
-			fade->Start(FadeType::IrisOut, false, 0.0005f); // フェードイン開始
+			fade->Start(FadeType::IrisOut, false, 1.0f);  // フェードイン開始
 			state = SceneState::Playing;
 		}
 		return GetNowSceneType(); // リスタート中は以下の処理をスキップ
@@ -95,7 +94,7 @@ eSceneType InGameScene::Update(const float& delta_second)
 
 	for (auto d : detectors) {
 		// 設置物（カメラ・ライト）の状態を更新（プレイヤーとの距離計算など）
-		d->Update(player);
+		d->Update(player,delta_second);
 
 		// その設置物の検知範囲内にプレイヤーが入っているか判定
 		if (d->IsDetected()) {
@@ -145,12 +144,15 @@ eSceneType InGameScene::Update(const float& delta_second)
 			if (isLightDetected) {
 				// 【ライト演出】
 				// 画面全体が非常にゆっくり暗くなる(Normal)演出
-				fade->Start(FadeType::Normal, true, 0.0002f);
+				// 1.0f(完了) / 3.0(秒) = 約 0.33f
+				fade->Start(FadeType::Normal, true, 0.8f);;
 			}
 			else {
 				// 【カメラ演出】見つかって捕まったイメージ
 				// 円形に画面が閉じていく(IrisOut)演出
-				fade->Start(FadeType::IrisOut, true, 0.02f);
+				// パシッと1秒で暗くする場合
+	            // 1.0f(完了) / 1.0(秒) = 1.0f
+				fade->Start(FadeType::IrisOut, true, 1.0f);
 			}
 		}
 	}

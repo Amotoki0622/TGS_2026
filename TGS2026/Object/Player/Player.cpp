@@ -258,6 +258,10 @@ void Player::Draw() const
     }
     else // state == State::Shadow
     {
+        // シャドウ状態：少し透けさせる（アルファ値 150前後）
+        // これにより「隠れている」「実体がない」感じに
+        SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
+
         // シャドウ状態（shadow.png は小さいので、もっと大きくする）
         if (images2[currentImage] != -1)
         {
@@ -267,6 +271,8 @@ void Player::Draw() const
             float shadowExRate = 0.2f;
             DrawRotaGraph(x, y, (double)shadowExRate, 0.0, images2[currentImage], TRUE, revers);
         }
+        // 他の描画に影響が出ないよう、最後に描画モードをリセットする
+    SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
     }
 
     // (x座標, y座標, 色, "書式文字列", 変数);

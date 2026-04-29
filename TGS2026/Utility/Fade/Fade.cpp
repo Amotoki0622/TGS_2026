@@ -19,20 +19,23 @@ void Fade::Start(FadeType type, bool isOut, float speed) {
     this->ratio = isOut ? 0.0f : 1.0f;
 }
 
-void Fade::Update() {
+void Fade::Update(float delta_second)
+{
     if (!isFading) return;
 
-    if (isOut) {
-        // 暗くしていく
-        ratio += speed;
+    // speed に delta_second を掛けることで、FPSに関わらず一定時間で終わるようになります
+    // speed を「1秒間に変化する量」として扱います
+    float step = speed * delta_second;
+
+    if (isOut) { // 暗くなる（フェードアウト）
+        ratio += step;
         if (ratio >= 1.0f) {
             ratio = 1.0f;
             isFading = false;
         }
     }
-    else {
-        // 明るくしていく
-        ratio -= speed;
+    else { // 明るくなる（フェードイン）
+        ratio -= step;
         if (ratio <= 0.0f) {
             ratio = 0.0f;
             isFading = false;
