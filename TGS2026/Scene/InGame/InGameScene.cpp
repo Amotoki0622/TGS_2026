@@ -4,6 +4,22 @@
 // コンストラクタ
 InGameScene::InGameScene()
 {
+	isBgmStarted = false;
+
+	// メインBGM
+	mainBGM = LoadSoundMem("Resource/Sounds/BGM/main/main01.mp3");
+	// 音量を設定（例：半分の 128 や、かなり控えめな 80 など）
+	ChangeVolumeSoundMem(85, mainBGM);
+
+	// 警報音
+	beepSE = LoadSoundMem("Resource/Sounds/SE/object/cam/cam3.mp3");
+	freq = GetFrequencySoundMem(beepSE); // 元の周波数を取得
+	// 音量を設定（例：半分の 128 や、かなり控えめな 80 など）
+	ChangeVolumeSoundMem(70, beepSE);
+	// 倍速にする場合
+	SetFrequencySoundMem((int)(freq * 0.6f), beepSE);
+
+
 }
 
 // デストラクタ
@@ -41,6 +57,14 @@ void InGameScene::Initialize()
 
 	background = LoadGraph("Resource/Images/GameMain/background2.png");   // 背景画像
 
+	// 音源関連・読み込み
+	dieSE = LoadSoundMem("Resource/Sounds/SE/object/player/light_die01.mp3");
+	freq = GetFrequencySoundMem(dieSE); // 元の周波数を取得
+	// 音量を設定（例：半分の 128 や、かなり控えめな 80 など）
+	ChangeVolumeSoundMem(70, dieSE);
+	// 倍速にする場合
+	SetFrequencySoundMem((int)(freq * 1.0f), dieSE);
+
 	
 	// --- 検知オブジェクトの配置 ---
 	// 一旦リストを掃除（リセット時用）
@@ -52,9 +76,9 @@ void InGameScene::Initialize()
 	detectors.push_back(new Cam(400.0f, 150.0f, DX_PI_F / 2.0f, 350.0f, 0.8f));
 	detectors.push_back(new Cam(800.0f, 600.0f, DX_PI_F * 1.5f, 400.0f, 0.7f));
 
-	//// 照明配置: (x, y, 半径)
-	//detectors.push_back(new Light(640.0f, 360.0f, 120.0f));
-	//detectors.push_back(new Light(200.0f, 500.0f, 80.0f));
+	// 照明配置: (x, y, 半径)
+	detectors.push_back(new Light(640.0f, 360.0f, 120.0f));
+	detectors.push_back(new Light(200.0f, 500.0f, 80.0f));
 
 	//出現位置設定↓
 	//player.x = 500;
@@ -66,6 +90,12 @@ eSceneType InGameScene::Update(const float& delta_second)
 {
 	// フェードの更新を常に行う
 	fade->Update(delta_second);
+
+	// 音の再生
+	if (CheckSoundMem(mainBGM) == 0) {
+		// ループ再生
+		PlaySoundMem(mainBGM, DX_PLAYTYPE_LOOP);
+	}
 
 	// フェードアウト中（リスタート待機中）の処理
 	if (state == SceneState::Restarting)
@@ -109,6 +139,28 @@ eSceneType InGameScene::Update(const float& delta_second)
 		}
 	}
 
+	// カメラの音源処理
+	if (isCamDetected) {
+		// 【見つかっている間】
+		// まだ鳴っていなければ、ループ再生を開始
+		if (CheckSoundMem(beepSE) == 0) {
+			PlaySoundMem(beepSE, DX_PLAYTYPE_LOOP);
+		}
+	}
+	else {
+		// 【逃げ切った、または範囲外】
+		// 鳴っていたら止める
+		if (CheckSoundMem(beepSE) == 1) {
+			StopSoundMem(beepSE);
+		}
+
+		if (state == SceneState::Detected) {
+			state = SceneState::Playing;
+			detectionTimer = 0.0f;
+		}
+	}
+
+
 	// --- 2. ステート（進行状況）管理フェーズ ---
 	// カメラかライト、どちらかに検知されている場合
 	if (isCamDetected || isLightDetected) {
@@ -121,22 +173,22 @@ eSceneType InGameScene::Update(const float& delta_second)
 
 		// 【重要】ライト（影で触れた）なら猶予なし、カメラなら時間経過でタイマーを進める
 		if (isLightDetected) {
+			// 状態が切り替わるタイミングで再生
+			PlaySoundMem(dieSE, DX_PLAYTYPE_BACK);
 			detectionTimer = LIMIT_TIME; // ライトの場合は強制的にタイムアップ状態にする
 		}
 		else {
 			detectionTimer += delta_second; // カメラの場合は現実時間の経過秒数を加算
 		}
 
-		if (isCamDetected) {
-			// ここでカメラの警報ループ音を再生する
-			// (既に再生中なら二重に鳴らさないようにチェックが必要)
-		}
+		
 
 		// --- 3. 失敗（リセット）確定判定 ---
 		// タイマーが制限時間を超えた（＝捕まった）場合の処理
 		if (detectionTimer >= LIMIT_TIME) {
 			// 例：入れるかは別。ここで上記のループ音を止め、「ガシャーン！」などの失敗音を再生する
 			// ここに入れる
+			StopSoundMem(beepSE);
 		
 			// 「リスタート待機状態(Restarting)」へ移行し、画面演出を開始
 			state = SceneState::Restarting;
@@ -174,6 +226,8 @@ eSceneType InGameScene::Update(const float& delta_second)
 		return eSceneType::eTitle;
 	}
 
+
+
 	return GetNowSceneType();
 }
 
@@ -192,7 +246,7 @@ void InGameScene::Draw() const
 	}
 	
 	goal.Draw();
-	player.Draw(); // ←追加
+	player.Draw();
 
 	//// --- カメラ・照明の描画 ---
 	//// プレイヤーより後に描くことで、視界範囲をプレイヤーの上に重ねて確認しやすくする

@@ -36,10 +36,17 @@ private:
 
 	int background;
 
+	// 音源関連
+	int freq;
+	bool isBgmStarted = false; // これはメンバ変数
+	int mainBGM;
+	int beepSE;          // 警報音
+	int dieSE;           // プレイヤー死亡時の音
+
 	SceneState state = SceneState::Playing;
 	Fade* fade = nullptr;          // フェードクラス
 	float detectionTimer = 0.0f;   // 猶予タイマー
-	const float LIMIT_TIME = 2.0f; // 3秒でアウト
+	const float LIMIT_TIME = 2.5f; // 見つかってからの制限時間
 
 public:
 	// コンストラクタ

@@ -22,6 +22,23 @@ void Player::Initialize()
     radius = 60;
     speed = 90; 
 
+    // 音源読み込み・関連
+    //moveSE = LoadSoundMem("Resource/Sounds/SE/object/player/");
+
+
+    // 変身時
+    changeStateSE = LoadSoundMem("Resource/Sounds/SE/object/player/change.mp3");
+    // 読み込み直後に設定
+    // 基本の周波数は 44100 が一般的です
+    freq = GetFrequencySoundMem(changeStateSE); // 元の周波数を取得
+    // 音量を設定（例：半分の 128 や、かなり控えめな 80 など）
+    ChangeVolumeSoundMem(70, changeStateSE);
+    // 倍速にする場合
+    SetFrequencySoundMem((int)(freq * 2.0f), changeStateSE);
+
+
+
+
     state = State::Normal;
     currentImage = 0; // 最初は通常ポーズ
 
@@ -164,6 +181,9 @@ void Player::ChangeState()
         input->GetButtonInputState(XINPUT_BUTTON_RIGHT_SHOULDER) == eInputState::ePress ||
         input->GetKeyInputState(KEY_INPUT_RETURN) == eInputState::ePress)
     {
+        // 状態が切り替わるタイミングで再生
+        PlaySoundMem(changeStateSE, DX_PLAYTYPE_BACK);
+
         state = (state == State::Normal) ? State::Shadow : State::Normal;
         tekazu--;
        
