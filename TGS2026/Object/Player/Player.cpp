@@ -76,8 +76,6 @@ void Player::Initialize()
     collisionHeight = radius;
 
     tekazu = 18;
-
-    UpdateColor();
 }
 
 // =========================
@@ -249,22 +247,6 @@ void Player::UpdateAnimation(float delta_second)
     }
 }
 
-// =========================
-// 色更新（使わなくてもOK）
-// =========================
-void Player::UpdateColor()
-{
-    switch (state)
-    {
-    case State::Normal:
-        color = GetColor(255, 0, 0);
-        break;
-
-    case State::Shadow:
-        color = GetColor(100, 100, 255);
-        break;
-    }
-}
 
 void Player::Draw() const
 {

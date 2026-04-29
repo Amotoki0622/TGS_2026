@@ -74,11 +74,11 @@ void InGameScene::Initialize()
 	// カメラ配置: (x, y, 角度, 距離, 視野角)
 	// 向き(角度)はラジアン: 0=右, PI/2=下, PI=左, PI*1.5=上
 	detectors.push_back(new Cam(400.0f, 150.0f, DX_PI_F / 2.0f, 350.0f, 0.8f));
-	detectors.push_back(new Cam(800.0f, 600.0f, DX_PI_F * 1.5f, 400.0f, 0.7f));
+	detectors.push_back(new Cam(950.0f, 600.0f, DX_PI_F * 1.5f, 400.0f, 0.7f));
 
-	// 照明配置: (x, y, 半径)
-	detectors.push_back(new Light(640.0f, 360.0f, 120.0f));
-	detectors.push_back(new Light(200.0f, 500.0f, 80.0f));
+	//// 照明配置: (x, y, 半径)
+	//detectors.push_back(new Light(640.0f, 360.0f, 120.0f));
+	//detectors.push_back(new Light(200.0f, 500.0f, 80.0f));
 
 	//出現位置設定↓
 	//player.x = 500;
