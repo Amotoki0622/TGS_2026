@@ -255,7 +255,7 @@ void Player::UpdateAnimation(float delta_second)
         }
     }
 
-    // --- 3. 手数の減算（変更なし） ---
+    // --- 3. 手数の減算 ---
     if (isPressed)
     {
         tekazu--;
@@ -274,7 +274,7 @@ void Player::Draw() const
             DrawRotaGraph(x, y, 0.2, 0.0, images[currentImage], TRUE, revers);
         }
     }
-    else // state == State::Shadow
+    else // Shadow状態時
     {
         // シャドウ状態：少し透けさせる（アルファ値 150前後）
         // これにより「隠れている」「実体がない」感じに
