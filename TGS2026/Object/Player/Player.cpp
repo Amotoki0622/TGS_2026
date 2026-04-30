@@ -2,13 +2,6 @@
 //#include "../Wall/Wall.h"
 #include "../../Utility/InputManager.h"
 
-
-// もしPlayer.hで定義していなければ、ここで定義してください
-// 今回の画像は横2枚、縦1枚の構成です
-#define IMAGE_NUM 2
-
-
-
 // =========================
 // 初期化処理
 // =========================
@@ -21,6 +14,19 @@ void Player::Initialize()
 
     radius = 60;
     speed = 90; 
+
+    state = State::Normal;
+    currentImage = 0; // 最初は通常ポーズ
+
+    currentImage = 0;
+    // コリジョンサイズ
+    /*collisionWidth = radius * 1.5f;
+    collisionHeight = radius * 1.5f;*/
+
+    collisionWidth = radius;
+    collisionHeight = radius;
+
+    tekazu = 18;
 
     // 音源読み込み・関連
     //moveSE = LoadSoundMem("Resource/Sounds/SE/object/player/");
@@ -35,12 +41,6 @@ void Player::Initialize()
     ChangeVolumeSoundMem(70, changeStateSE);
     // 倍速にする場合
     SetFrequencySoundMem((int)(freq * 2.0f), changeStateSE);
-
-
-
-
-    state = State::Normal;
-    currentImage = 0; // 最初は通常ポーズ
 
     // プレイヤーキャラ画像分割読み込み
     // 1. 通常状態の画像読み込み（player_01.png）
@@ -58,8 +58,8 @@ void Player::Initialize()
         "Resource/Images/Player/shadow2.png",
         2,      // 総枚数
         2, 1,   // 横2, 縦1
-        768,    // 【ここを修正】1枚あたりの横幅 (612 / 2)
-        1024,    // 【ここを修正】1枚あたりの縦幅 (そのまま)
+        768,    // 1枚あたりの横幅 (612 / 2)
+        1024,    // 1枚あたりの縦幅 (そのまま)
         images2 // shadow用配列に格納
     );
 
@@ -67,15 +67,30 @@ void Player::Initialize()
         printfDx("画像読み込み失敗\n");
     }
 
-    currentImage = 0;
-    // コリジョンサイズ
-    /*collisionWidth = radius * 1.5f;
-    collisionHeight = radius * 1.5f;*/
+  //  // =============================================================
+  //// 移動用画像込みで考える場合　
+  //// =============================================================
+  //  int fullNormal = LoadGraph("Resource/Images/Player/player_03.png");
+  //  int fullShadow = LoadGraph("Resource/Images/Player/shadow3.png");
 
-    collisionWidth = radius;
-    collisionHeight = radius;
+  //  // --- 1. 通常状態（これは整列されているのでループでOK） ---
+  //  for (int i = 0; i < 3; i++) {
+  //      images[i] = DerivationGraph(i * 512, 0, 512, 1024, fullNormal);
+  //  }
 
-    tekazu = 18;
+  //  for (int i = 0; i < 3; i++) {
+  //      images2[i] = DerivationGraph(i * 512, 0, 480, 1024, fullShadow);
+  //  }
+
+  //  // 3. 親画像を解放（これで子画像だけがメモリに残る）
+  //  DeleteGraph(fullNormal);
+  //  DeleteGraph(fullShadow);
+
+  //  // 4. エラーチェック
+  //  if (images2[0] == -1 || images2[1] == -1) {
+  //      printfDx("シャドウ画像の切り出しに失敗しました。\n");
+  //  }
+
 }
 
 // =========================
@@ -240,7 +255,7 @@ void Player::UpdateAnimation(float delta_second)
         }
     }
 
-    // --- 3. 手数の減算（変更なし） ---
+    // --- 3. 手数の減算 ---
     if (isPressed)
     {
         tekazu--;
@@ -255,10 +270,11 @@ void Player::Draw() const
         // 通常状態（player_01.png は大きいので 0.17倍）
         if (images[currentImage] != -1)
         {
+                               //↓移動の画像の追加時はここを0.3
             DrawRotaGraph(x, y, 0.2, 0.0, images[currentImage], TRUE, revers);
         }
     }
-    else // state == State::Shadow
+    else // Shadow状態時
     {
         // シャドウ状態：少し透けさせる（アルファ値 150前後）
         // これにより「隠れている」「実体がない」感じに
@@ -267,11 +283,8 @@ void Player::Draw() const
         // シャドウ状態（shadow.png は小さいので、もっと大きくする）
         if (images2[currentImage] != -1)
         {
-            // player_01.pngの横幅(768)とshadow.pngの横幅(306)の比率を考えると、
-            // 0.17 * (768 / 306) = 約 0.42 倍くらい。
-            // 0.4 ～ 0.45 あたりで、通常時と同じ大きさに見えるように調整してください。
-            float shadowExRate = 0.2f;
-            DrawRotaGraph(x, y, (double)shadowExRate, 0.0, images2[currentImage], TRUE, revers);
+                              //↓移動の画像の追加時はここを0.3
+            DrawRotaGraph(x, y, 0.2, 0.0, images2[currentImage], TRUE, revers);
         }
         // 他の描画に影響が出ないよう、最後に描画モードをリセットする
     SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
