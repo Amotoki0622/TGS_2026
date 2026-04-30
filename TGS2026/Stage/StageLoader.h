@@ -13,13 +13,13 @@ public:
 	// マップファイルを読み込み、StageDataにマップ配置を書き込む処理
 	static void LoadMapCSV(StageData& data);
 
-	const std::string& GetDebugMessage() const
+	/*const std::string& GetDebugMessage() const
 	{
 		return m_debugMessage;
-	}
+	}*/
 
 
 private:
-	static std::string m_debugMessage;
+	//static std::string m_debugMessage;
 };
 

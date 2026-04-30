@@ -50,7 +50,7 @@ void StageLoader::LoadMapCSV(StageData& data)
 	// ファイルチェック
 	if (ifs.fail())
 	{
-		m_debugMessage = "失敗:" + fullPath;		// 失敗時
+		//m_debugMessage = "失敗:" + fullPath;		// 失敗時
 		throw(fullPath + "が開けません。(マップ配置)");
 	}
 
@@ -162,5 +162,5 @@ void StageLoader::LoadMapCSV(StageData& data)
 #endif // DEBUG
 
 	// 読み込み完了後にメッセージをセット
-	m_debugMessage = data.MapFileName + " を読み込みました。";
+	//m_debugMessage = data.MapFileName + " を読み込みました。";
 }
