@@ -18,19 +18,25 @@ public:
 	~StageManager();
 
 	// 初期化処理
-	void Initialize();
+	void Initialize();			// 起動時に1回呼び出す
 
 	// 更新処理
-	void Updata();
+	void Updata();				//毎フレーム呼び出す
 
 	// 指定したレベルのステージを開始する
-	void LoadLevel(int levelIndex);
+	void LoadLevel(int levelIndex);			// ステージ切り替え時に呼び出す
 
 	// 現在の手数を取得
 	int GetCurrentMoveLimit()const
 	{
 		return m_currentMoveLimit;
 	}
+
+	int GetCurrentLevel() const
+	{
+		return m_currentLevel;
+	}
+
 private:
 	// 実際にオブジェクトを生成する内部関数
 	void CreateStageObject();
