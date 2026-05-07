@@ -132,6 +132,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AppMain.cpp" />
+    <ClCompile Include="Object\MineBomb\MineBomb.cpp" />
+    <ClCompile Include="Object\LegTrap\LegTrap.cpp" />
     <ClCompile Include="Utility\Fade\Fade.cpp" />
     <ClCompile Include="Object\Light\Light.cpp" />
     <ClCompile Include="Object\Cam\Cam.cpp" />
@@ -156,6 +158,8 @@
     <ClCompile Include="Object\Wall\Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Object\MineBomb\MineBomb.h" />
+    <ClInclude Include="Object\LegTrap\LegTrap.h" />
     <ClInclude Include="Utility\Fade\Fade.h" />
     <ClInclude Include="Object\Detective\DetectiveObject.h" />
     <ClInclude Include="Object\Light\Light.h" />
