@@ -48,6 +48,7 @@ void StageManager::LoadLevel(int levelIndex)
 	CreateStageObject();
 }
 
+// 実際にオブジェクトを生成する内部関数
 void StageManager::CreateStageObject()
 {
 	if (!m_pCurrentData) return;
@@ -61,6 +62,34 @@ void StageManager::CreateStageObject()
 			// modeに応じた生成処理
 			switch (mode)
 			{
+			case 'W':
+				// 壁を生成する処理
+				break;
+
+			case 'P':
+				// プレイヤーを生成する処理
+				break;
+
+			case 'C':
+				// カメラを生成する処理
+				break;
+
+			case 'L':
+				// ライトを生成する処理
+				break;
+
+			case 'T':
+				// トラップを生成する処理
+				break;
+
+			case 'F':
+				// 
+				break;
+
+			case 'w':
+				// 
+				break;
+
 			default:
 				break;
 			}
