@@ -59,7 +59,7 @@ void StageManager::CreateStageObject()
 
 			// 座標計算する処理
 
-			// modeに応じた生成処理
+			// modeに応じた生成処理	(コメント文の中に詳細を書く)
 			switch (mode)
 			{
 			case 'W':
@@ -83,11 +83,11 @@ void StageManager::CreateStageObject()
 				break;
 
 			case 'F':
-				// 
+				// 床を生成する処理
 				break;
 
 			case 'w':
-				// 
+				// ワープを生成する処理
 				break;
 
 			default:
