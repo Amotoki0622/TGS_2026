@@ -1,16 +1,16 @@
-#include "Wall.h"
+#include "Block.h"
 #include "../Player/Player.h"
 #include "DxLib.h"
 
 #include <cmath>
 
 // プレイヤーをセット
-void Wall::SetPlayer(Player* p)
+void Block::SetPlayer(Player* p)
 {
     player = p;
 }
 
-Wall::Wall(float x, float y, float w, float h)
+Block::Block(float x, float y, float w, float h)
 {
     this->x = x;
     this->y = y;
@@ -18,25 +18,25 @@ Wall::Wall(float x, float y, float w, float h)
     this->height = h;
 }
 
-Wall::~Wall()
+Block::~Block()
 {
 
 }
 
 // 初期化
-void Wall::Initialize()
+void Block::Initialize()
 {
 
 }
 
 // 更新
-void Wall::Update(float delta_second)
+void Block::Update(float delta_second)
 {
-    
+
 }
 
 // 描画
-void Wall::Draw() const
+void Block::Draw() const
 {
     DrawBox(
         (int)(x - width / 2),
@@ -50,14 +50,14 @@ void Wall::Draw() const
 }
 
 // 終了
-void Wall::Finalize()
+void Block::Finalize()
 {
 }
 
 // =========================
 // 当たり判定（中心座標対応）
 // =========================
-bool Wall::IsHit(int nextX, int nextY, float pW, float pH) const
+bool Block::IsHit(int nextX, int nextY, float pW, float pH) const
 {
     float pLeft = nextX - pW / 2;
     float pRight = nextX + pW / 2;
