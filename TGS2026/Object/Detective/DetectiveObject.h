@@ -6,7 +6,8 @@
 // オブジェクトの種類を定義
 enum class DetectiveType {
     Camera,
-    Light
+    Light,
+    LegTrap
 };
 
 class DetectiveObject {
