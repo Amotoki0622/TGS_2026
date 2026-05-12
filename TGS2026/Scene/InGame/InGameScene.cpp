@@ -80,6 +80,10 @@ void InGameScene::Initialize()
 	//detectors.push_back(new Light(640.0f, 360.0f, 120.0f));
 	//detectors.push_back(new Light(200.0f, 500.0f, 80.0f));
 
+
+	// 画面中央付近に、半径80pxの判定を持つトラバサミを配置
+	detectors.push_back(new LegTrap(640.0f, 400.0f, 80.0f));
+
 	//出現位置設定↓
 	//player.x = 500;
 	//player.y = 200;
@@ -129,11 +133,11 @@ eSceneType InGameScene::Update(const float& delta_second)
 		// その設置物の検知範囲内にプレイヤーが入っているか判定
 		if (d->IsDetected()) {
 			// カメラに検知された場合
-			if (d->GetType() == DetectiveType::Camera) {
+			if (d->GetType() == TrapType::Camera) {
 				isCamDetected = true;
 			}
 			// ライトに検知され、かつプレイヤーが「影状態」だった場合
-			else if (d->GetType() == DetectiveType::Light && player.GetState() == Player::State::Shadow) {
+			else if (d->GetType() == TrapType::Light && player.GetState() == Player::State::Shadow) {
 				isLightDetected = true;
 			}
 		}
@@ -269,7 +273,7 @@ void InGameScene::Draw() const
 	for (auto d : detectors)
 	{
 		// 自分のタイプが Light の時だけ Camera を呼ぶ
-		if (d->GetType() == DetectiveType::Camera)
+		if (d->GetType() == TrapType::Camera)
 		{
 			d->Draw();
 		}
@@ -283,7 +287,7 @@ void InGameScene::Draw() const
 		// カメラ検知があるか確認
 		bool isCameraDetecting = false;
 		for (auto d : detectors) {
-			if (d->GetType() == DetectiveType::Camera && d->IsDetected()) {
+			if (d->GetType() == TrapType::Camera && d->IsDetected()) {
 				isCameraDetecting = true;
 				break;
 			}

@@ -2,7 +2,7 @@
 
 // コンストラクタ
 Cam::Cam(float x, float y, float angle, float range, float fov)
-    : DetectiveObject(x, y, DetectiveType::Camera) // 親のコンストラクタ呼び出し
+    : TrapObject(x, y, TrapType::Camera) // 親のコンストラクタ呼び出し
 {
     this->range = range;
     this->baseAngle = angle; // 基準
