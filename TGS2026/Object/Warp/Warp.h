@@ -9,13 +9,14 @@ class Warp : public GameObject
 private:
 	float x, y;
 	float width, height;
+	float toX, toY;
 
 	Player* player;
 
 public:
 	void SetPlayer(Player* p);
 
-	Warp(float x, float y, float w, float h);
+	Warp(float x, float y, float w, float h, float toX, float toY);
 	~Warp();
 
 	//‰Šú‰»ˆ—
@@ -27,7 +28,7 @@ public:
 	//I—¹ˆ—
 	void Finalize() override;
 
-	bool IsHit(int nextX, int nextY, float pW, float pH) const;
+	bool CheckCollision() const;
 };
 //#include "DxLib.h"
 //
