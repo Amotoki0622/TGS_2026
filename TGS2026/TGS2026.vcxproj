@@ -137,6 +137,7 @@
     <ClCompile Include="Object\Trap\MineBomb\MineBomb.cpp" />
     <ClCompile Include="Object\Trap\LegTrap\LegTrap.cpp" />
     <ClCompile Include="Object\Warp\Warp.cpp" />
+    <ClCompile Include="Object\Trap\SpikeTrap\SpikeTrap.cpp" />
     <ClCompile Include="Utility\Fade\Fade.cpp" />
     <ClCompile Include="Object\Trap\Light\Light.cpp" />
     <ClCompile Include="Object\Trap\Cam\Cam.cpp" />
@@ -166,6 +167,7 @@
     <ClInclude Include="Object\Trap\MineBomb\MineBomb.h" />
     <ClInclude Include="Object\Trap\LegTrap\LegTrap.h" />
     <ClInclude Include="Object\Warp\Warp.h" />
+    <ClInclude Include="Object\Trap\SpikeTrap\SpikeTrap.h" />
     <ClInclude Include="Utility\Fade\Fade.h" />
     <ClInclude Include="Object\Trap\TrapObject\TrapObject.h" />
     <ClInclude Include="Object\Trap\Light\Light.h" />
