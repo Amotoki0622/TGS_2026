@@ -3,6 +3,7 @@
 #include "../../Object/Player/Player.h" 
 #include "../../Object/Goal/Goal.h"
 #include "../../Object/Wall/Wall.h"
+#include "../../Object/Warp/Warp.h"
 #include "../SceneBase.h"
 #include "../../Utility/ResourceManager.h"
 #include "../../Object/Detective/DetectiveObject.h" // êeÉNÉâÉX
@@ -24,6 +25,7 @@ class InGameScene : public SceneBase
 private:
 	Player player;
 	Goal goal;
+	Warp* warp;
 	/*Wall wall;*/
 	std::vector<Wall> walls;
 

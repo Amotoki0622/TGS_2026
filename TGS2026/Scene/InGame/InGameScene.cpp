@@ -32,8 +32,12 @@ InGameScene::~InGameScene()
 // 初期化処理
 void InGameScene::Initialize()
 {
+	warp = new Warp(120, 320, 80, 80, 900, 320);
+
 	player.Initialize();  // ←追加
 	goal.Initialize();
+	warp->Initialize();
+	warp->SetPlayer(&player);
 	goal.SetPlayer(&player);
 
 	// 壁を配置
@@ -41,6 +45,7 @@ void InGameScene::Initialize()
 	walls.emplace_back(640, 635, 1280, 200);
 	walls.emplace_back(618, 320, 60, 220);
 
+	/*warp = new Warp(300, 200, 80, 80, 900, 100);*/
 	//wall.Initialize();
 	//wall.SetPlayer(&player);
 
@@ -111,6 +116,7 @@ eSceneType InGameScene::Update(const float& delta_second)
 	player.Update(delta_second);  
 	player.Move(walls);
 	goal.Update(delta_second);
+	warp->Update(delta_second);
 
 	for (auto& wall : walls)
 	{
@@ -247,6 +253,7 @@ void InGameScene::Draw() const
 	
 	goal.Draw();
 	player.Draw();
+	warp->Draw();
 
 	//// --- カメラ・照明の描画 ---
 	//// プレイヤーより後に描くことで、視界範囲をプレイヤーの上に重ねて確認しやすくする

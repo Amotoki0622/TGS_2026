@@ -28,7 +28,9 @@ public:
 	//I—¹ˆ—
 	void Finalize() override;
 
-	bool CheckCollision() const;
+	bool IsHit(int nextX, int nextY, float pW, float pH) const;
+
+	/*bool CheckCollision() const;*/
 };
 //#include "DxLib.h"
 //
