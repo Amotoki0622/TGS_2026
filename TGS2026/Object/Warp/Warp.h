@@ -1,27 +1,57 @@
 #pragma once
-#include "DxLib.h"
+#include "../../Utility/Vector2D.h"
+#include "../GameObject.h"
 
-class Warp
+class Player;
+
+class Warp : public GameObject
 {
 private:
-	int x, y;
-	int w, h;
-	int Tx, Ty;
+	float x, y;
+	float width, height;
 
-	int Color1;
-	int Color2;
-
-	bool byouga;
+	Player* player;
 
 public:
-	Warp(int _x, int _y, int _w, int _h, int _Tx, int _Ty,
-		int _Color1, int _Color2, bool _byouga = true);
+	void SetPlayer(Player* p);
 
-	bool CheckHit(int px, int py) const;
-	void Draw() const;
+	Warp(float x, float y, float w, float h);
+	~Warp();
 
-	int GetTx()const { return Tx; }
-	int GetTy()const { return Ty; }
-	bool IsByouga() const { return byouga; }
+	//‰Šú‰»ˆ—
+	void Initialize() override;
+	//XVˆ—
+	void Update(float delta_second) override;
+	//•`‰æˆ—
+	void Draw() const override;
+	//I—¹ˆ—
+	void Finalize() override;
 
+	bool IsHit(int nextX, int nextY, float pW, float pH) const;
 };
+//#include "DxLib.h"
+//
+//class Warp
+//{
+//private:
+//	int x, y;
+//	int w, h;
+//	int Tx, Ty;
+//
+//	int Color1;
+//	int Color2;
+//
+//	bool byouga;
+//
+//public:
+//	Warp(int _x, int _y, int _w, int _h, int _Tx, int _Ty,
+//		int _Color1, int _Color2, bool _byouga = true);
+//
+//	bool CheckHit(int px, int py) const;
+//	void Draw() const;
+//
+//	int GetTx()const { return Tx; }
+//	int GetTy()const { return Ty; }
+//	bool IsByouga() const { return byouga; }
+//
+//};
