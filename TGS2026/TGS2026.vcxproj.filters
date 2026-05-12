@@ -66,13 +66,13 @@
     <ClCompile Include="Scene\Question\Question.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Object\Cam\Cam.cpp">
+    <ClCompile Include="Object\Trap\Cam\Cam.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Object\Wall\Wall.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Object\Light\Light.cpp">
+    <ClCompile Include="Object\Trap\Light\Light.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Stage\StageManager.cpp">
@@ -84,10 +84,10 @@
     <ClCompile Include="Utility\Fade\Fade.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Object\LegTrap\LegTrap.cpp">
+    <ClCompile Include="Object\Trap\LegTrap\LegTrap.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Object\MineBomb\MineBomb.cpp">
+    <ClCompile Include="Object\Trap\MineBomb\MineBomb.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Object\Warp\Warp.cpp">
@@ -149,16 +149,16 @@
     <ClInclude Include="Scene\Question\Question.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Object\Cam\Cam.h">
+    <ClInclude Include="Object\Trap\Cam\Cam.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Object\Wall\Wall.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Object\Light\Light.h">
+    <ClInclude Include="Object\Trap\Light\Light.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Object\Detective\DetectiveObject.h">
+    <ClInclude Include="Object\Trap\TrapObject\TrapObject.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Stage\StageData.h">
@@ -176,10 +176,10 @@
     <ClInclude Include="Utility\Fade\Fade.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Object\LegTrap\LegTrap.h">
+    <ClInclude Include="Object\Trap\LegTrap\LegTrap.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Object\MineBomb\MineBomb.h">
+    <ClInclude Include="Object\Trap\MineBomb\MineBomb.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Object\Warp\Warp.h">

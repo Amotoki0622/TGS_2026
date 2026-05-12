@@ -1,7 +1,7 @@
 #pragma once
-#include "../Detective/DetectiveObject.h"
+#include "../TrapObject/TrapObject.h"
 
-class Cam : public DetectiveObject {
+class Cam : public TrapObject {
 private:
     float range;
     float angle;

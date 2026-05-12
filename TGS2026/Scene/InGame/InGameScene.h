@@ -5,9 +5,10 @@
 #include "../../Object/Wall/Wall.h"
 #include "../SceneBase.h"
 #include "../../Utility/ResourceManager.h"
-#include "../../Object/Detective/DetectiveObject.h" // 親クラス
-#include "../../Object/Cam/Cam.h"             // 子クラス
-#include "../../Object/Light/Light.h"           // 子クラス
+#include "../../Object/Trap/TrapObject/TrapObject.h"     // 親クラス
+#include "../../Object/Trap/Cam/Cam.h"                   // 子クラス(カメラ)
+#include "../../Object/Trap/Light/Light.h"               // 子クラス(ライト)
+#include "../../Object/Trap/LegTrap/LegTrap.h"           // 子クラス(トラバサミ)
 #include "../../Utility/Fade/Fade.h"
 #include <vector>
 
@@ -31,7 +32,7 @@ private:
 	ResourceManager* resource;      
 
 	// 検知オブジェクト（カメラ・照明）をまとめて管理
-	std::vector<DetectiveObject*> detectors;
+	std::vector<TrapObject*> detectors;
 
 
 	int background;
