@@ -133,8 +133,6 @@
   <ItemGroup>
     <ClCompile Include="AppMain.cpp" />
     <ClCompile Include="Object\Key\Key.cpp" />
-    <ClCompile Include="Object\MineBomb\MineBomb.cpp" />
-    <ClCompile Include="Object\LegTrap\LegTrap.cpp" />
     <ClCompile Include="Object\Trap\MineBomb\MineBomb.cpp" />
     <ClCompile Include="Object\Trap\LegTrap\LegTrap.cpp" />
     <ClCompile Include="Object\Warp\Warp.cpp" />
@@ -163,8 +161,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Object\Key\Key.h" />
-    <ClInclude Include="Object\MineBomb\MineBomb.h" />
-    <ClInclude Include="Object\LegTrap\LegTrap.h" />
     <ClInclude Include="Object\Trap\MineBomb\MineBomb.h" />
     <ClInclude Include="Object\Trap\LegTrap\LegTrap.h" />
     <ClInclude Include="Object\Warp\Warp.h" />
