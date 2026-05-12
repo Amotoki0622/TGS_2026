@@ -43,7 +43,7 @@ void Block::Draw() const
         (int)(y - height / 2),
         (int)(x + width / 2),
         (int)(y + height / 2),
-        GetColor(255, 255, 0),
+        GetColor(0, 0, 255),
         FALSE
     );
 
