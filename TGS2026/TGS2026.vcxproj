@@ -132,6 +132,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AppMain.cpp" />
+    <ClCompile Include="Object\Block\Block.cpp" />
     <ClCompile Include="Object\Key\Key.cpp" />
     <ClCompile Include="Object\Trap\MineBomb\MineBomb.cpp" />
     <ClCompile Include="Object\Trap\LegTrap\LegTrap.cpp" />
@@ -160,6 +161,7 @@
     <ClCompile Include="Object\Wall\Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Object\Block\Block.h" />
     <ClInclude Include="Object\Key\Key.h" />
     <ClInclude Include="Object\Trap\MineBomb\MineBomb.h" />
     <ClInclude Include="Object\Trap\LegTrap\LegTrap.h" />

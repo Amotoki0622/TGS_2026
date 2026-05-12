@@ -3,6 +3,7 @@
 #include "../../Object/Player/Player.h" 
 #include "../../Object/Goal/Goal.h"
 #include "../../Object/Wall/Wall.h"
+#include "../../Object/Block/Block.h"
 #include "../SceneBase.h"
 #include "../../Utility/ResourceManager.h"
 #include "../../Object/Trap/TrapObject/TrapObject.h"     // 親クラス
@@ -27,6 +28,7 @@ private:
 	Goal goal;
 	/*Wall wall;*/
 	std::vector<Wall> walls;
+	std::vector<Block> blocks;
 
 	// リソースマネージャー
 	ResourceManager* resource;      

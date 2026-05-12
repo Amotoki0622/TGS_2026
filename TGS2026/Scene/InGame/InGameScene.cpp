@@ -41,6 +41,8 @@ void InGameScene::Initialize()
 	walls.emplace_back(640, 635, 1280, 200);
 	walls.emplace_back(618, 320, 60, 220);
 
+	blocks.emplace_back(618, 480, 60, 60);  //動くブロック
+
 	//wall.Initialize();
 	//wall.SetPlayer(&player);
 
@@ -52,6 +54,11 @@ void InGameScene::Initialize()
 	for (auto& wall : walls)
 	{
 		wall.SetPlayer(&player);
+	}
+
+	for (auto& block : blocks)
+	{
+		block.SetPlayer(&player);
 	}
 
 
@@ -119,6 +126,11 @@ eSceneType InGameScene::Update(const float& delta_second)
 	for (auto& wall : walls)
 	{
 		wall.Update(delta_second);
+	}
+
+	for (auto& block : blocks)
+	{
+		block.Update(delta_second);
 	}
 
 	// --- 1. 検知判定フェーズ ---
@@ -247,6 +259,11 @@ void InGameScene::Draw() const
 	for (auto& wall : walls)
 	{
 		wall.Draw();
+	}
+
+	for (auto& block : blocks)
+	{
+		block.Draw();
 	}
 	
 	goal.Draw();
