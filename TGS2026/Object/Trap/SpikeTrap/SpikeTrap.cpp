@@ -13,7 +13,7 @@ void SpikeTrap::Update(const Player& player, float delta_second) {
     // 一度踏んで detected が true になったら、以降の判定をスキップして状態を維持する
     if (detected) return;
 
-    // トラバサミは物理的な罠なので、Shadow状態（影）でも踏む仕様
+    // Shadow状態（影）でも踏む仕様にするか考えておく
     // もし影なら避ける仕様にする場合は、ここに return 処理を追加してください
 
     int px, py;

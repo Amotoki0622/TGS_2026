@@ -1,7 +1,7 @@
 #include "GameObject.h"
 #include "DxLib.h"
 
-GameObject::GameObject() : location(0.0f), box_size(0.0f), graphic_images(NULL), flip_flag(FALSE)
+GameObject::GameObject(ObjectType type = ObjectType::None) : location(0.0f), box_size(0.0f), graphic_images(NULL), flip_flag(FALSE)
 {
 }
 
@@ -14,7 +14,7 @@ void GameObject::Initialize()
 {
 }
 
-void GameObject::Update(float delta_second)
+void GameObject::Update(const Player& player, float delta_second)
 {
 }
 
