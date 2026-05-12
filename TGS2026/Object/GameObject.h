@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../Utility/Vector2D.h"
-#include "Player/Player.h" 
 #include <cmath>
 
 class GameObject
