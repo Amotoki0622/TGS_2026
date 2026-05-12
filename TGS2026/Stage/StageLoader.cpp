@@ -79,7 +79,7 @@ void StageLoader::LoadMapCSV(StageData& data)
 			}
 			else
 			{
-				row.push_back(' ');			// ‹ó‚Á‚Û‚ğ‹ó”’(°)‚Æ‚·‚é
+				row.push_back('W');			// ‹ó‚Á‚Û‚ğ‹ó”’(°)‚Æ‚·‚é
 			}
 		}
 

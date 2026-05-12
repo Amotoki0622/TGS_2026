@@ -15,7 +15,7 @@ StageManager::~StageManager()
 void StageManager::Initialize()
 {
 	// 全ステージデータをロード
-	m_allStages = StageLoader::LoadMapList("Resource/Map/.csv");		// 格納するファイルの指定
+	m_allStages = StageLoader::LoadMapList("Resource/Map/StageData.csv");		// 格納するファイルの指定
 }
 
 // 指定したレベルのステージを開始する
@@ -51,10 +51,16 @@ void StageManager::LoadLevel(int levelIndex)
 // 実際にオブジェクトを生成する内部関数
 void StageManager::CreateStageObject()
 {
-	if (!m_pCurrentData) return;
+	//if (!m_pCurrentData) return;
+	if (m_pCurrentData == nullptr)
+	{
+		return;
+	}
 
-	for (int y = 0; y < m_pCurrentData->height; ++y) {
-		for (int x = 0; x < (int)m_pCurrentData->map[y].size(); ++x) {
+	for (int y = 0; y < m_pCurrentData->height; ++y) 
+	{
+		for (int x = 0; x < (int)m_pCurrentData->map[y].size(); ++x) 
+		{
 			char mode = m_pCurrentData->map[y][x];
 
 			// 座標計算する処理
