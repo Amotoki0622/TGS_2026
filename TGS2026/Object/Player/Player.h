@@ -7,12 +7,13 @@
 #include "DxLib.h"
 #include "../../Utility/Vector2D.h"
 #include "../Wall/Wall.h"
+#include "../GameObject.h"
 
 #include <vector>
 
 class Wall;
 
-class Player
+class Player : public GameObject
 {
 
 public:
@@ -96,7 +97,7 @@ public:
     void GetLocation(int& outX, int& outY) const;
     void SetPosition(float x, float y);  //プレイヤーの座標設定
 
-    void Move(const std::vector<Wall>& walls);
+    void Move(const std::vector<GameObject*>& objects);
 
 private:
     void ChangeState();
