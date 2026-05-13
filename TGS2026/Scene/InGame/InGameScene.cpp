@@ -43,18 +43,12 @@ void InGameScene::Initialize()
 	// オブジェクトの生成
 	allObjects.push_back(new Wall(640.0f, 150.0f, 1280.0f, 128.0f));
 	allObjects.push_back(new Wall(640.0f, 620.0f, 1280.0f, 128.0f));
+	allObjects.push_back(new Wall(640.0f, 130.0f, 1280.0f, 128.0f));
+	allObjects.push_back(new Wall(640.0f, 640.0f, 1280.0f, 128.0f));
 
-	//allObjects.push_back(new Wall(192.0f, 150.0f, 128.0f, 128.0f));
-	//allObjects.push_back(new Wall(320.0f, 150.0f, 128.0f, 128.0f));
-	//allObjects.push_back(new Wall(448.0f, 150.0f, 128.0f, 128.0f));
-	//allObjects.push_back(new Wall(576.0f, 150.0f, 128.0f, 128.0f));
-	//allObjects.push_back(new Wall(704.0f, 150.0f, 128.0f, 128.0f));
-	//allObjects.push_back(new Wall(832.0f, 150.0f, 128.0f, 128.0f));
-	//allObjects.push_back(new Wall(960.0f, 150.0f, 128.0f, 128.0f));
-	//allObjects.push_back(new Wall(1088.0f, 150.0f, 128.0f, 128.0f));
-	//allObjects.push_back(new Wall(1216.0f, 150.0f, 128.0f, 128.0f));
-
-	allObjects.push_back(new Block(328.0f, 300.0f, 128.0f, 128.0f));
+	allObjects.push_back(new Block(448.0f, 258.0f, 128.0f, 128.0f));
+	allObjects.push_back(new Block(448.0f, 386.0f, 128.0f, 128.0f));
+	allObjects.push_back(new Block(448.0f, 514.0f, 128.0f, 128.0f));
 
 	// 3. プレイヤーの初期化
 	player.Initialize();
