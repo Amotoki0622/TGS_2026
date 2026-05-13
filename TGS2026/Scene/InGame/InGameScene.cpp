@@ -32,32 +32,43 @@ InGameScene::~InGameScene()
 // 初期化処理
 void InGameScene::Initialize()
 {
-	warp = new Warp(120, 320, 80, 80, 900, 320);
-
 	player.Initialize();  // ←追加
 	goal.Initialize();
-	warp->Initialize();
-	warp->SetPlayer(&player);
 	goal.SetPlayer(&player);
 
-	// 壁を配置
-	walls.emplace_back(640, 120, 1280, 200);
-	walls.emplace_back(640, 635, 1280, 200);
-	walls.emplace_back(618, 320, 60, 220);
+	// オブジェクトの生成
+	allObjects.push_back(new Wall(640.0f, 150.0f, 1280.0f, 128.0f));
+	allObjects.push_back(new Wall(640.0f, 620.0f, 1280.0f, 128.0f));
 
-	/*warp = new Warp(300, 200, 80, 80, 900, 100);*/
-	//wall.Initialize();
-	//wall.SetPlayer(&player);
+	//allObjects.push_back(new Wall(192.0f, 150.0f, 128.0f, 128.0f));
+	//allObjects.push_back(new Wall(320.0f, 150.0f, 128.0f, 128.0f));
+	//allObjects.push_back(new Wall(448.0f, 150.0f, 128.0f, 128.0f));
+	//allObjects.push_back(new Wall(576.0f, 150.0f, 128.0f, 128.0f));
+	//allObjects.push_back(new Wall(704.0f, 150.0f, 128.0f, 128.0f));
+	//allObjects.push_back(new Wall(832.0f, 150.0f, 128.0f, 128.0f));
+	//allObjects.push_back(new Wall(960.0f, 150.0f, 128.0f, 128.0f));
+	//allObjects.push_back(new Wall(1088.0f, 150.0f, 128.0f, 128.0f));
+	//allObjects.push_back(new Wall(1216.0f, 150.0f, 128.0f, 128.0f));
+
+	allObjects.push_back(new Block(328.0f, 300.0f, 128.0f, 128.0f));
+
+	// 3. プレイヤーの初期化
+	player.Initialize();
 
 	if (!fade) fade = new Fade(); // 生成
 	state = SceneState::Playing;
 	detectionTimer = 0.0f;
 
 		// プレイヤーをセット
-	for (auto& wall : walls)
-	{
-		wall.SetPlayer(&player);
-	}
+	//for (auto& wall : walls)
+	//{
+	//	wall.SetPlayer(&player);
+	//}
+
+	//for (auto& block : blocks)
+	//{
+	//	block.SetPlayer(&player);
+	//}
 
 
 	background = LoadGraph("Resource/Images/GameMain/background2.png");   // 背景画像
@@ -84,6 +95,10 @@ void InGameScene::Initialize()
 	//// 照明配置: (x, y, 半径)
 	//detectors.push_back(new Light(640.0f, 360.0f, 120.0f));
 	//detectors.push_back(new Light(200.0f, 500.0f, 80.0f));
+
+
+	// 画面中央付近に、半径80pxの判定を持つトラバサミを配置
+	detectors.push_back(new LegTrap(640.0f, 400.0f, 80.0f));
 
 	//出現位置設定↓
 	//player.x = 500;
@@ -114,13 +129,17 @@ eSceneType InGameScene::Update(const float& delta_second)
 	}
 
 	player.Update(delta_second);  
-	player.Move(walls);
+	player.Move(allObjects);
 	goal.Update(delta_second);
-	warp->Update(delta_second);
 
 	for (auto& wall : walls)
 	{
 		wall.Update(delta_second);
+	}
+
+	for (auto& block : blocks)
+	{
+		block.Update(delta_second);
 	}
 
 	// --- 1. 検知判定フェーズ ---
@@ -135,11 +154,11 @@ eSceneType InGameScene::Update(const float& delta_second)
 		// その設置物の検知範囲内にプレイヤーが入っているか判定
 		if (d->IsDetected()) {
 			// カメラに検知された場合
-			if (d->GetType() == DetectiveType::Camera) {
+			if (d->GetType() == TrapType::Camera) {
 				isCamDetected = true;
 			}
 			// ライトに検知され、かつプレイヤーが「影状態」だった場合
-			else if (d->GetType() == DetectiveType::Light && player.GetState() == Player::State::Shadow) {
+			else if (d->GetType() == TrapType::Light && player.GetState() == Player::State::Shadow) {
 				isLightDetected = true;
 			}
 		}
@@ -246,14 +265,25 @@ void InGameScene::Draw() const
 	// タイトル画像の描画
 	DrawExtendGraph(0, 0, 1280, 720, background, TRUE);
 
-	for (auto& wall : walls)
+	// 追加したオブジェクト（壁やブロック）を全て描画
+	for (const auto& obj : allObjects) {
+		if (obj != nullptr) {
+			obj->Draw();
+		}
+	}
+
+	/*for (auto& wall : walls)
 	{
 		wall.Draw();
 	}
+
+	for (auto& block : blocks)
+	{
+		block.Draw();
+	}*/
 	
 	goal.Draw();
 	player.Draw();
-	warp->Draw();
 
 	//// --- カメラ・照明の描画 ---
 	//// プレイヤーより後に描くことで、視界範囲をプレイヤーの上に重ねて確認しやすくする
@@ -276,7 +306,7 @@ void InGameScene::Draw() const
 	for (auto d : detectors)
 	{
 		// 自分のタイプが Light の時だけ Camera を呼ぶ
-		if (d->GetType() == DetectiveType::Camera)
+		if (d->GetType() == TrapType::Camera)
 		{
 			d->Draw();
 		}
@@ -290,7 +320,7 @@ void InGameScene::Draw() const
 		// カメラ検知があるか確認
 		bool isCameraDetecting = false;
 		for (auto d : detectors) {
-			if (d->GetType() == DetectiveType::Camera && d->IsDetected()) {
+			if (d->GetType() == TrapType::Camera && d->IsDetected()) {
 				isCameraDetecting = true;
 				break;
 			}

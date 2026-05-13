@@ -3,12 +3,14 @@
 #include "../../Object/Player/Player.h" 
 #include "../../Object/Goal/Goal.h"
 #include "../../Object/Wall/Wall.h"
-#include "../../Object/Warp/Warp.h"
+#include "../../Object/Block/Block.h"
 #include "../SceneBase.h"
 #include "../../Utility/ResourceManager.h"
-#include "../../Object/Detective/DetectiveObject.h" // 親クラス
-#include "../../Object/Cam/Cam.h"             // 子クラス
-#include "../../Object/Light/Light.h"           // 子クラス
+#include "../../Object/Trap/TrapObject/TrapObject.h"     // 親クラス
+#include "../../Object/Trap/Cam/Cam.h"                   // 子クラス(カメラ)
+#include "../../Object/Trap/Light/Light.h"               // 子クラス(ライト)
+#include "../../Object/Trap/LegTrap/LegTrap.h"           // 子クラス(トラバサミ)
+#include "../../Object/Trap/SpikeTrap/SpikeTrap.h"       // 子クラス(トゲ床)
 #include "../../Utility/Fade/Fade.h"
 #include <vector>
 
@@ -25,15 +27,17 @@ class InGameScene : public SceneBase
 private:
 	Player player;
 	Goal goal;
-	Warp* warp;
 	/*Wall wall;*/
 	std::vector<Wall> walls;
+	std::vector<Block> blocks;
+
+	std::vector<GameObject*> allObjects;
 
 	// リソースマネージャー
 	ResourceManager* resource;      
 
 	// 検知オブジェクト（カメラ・照明）をまとめて管理
-	std::vector<DetectiveObject*> detectors;
+	std::vector<TrapObject*> detectors;
 
 
 	int background;

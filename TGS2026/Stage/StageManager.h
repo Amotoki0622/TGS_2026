@@ -21,10 +21,12 @@ public:
 	void Initialize();			// 起動時に1回呼び出す
 
 	// 更新処理
-	void Updata();				//毎フレーム呼び出す
+	// void Updata();				//毎フレーム呼び出す
 
 	// 指定したレベルのステージを開始する
 	void LoadLevel(int levelIndex);			// ステージ切り替え時に呼び出す
+
+	void NextLevel();		// 次のステージに行く関数
 
 	// 現在の手数を取得
 	int GetCurrentMoveLimit()const
@@ -32,6 +34,7 @@ public:
 		return m_currentMoveLimit;
 	}
 
+	// 現在のレベルを取得
 	int GetCurrentLevel() const
 	{
 		return m_currentLevel;

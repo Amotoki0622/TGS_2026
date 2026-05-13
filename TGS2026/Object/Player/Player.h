@@ -7,12 +7,13 @@
 #include "DxLib.h"
 #include "../../Utility/Vector2D.h"
 #include "../Wall/Wall.h"
+#include "../GameObject.h"
 
 #include <vector>
 
 class Wall;
 
-class Player
+class Player : public GameObject
 {
 
 public:
@@ -78,6 +79,13 @@ public:
     void Update(const float& delta_second);
     void Draw() const;
 
+    // 手数を1減らす関数
+    void DecreaseMoveCount() {
+        if (tekazu > 0) {
+            tekazu--;
+        }
+    }
+
     // =========================================
     // コリジョン用取得関数
     // =========================================
@@ -89,13 +97,13 @@ public:
     void GetLocation(int& outX, int& outY) const;
     void SetPosition(float x, float y);  //プレイヤーの座標設定
 
-    void Move(const std::vector<Wall>& walls);
+    void Move(const std::vector<GameObject*>& objects);
 
 private:
     void ChangeState();
 
     // =========================
-    // アニメーション更新（追加）
+    // アニメーション更新
     // =========================
     void UpdateAnimation(float delta_second);
 };

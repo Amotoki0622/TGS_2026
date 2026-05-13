@@ -1,7 +1,7 @@
 #include "Light.h"
 
 Light::Light(float x, float y, float radius)
-    : DetectiveObject(x, y, DetectiveType::Light), radius(radius) {
+    : TrapObject(x, y, TrapType::Light), radius(radius) {
 }
 
 void Light::Update(const Player& player, float delta_second) {
