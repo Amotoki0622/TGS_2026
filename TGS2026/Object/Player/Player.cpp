@@ -8,12 +8,12 @@
 void Player::Initialize()
 {
     // 初期位置
-    x = 70;
-    y = 381;
+    x = 64;
+    y = 250;
 
 
-    radius = 60;
-    speed = 90; 
+    radius = 64;
+    speed = 128; 
 
     state = State::Normal;
     currentImage = 0; // 最初は通常ポーズ
@@ -106,7 +106,7 @@ void Player::Update(const float& delta_second)
 // =========================
 // 移動処理
 // =========================
-void Player::Move(const std::vector<Wall>& walls) {
+void Player::Move(const std::vector<GameObject*>& objects) {
     InputManager* input = InputManager::GetInstance();
 
     int moveX = 0;
@@ -150,35 +150,50 @@ void Player::Move(const std::vector<Wall>& walls) {
     // =========================
     // 画面外チェック
     // =========================
-    if (nextX < radius || nextX > 1280 ||
+    if (nextX < radius || nextX > 1280 - radius || // 右端もradiusを考慮
         nextY < radius || nextY > 720 - radius)
     {
         return;
     }
 
     // =========================
-    // 壁との当たり判定（移動前チェック）
+    // オブジェクトとの当たり判定
     // =========================
-    bool hitWall = false;
+    bool canMove = true;
 
-    for (const auto& wall : walls)
+    for (const auto& obj : objects)
     {
-        if (wall.IsHit(nextX, nextY, collisionWidth, collisionHeight))
+        // 自分自身（プレイヤー）との判定はスキップ
+        if (obj == this) continue;
+
+        // GameObjectクラスに追加したIsHitを呼び出す
+        if (obj->IsHit(nextX, nextY, collisionWidth, collisionHeight))
         {
-            hitWall = true;
+            // 何かにぶつかったので、基本は移動不可
+            canMove = false;
+            break;
+            // --- 発展：オブジェクトごとの特殊処理 ---
+            // もし「動かせるブロック」だった場合の処理をここに書く
+            if (obj->IsMovable())
+            {
+                // ここでブロック側のMoveなどを呼び出し、
+                // ブロックが移動に成功したら canMove = true にする、といった処理が可能
+            }
+
+            // ぶつかった時点でこのループは抜ける
             break;
         }
     }
 
     // =========================
-    // 移動処理
+    // 移動確定処理
     // =========================
-    if (!hitWall)
+    if (canMove)
     {
         x = nextX;
         y = nextY;
 
-        // 成功したときだけ手数減少
+        // 移動が成功したときだけ手数減少
         tekazu--;
     }
 }
