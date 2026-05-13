@@ -1,48 +1,93 @@
 #include "SpikeTrap.h"
+#include "../../Player/Player.h" // Playerの関数を呼ぶために必要
 #include <cmath>
 
+// コンストラクタ
 SpikeTrap::SpikeTrap(float x, float y, float radius)
-    : TrapObject(x, y, TrapType::SpikeTrap), radius(radius) {
-
-    //// 画像読み込み
-    //openImage = LoadGraph("Resource/Images/Object/trap_open.png");
-    //closedImage = LoadGraph("Resource/Images/Object/trap_closed.png");
+    : TrapObject(x, y, TrapType::SpikeTrap), // 親クラスの初期化
+    radius(radius),                       // 半径の設定
+    state(SpikeState::Off)                // 最初はOff（安全）からスタート
+{
+    // 画像読み込みなどが必要な場合はここで行う
 }
 
+// 更新処理
 void SpikeTrap::Update(const Player& player, float delta_second) {
-    // 一度踏んで detected が true になったら、以降の判定をスキップして状態を維持する
-    if (detected) return;
-
-    // Shadow状態（影）でも踏む仕様にするか考えておく
-    // もし影なら避ける仕様にする場合は、ここに return 処理を追加してください
-
     int px, py;
     player.GetLocation(px, py);
 
-    // 円形範囲判定（Lightと同一のロジック）
+    // 1. 移動監視（Toggle）は常に実行
+    if (lastPlayerX != -1 && (px != lastPlayerX || py != lastPlayerY)) {
+        ToggleState();
+        // 離れた後に戻ってきたらまたダメージを食らわせたいなら、ここで detected = false にする
+        // 1回きりにしたいならこのままでOK
+    }
+    lastPlayerX = px;
+    lastPlayerY = py;
+
+    // 2. 「今」プレイヤーが範囲内にいるかをチェック
     float dist = sqrtf(powf((float)px - x, 2) + powf((float)py - y, 2));
-    if (dist < radius) {
+    bool isTouching = (dist < radius); // 範囲内ならtrue
+
+    // 3. 当たり判定（手数を減らす処理）
+    // 「トゲが出ていて」かつ「範囲内にいて」かつ「まだ手数を減らしていない」場合
+    if (state == SpikeState::On && isTouching && !detected) {
+
+        // 【重要】手数を減らす
+        // playerはconst参照なので、中身を変えるためにキャストが必要です
+        Player& mutablePlayer = const_cast<Player&>(player);
+        mutablePlayer.DecreaseMoveCount();
+
+        // 1回減らしたらdetectedをtrueにして、連続で減るのを防ぐ
         detected = true;
+
+        // デバッグログ
+        OutputDebugString("トゲに当たった！手数が減りました。\n");
+    }
+    // 4. 【重要】もし範囲外に出たら、detectedをリセットする（これで「離れた」とみなす）
+    if (!isTouching) {
+        detected = false;
     }
 }
 
+// 描画処理
 void SpikeTrap::Draw() const {
-    // 発動状況に応じて画像を選択
-    int handle = detected ? closedImage : openImage;
+    unsigned int color;
 
-    if (handle != -1) {
-        // 画像の中心(x, y)で描画
-        DrawRotaGraph((int)x, (int)y, 1.0, 0.0, handle, TRUE);
+    // 今まさに踏んでダメージが発生しているなら「黄色（HIT）」
+    if (detected) {
+        color = GetColor(255, 255, 0);
+    }
+    else if (state == SpikeState::On) {
+        color = GetColor(255, 0, 0); // 赤
+    }
+    else {
+        color = GetColor(0, 0, 255); // 青
     }
 
-    // --- デバッグ用表示（LightのDraw構成を流用） ---
-    unsigned int color = detected ? GetColor(255, 0, 0) : GetColor(0, 255, 255);
-
-    // 範囲の可視化（透過円）
+    // --- 円の描画 ---
     SetDrawBlendMode(DX_BLENDMODE_ALPHA, 60);
     DrawCircle((int)x, (int)y, (int)radius, color, TRUE);
     SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-
-    // 範囲の縁
     DrawCircle((int)x, (int)y, (int)radius, color, FALSE);
+
+    // --- テキスト表示 ---
+    if (detected) {
+        DrawFormatString((int)x - 20, (int)y - 10, color, "HIT!");
+    }
+    else {
+        // 離れたら ON / OFF 表示に戻る
+        const char* statusText = (state == SpikeState::On) ? "ON" : "OFF";
+        DrawFormatString((int)x - 20, (int)y - 10, color, statusText);
+    }
+}
+
+// 状態反転処理
+void SpikeTrap::ToggleState() {
+    if (state == SpikeState::On) {
+        state = SpikeState::Off;
+    }
+    else {
+        state = SpikeState::On;
+    }
 }

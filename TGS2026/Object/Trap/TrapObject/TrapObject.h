@@ -5,10 +5,10 @@
 
 // オブジェクトの種類を定義
 enum class TrapType {
-    Camera,
-    Light,
-    LegTrap,
-    SpikeTrap
+    Camera,            // カメラ
+    Light,             // ライト
+    LegTrap,           // トラバサミ
+    SpikeTrap          // トゲ床トラップ
 };
 
 class TrapObject {
