@@ -30,6 +30,8 @@ private:
 	std::vector<Wall> walls;
 	std::vector<Block> blocks;
 
+	std::vector<GameObject*> allObjects;
+
 	// リソースマネージャー
 	ResourceManager* resource;      
 

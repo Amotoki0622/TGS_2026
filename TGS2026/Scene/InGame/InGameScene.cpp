@@ -36,30 +36,39 @@ void InGameScene::Initialize()
 	goal.Initialize();
 	goal.SetPlayer(&player);
 
-	// 壁を配置
-	walls.emplace_back(640, 120, 1280, 200);
-	walls.emplace_back(640, 635, 1280, 200);
-	walls.emplace_back(618, 320, 60, 220);
+	// オブジェクトの生成
+	allObjects.push_back(new Wall(640.0f, 150.0f, 1280.0f, 128.0f));
+	allObjects.push_back(new Wall(640.0f, 620.0f, 1280.0f, 128.0f));
 
-	blocks.emplace_back(618, 480, 60, 60);  //動くブロック
+	//allObjects.push_back(new Wall(192.0f, 150.0f, 128.0f, 128.0f));
+	//allObjects.push_back(new Wall(320.0f, 150.0f, 128.0f, 128.0f));
+	//allObjects.push_back(new Wall(448.0f, 150.0f, 128.0f, 128.0f));
+	//allObjects.push_back(new Wall(576.0f, 150.0f, 128.0f, 128.0f));
+	//allObjects.push_back(new Wall(704.0f, 150.0f, 128.0f, 128.0f));
+	//allObjects.push_back(new Wall(832.0f, 150.0f, 128.0f, 128.0f));
+	//allObjects.push_back(new Wall(960.0f, 150.0f, 128.0f, 128.0f));
+	//allObjects.push_back(new Wall(1088.0f, 150.0f, 128.0f, 128.0f));
+	//allObjects.push_back(new Wall(1216.0f, 150.0f, 128.0f, 128.0f));
 
-	//wall.Initialize();
-	//wall.SetPlayer(&player);
+	allObjects.push_back(new Block(328.0f, 300.0f, 128.0f, 128.0f));
+
+	// 3. プレイヤーの初期化
+	player.Initialize();
 
 	if (!fade) fade = new Fade(); // 生成
 	state = SceneState::Playing;
 	detectionTimer = 0.0f;
 
 		// プレイヤーをセット
-	for (auto& wall : walls)
-	{
-		wall.SetPlayer(&player);
-	}
+	//for (auto& wall : walls)
+	//{
+	//	wall.SetPlayer(&player);
+	//}
 
-	for (auto& block : blocks)
-	{
-		block.SetPlayer(&player);
-	}
+	//for (auto& block : blocks)
+	//{
+	//	block.SetPlayer(&player);
+	//}
 
 
 	background = LoadGraph("Resource/Images/GameMain/background2.png");   // 背景画像
@@ -120,7 +129,7 @@ eSceneType InGameScene::Update(const float& delta_second)
 	}
 
 	player.Update(delta_second);  
-	player.Move(walls);
+	player.Move(allObjects);
 	goal.Update(delta_second);
 
 	for (auto& wall : walls)
@@ -256,7 +265,14 @@ void InGameScene::Draw() const
 	// タイトル画像の描画
 	DrawExtendGraph(0, 0, 1280, 720, background, TRUE);
 
-	for (auto& wall : walls)
+	// 追加したオブジェクト（壁やブロック）を全て描画
+	for (const auto& obj : allObjects) {
+		if (obj != nullptr) {
+			obj->Draw();
+		}
+	}
+
+	/*for (auto& wall : walls)
 	{
 		wall.Draw();
 	}
@@ -264,7 +280,7 @@ void InGameScene::Draw() const
 	for (auto& block : blocks)
 	{
 		block.Draw();
-	}
+	}*/
 	
 	goal.Draw();
 	player.Draw();
