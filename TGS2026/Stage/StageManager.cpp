@@ -54,7 +54,7 @@ void StageManager::LoadLevel(int levelIndex)
 	m_pCurrentData = &m_allStages[m_currentLevel];
 
 	// ステージの詳細(ステージ配置)をロード
-	StageLoader::LoadMapCSV(*m_pCurrentData);
+	// StageLoader::LoadMapCSV(*m_pCurrentData);＊ワンちゃんいらないかもしれない
 
 	// 手数制限をセット
 	m_currentMoveLimit = m_pCurrentData->moveLimit;
