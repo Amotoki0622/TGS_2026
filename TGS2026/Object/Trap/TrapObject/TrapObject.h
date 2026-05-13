@@ -7,7 +7,8 @@
 enum class TrapType {
     Camera,
     Light,
-    LegTrap
+    LegTrap,
+    SpikeTrap
 };
 
 class TrapObject {

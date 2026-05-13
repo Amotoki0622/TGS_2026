@@ -78,6 +78,13 @@ public:
     void Update(const float& delta_second);
     void Draw() const;
 
+    // 手数を1減らす関数
+    void DecreaseMoveCount() {
+        if (tekazu > 0) {
+            tekazu--;
+        }
+    }
+
     // =========================================
     // コリジョン用取得関数
     // =========================================
@@ -95,7 +102,7 @@ private:
     void ChangeState();
 
     // =========================
-    // アニメーション更新（追加）
+    // アニメーション更新
     // =========================
     void UpdateAnimation(float delta_second);
 };

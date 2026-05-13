@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Utility/Vector2D.h"
+#include <cmath>
 
 class GameObject
 {
@@ -30,11 +31,13 @@ public:
 	{
 		return location;
 	}
+
 	// À•W‚ðÝ’è‚·‚é
 	void SetLocation(const Vector2D& location)
 	{
 		this->location = location;
 	}
+
 	// “–‚½‚è”»’è‚Ì”ÍˆÍ‚ð•Ô‚·
 	const Vector2D& GetBoxSize() const
 	{
