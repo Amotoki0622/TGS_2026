@@ -2,7 +2,9 @@
 
 // インストラクタ
 StageManager::StageManager()
-	: m_currentLevel(0), m_currentMoveLimit(0), m_pCurrentData(nullptr)
+	: m_currentLevel(0)
+	, m_currentMoveLimit(0)
+	, m_pCurrentData(nullptr)
 {
 
 }
