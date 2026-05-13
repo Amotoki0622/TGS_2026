@@ -8,8 +8,6 @@ class Player;
 class Wall :public GameObject
 {
 private:
-	//float x, y;
-	//float width, height;
 
 	Player* player; // プレイヤー参照
 
