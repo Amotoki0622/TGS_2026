@@ -41,8 +41,6 @@ void InGameScene::Initialize()
 	warp->SetPlayer(&player);
 
 	// オブジェクトの生成
-	allObjects.push_back(new Wall(640.0f, 150.0f, 1280.0f, 128.0f));
-	allObjects.push_back(new Wall(640.0f, 620.0f, 1280.0f, 128.0f));
 	allObjects.push_back(new Wall(640.0f, 130.0f, 1280.0f, 128.0f));
 	allObjects.push_back(new Wall(640.0f, 640.0f, 1280.0f, 128.0f));
 
