@@ -8,8 +8,6 @@ class Player;
 class Block :public GameObject
 {
 private:
-	float x, y;
-	float width, height;
 
 	Player* player; // プレイヤー参照
 
@@ -29,7 +27,7 @@ public:
 	//終了処理
 	void Finalize() override;
 
-	bool IsHit(int nextX, int nextY, float pW, float pH) const;
+	bool IsHit(int nextX, int nextY, int width, int height) const override;
 
 };
 

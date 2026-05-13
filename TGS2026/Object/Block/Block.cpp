@@ -12,10 +12,11 @@ void Block::SetPlayer(Player* p)
 
 Block::Block(float x, float y, float w, float h)
 {
-    this->x = x;
-    this->y = y;
-    this->width = w;
-    this->height = h;
+    // 親クラス GameObject が持っている location と box_size に代入する
+    this->location.x = x;
+    this->location.y = y;
+    this->box_size.x = w;
+    this->box_size.y = h;
 }
 
 Block::~Block()
@@ -39,11 +40,11 @@ void Block::Update(float delta_second)
 void Block::Draw() const
 {
     DrawBox(
-        (int)(x - width / 2),
-        (int)(y - height / 2),
-        (int)(x + width / 2),
-        (int)(y + height / 2),
-        GetColor(255, 255, 0),
+        (int)(location.x - box_size.x / 2),
+        (int)(location.y - box_size.y / 2),
+        (int)(location.x + box_size.x / 2),
+        (int)(location.y + box_size.y / 2),
+        GetColor(255, 0, 0),
         FALSE
     );
 
@@ -57,22 +58,35 @@ void Block::Finalize()
 // =========================
 // 当たり判定（中心座標対応）
 // =========================
-bool Block::IsHit(int nextX, int nextY, float pW, float pH) const
+bool Block::IsHit(int nextX, int nextY, int width, int height) const
 {
-    float pLeft = nextX - pW / 2;
-    float pRight = nextX + pW / 2;
-    float pTop = nextY - pH / 2;
-    float pBottom = nextY + pH / 2;
+    // =========================================================
+    // 1. プレイヤー（移動先）の四隅を計算
+    // 引数で渡された nextX, nextY, width, height を使用します
+    // =========================================================
+// 判定を0.5ピクセル分だけ内側にする例
+    float pLeft = (float)nextX - (float)width / 2.0f + 0.5f;
+    float pRight = (float)nextX + (float)width / 2.0f - 0.5f;
+    float pTop = (float)nextY - (float)height / 2.0f + 0.5f;
+    float pBottom = (float)nextY + (float)height / 2.0f - 0.5f;
 
-    float wLeft = x - width / 2;
-    float wRight = x + width / 2;
-    float wTop = y - height / 2;
-    float wBottom = y + height / 2;
+    // =========================================================
+    // 2. この壁自体の四隅を計算
+    // GameObject から継承した location と box_size を使用します
+    // =========================================================
+    float bLeft = location.x - box_size.x / 2.0f;
+    float bRight = location.x + box_size.x / 2.0f;
+    float bTop = location.y - box_size.y / 2.0f;
+    float bBottom = location.y + box_size.y / 2.0f;
 
+    // =========================================================
+    // 3. 衝突判定（AABB方式）
+    // すべての条件が重なっている場合のみ true を返します
+    // =========================================================
     return (
-        pLeft < wRight &&
-        pRight > wLeft &&
-        pTop < wBottom &&
-        pBottom > wTop
+        pLeft < bRight &&
+        pRight > bLeft &&
+        pTop < bBottom &&
+        pBottom > bTop
         );
 }
