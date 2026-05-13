@@ -14,8 +14,22 @@ StageManager::~StageManager()
 // 初期化処理
 void StageManager::Initialize()
 {
+	// StageData.csvを読み込む
 	// 全ステージデータをロード
 	m_allStages = StageLoader::LoadMapList("Resource/Map/StageData.csv");		// 格納するファイルの指定
+
+
+	// StageData.csvを読み込み、全ステージのCSVファイルを順番に読み込む
+	for (int i = 0; i < (int)m_allStages.size(); i++)
+	{
+		// i番目のステージデータを読み込み関数に渡す処理
+		StageLoader::LoadMapCSV(m_allStages[i]);		// m_allStages.mapに2次元配列データが格納される
+	}
+
+	if (m_allStages.empty() == false)
+	{
+		LoadLevel(0);		// 最初のレベルを呼び出す
+	}
 }
 
 // 指定したレベルのステージを開始する
@@ -46,6 +60,22 @@ void StageManager::LoadLevel(int levelIndex)
 
 	// マップデータに基づいて、実際にゲームオブジェクトを生成する
 	CreateStageObject();
+}
+
+void StageManager::NextLevel()
+{
+	int nextlevel = m_currentLevel + 1;
+
+	// 次のステージがあるか確認
+	if (nextlevel < (int)m_allStages.size())
+	{
+		LoadLevel(nextlevel);
+	}
+	else
+	{
+		// 全ステージクリアした時の処理(エンディング?)
+	}
+
 }
 
 // 実際にオブジェクトを生成する内部関数
