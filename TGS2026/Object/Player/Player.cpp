@@ -113,20 +113,50 @@ void Player::Move(const std::vector<GameObject*>& objects) {
     InputManager* input = InputManager::GetInstance();
 
     // Bボタン（蹴る）でブロックを動かす
-    if (input->GetButtonInputState(XINPUT_BUTTON_B) == eInputState::ePress || 
-        input->GetKeyInputState(KEY_INPUT_SPACE) == eInputState::ePress) {
-        float kickX = (revers == TRUE) ? 128.0f : -128.0f;
+    if (input->GetButtonInputState(XINPUT_BUTTON_B) == eInputState::ePress ||
+        input->GetKeyInputState(KEY_INPUT_SPACE) == eInputState::ePress)
+    {
+        // --- 1. 蹴る方向（ベクトル）を決定する ---
+        float kickX = 0.0f;
         float kickY = 0.0f;
-        float checkX = (float)x + (revers == TRUE ? 64.0f : -64.0f);
-        float checkY = (float)y;
 
+        // 十字キーまたはキーボードの入力をチェック
+        if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_LEFT) == eInputState::eHold ||
+            input->GetKeyInputState(KEY_INPUT_LEFT) == eInputState::eHold) {
+            kickX = -128.0f;
+        }
+        else if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_RIGHT) == eInputState::eHold ||
+            input->GetKeyInputState(KEY_INPUT_RIGHT) == eInputState::eHold) {
+            kickX = 128.0f;
+        }
+        else if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_UP) == eInputState::eHold ||
+            input->GetKeyInputState(KEY_INPUT_UP) == eInputState::eHold) {
+            kickY = -128.0f;
+        }
+        else if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_DOWN) == eInputState::eHold ||
+            input->GetKeyInputState(KEY_INPUT_DOWN) == eInputState::eHold) {
+            kickY = 128.0f;
+        }
+        else {
+            // 何も方向が押されていない場合は、今のプレイヤーの向き(revers)に蹴る
+            kickX = (revers == TRUE) ? 128.0f : -128.0f;
+        }
+
+        // --- 2. 判定を出す位置（check座標）を計算 ---
+        // 実際に蹴りだす量(128)ではなく、目の前(64)にブロックがあるか調べる
+        float checkX = (float)x + (kickX != 0 ? (kickX > 0 ? 64.0f : -64.0f) : 0.0f);
+        float checkY = (float)y + (kickY != 0 ? (kickY > 0 ? 64.0f : -64.0f) : 0.0f);
+
+        // --- 3. 衝突判定とPushの実行 ---
         for (auto& obj : objects) {
             if (obj == this) continue;
-            if (obj->IsHit((int)checkX, (int)checkY, 64, 64)) {
+
+            if (obj->IsHit((int)checkX, (int)checkY, 60, 60)) { // 少し遊び(60)を持たせる
                 Block* targetBlock = dynamic_cast<Block*>(obj);
                 if (targetBlock != nullptr) {
+                    printfDx("Blockを方向指定で蹴った！(X:%.0f, Y:%.0f)\n", kickX, kickY);
                     targetBlock->Push(kickX, kickY);
-                    return; // 蹴ったらこのターンの移動処理は終了
+                    return; // 成功したら終了
                 }
             }
         }
