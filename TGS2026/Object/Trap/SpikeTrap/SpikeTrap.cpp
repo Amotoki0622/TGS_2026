@@ -5,10 +5,16 @@
 // コンストラクタ
 SpikeTrap::SpikeTrap(float x, float y, float radius)
     : TrapObject(x, y, TrapType::SpikeTrap), // 親クラスの初期化
-    radius(radius),                       // 半径の設定
-    state(SpikeState::Off)                // 最初はOff（安全）からスタート
+    radius(radius),                          // 半径の設定
+    state(SpikeState::Off)                   // 最初はOff（安全）からスタート
 {
-    // 画像読み込みなどが必要な場合はここで行う
+    // 画像を分割して読み込む（横2枚、縦1枚）
+    // 1枚あたりのサイズは 横768(1536/2), 縦1024
+    int handles[2];
+    LoadDivGraph("Resource/Images/Trap/SpikeTrap/SpikeTrap2.png", 2, 2, 1, 735, 930, handles);
+
+    closedImage = handles[0];  // 左側：トゲなし
+    openImage = handles[1];    // 右側：トゲあり
 }
 
 // 更新処理
@@ -52,34 +58,52 @@ void SpikeTrap::Update(const Player& player, float delta_second) {
 
 // 描画処理
 void SpikeTrap::Draw() const {
-    unsigned int color;
+    // 1. 状態に応じた画像を選択
+    int handle = (state == SpikeState::On) ? openImage : closedImage;
 
-    // 今まさに踏んでダメージが発生しているなら「黄色（HIT）」
+    if (handle != -1) {
+        // 画像の元の幅（768px）に対して、ゲーム上のサイズ（radius * 2）に合わせる倍率を計算
+        // もし大きすぎる場合は、ここの倍率を 0.1 とか固定値にしてもOKです
+        float scale = (radius * 1.6f) / 740.0f;
+
+        // 画像の中心(x, y)で描画
+        DrawRotaGraph((int)x, (int)y, (double)scale, 0.0, handle, TRUE);
+    }
+
+    // --- 動作確認用（後で消してOK） ---
+    // 踏んでいる間だけ「HIT!」を画像の上に重ねて出すと分かりやすいです
     if (detected) {
-        color = GetColor(255, 255, 0);
-    }
-    else if (state == SpikeState::On) {
-        color = GetColor(255, 0, 0); // 赤
-    }
-    else {
-        color = GetColor(0, 0, 255); // 青
+        DrawFormatString((int)x - 20, (int)y - 50, GetColor(255, 255, 0), "HIT!");
     }
 
-    // --- 円の描画 ---
-    SetDrawBlendMode(DX_BLENDMODE_ALPHA, 60);
-    DrawCircle((int)x, (int)y, (int)radius, color, TRUE);
-    SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-    DrawCircle((int)x, (int)y, (int)radius, color, FALSE);
+    //unsigned int color;
 
-    // --- テキスト表示 ---
-    if (detected) {
-        DrawFormatString((int)x - 20, (int)y - 10, color, "HIT!");
-    }
-    else {
-        // 離れたら ON / OFF 表示に戻る
-        const char* statusText = (state == SpikeState::On) ? "ON" : "OFF";
-        DrawFormatString((int)x - 20, (int)y - 10, color, statusText);
-    }
+    //// 今まさに踏んでダメージが発生しているなら「黄色（HIT）」
+    //if (detected) {
+    //    color = GetColor(255, 255, 0);
+    //}
+    //else if (state == SpikeState::On) {
+    //    color = GetColor(255, 0, 0); // 赤
+    //}
+    //else {
+    //    color = GetColor(0, 0, 255); // 青
+    //}
+
+    //// --- 円の描画 ---
+    //SetDrawBlendMode(DX_BLENDMODE_ALPHA, 60);
+    //DrawCircle((int)x, (int)y, (int)radius, color, TRUE);
+    //SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+    //DrawCircle((int)x, (int)y, (int)radius, color, FALSE);
+
+    //// --- テキスト表示 ---
+    //if (detected) {
+    //    DrawFormatString((int)x - 20, (int)y - 10, color, "HIT!");
+    //}
+    //else {
+    //    // 離れたら ON / OFF 表示に戻る
+    //    const char* statusText = (state == SpikeState::On) ? "ON" : "OFF";
+    //    DrawFormatString((int)x - 20, (int)y - 10, color, statusText);
+    //}
 }
 
 // 状態反転処理
