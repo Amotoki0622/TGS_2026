@@ -26,8 +26,10 @@ public:
 	void Draw() const override;
 	//終了処理
 	void Finalize() override;
-
+	// 当たり判定チェック
 	bool IsHit(int nextX, int nextY, int width, int height) const override;
 
+	// プレイヤーがキックするとブロックが動く
+	void Push(float moveX, float moveY);
 };
 

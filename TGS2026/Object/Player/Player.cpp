@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "../Block/Block.h"
 //#include "../Wall/Wall.h"
 #include "../../Utility/InputManager.h"
 
@@ -10,6 +11,7 @@ void Player::Initialize()
     // 初期位置
     x = 64;
     y = 250;
+
 
 
     radius = 64;
@@ -101,6 +103,7 @@ void Player::Update(const float& delta_second)
     ChangeState();
     //Move(walls);
     UpdateAnimation(delta_second);
+
 }
 
 // =========================
@@ -108,6 +111,26 @@ void Player::Update(const float& delta_second)
 // =========================
 void Player::Move(const std::vector<GameObject*>& objects) {
     InputManager* input = InputManager::GetInstance();
+
+    // Bボタン（蹴る）でブロックを動かす
+    if (input->GetButtonInputState(XINPUT_BUTTON_B) == eInputState::ePress) {
+        float kickX = (revers == TRUE) ? 128.0f : -128.0f;
+        float kickY = 0.0f;
+        float checkX = (float)x + (revers == TRUE ? 64.0f : -64.0f);
+        float checkY = (float)y;
+
+        for (auto& obj : objects) {
+            if (obj == this) continue;
+            if (obj->IsHit((int)checkX, (int)checkY, 64, 64)) {
+                Block* targetBlock = dynamic_cast<Block*>(obj);
+                if (targetBlock != nullptr) {
+                    targetBlock->Push(kickX, kickY);
+                    return; // 蹴ったらこのターンの移動処理は終了
+                }
+            }
+        }
+    }
+
 
     int moveX = 0;
     int moveY = 0;
@@ -183,6 +206,7 @@ void Player::Move(const std::vector<GameObject*>& objects) {
             // ぶつかった時点でこのループは抜ける
             break;
         }
+
     }
 
     // =========================

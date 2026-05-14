@@ -17,6 +17,8 @@ Block::Block(float x, float y, float w, float h)
     this->location.y = y;
     this->box_size.x = w;
     this->box_size.y = h;
+
+   /* printfDx("Block Created at %.1f, %.1f\n", location.x, location.y);*/
 }
 
 Block::~Block()
@@ -89,4 +91,12 @@ bool Block::IsHit(int nextX, int nextY, int width, int height) const
         pTop < bBottom &&
         pBottom > bTop
         );
+
+}
+
+void Block::Push(float moveX, float moveY) {
+    // íPèÉÇ…ç°ÇÃç¿ïWÇ… 128 Çë´Ç∑
+    location.x += moveX;
+    location.y += moveY;
+
 }
