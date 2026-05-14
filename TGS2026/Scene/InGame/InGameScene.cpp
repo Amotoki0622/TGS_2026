@@ -32,13 +32,13 @@ InGameScene::~InGameScene()
 // 初期化処理
 void InGameScene::Initialize()
 {
-	warp = new Warp(120, 320, 80, 80, 900, 320);
+	/*warp = new Warp(120, 320, 80, 80, 900, 320);*/
 
 	player.Initialize();  // ←追加
 	goal.Initialize();
-	warp->Initialize();
+	/*warp.Initialize();*/
 	goal.SetPlayer(&player);
-	warp->SetPlayer(&player);
+	/*warp.SetPlayer(&player);*/
 
 	// オブジェクトの生成
 	allObjects.push_back(new Wall(640.0f, 150.0f, 1280.0f, 128.0f));
@@ -56,6 +56,7 @@ void InGameScene::Initialize()
 
 	allObjects.push_back(new Block(328.0f, 300.0f, 128.0f, 128.0f));
 
+	allObjects.push_back(new Warp(900.0f, 320.0f, 128.0f, 128.0f, 328.0f, 300.0f));
 	// 3. プレイヤーの初期化
 	player.Initialize();
 
@@ -135,7 +136,7 @@ eSceneType InGameScene::Update(const float& delta_second)
 	player.Update(delta_second);  
 	player.Move(allObjects);
 	goal.Update(delta_second);
-	warp->Update(delta_second);
+	/*warp->Update(delta_second);*/
 
 	for (auto& wall : walls)
 	{
@@ -145,6 +146,11 @@ eSceneType InGameScene::Update(const float& delta_second)
 	for (auto& block : blocks)
 	{
 		block.Update(delta_second);
+	}
+
+	for (auto& warp : warps)
+	{
+		warp.Update(delta_second);
 	}
 
 	// --- 1. 検知判定フェーズ ---
@@ -289,7 +295,7 @@ void InGameScene::Draw() const
 	
 	goal.Draw();
 	player.Draw();
-	warp->Draw();
+	/*warp->Draw();*/
 
 	//// --- カメラ・照明の描画 ---
 	//// プレイヤーより後に描くことで、視界範囲をプレイヤーの上に重ねて確認しやすくする

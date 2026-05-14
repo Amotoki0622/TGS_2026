@@ -28,7 +28,7 @@ class InGameScene : public SceneBase
 private:
 	Player player;
 	Goal goal;
-	Warp* warp;
+	std::vector<Warp> warps;
 	/*Wall wall;*/
 	std::vector<Wall> walls;
 	std::vector<Block> blocks;
