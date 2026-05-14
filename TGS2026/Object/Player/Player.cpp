@@ -113,7 +113,8 @@ void Player::Move(const std::vector<GameObject*>& objects) {
     InputManager* input = InputManager::GetInstance();
 
     // Bボタン（蹴る）でブロックを動かす
-    if (input->GetButtonInputState(XINPUT_BUTTON_B) == eInputState::ePress) {
+    if (input->GetButtonInputState(XINPUT_BUTTON_B) == eInputState::ePress || 
+        input->GetKeyInputState(KEY_INPUT_SPACE) == eInputState::ePress) {
         float kickX = (revers == TRUE) ? 128.0f : -128.0f;
         float kickY = 0.0f;
         float checkX = (float)x + (revers == TRUE ? 64.0f : -64.0f);
