@@ -16,22 +16,24 @@ StageManager::~StageManager()
 // 初期化処理
 void StageManager::Initialize()
 {
-	// StageData.csvを読み込む
-	// 全ステージデータをロード
-	m_allStages = StageLoader::LoadMapList("Resource/Map/StageData.csv");		// 格納するファイルの指定
+	// 1. リストを読み込む
+	m_allStages = StageLoader::LoadMapList("Resource/Map/StageData.csv");
 
+	// 2. リストが空っぽならここで処理を止める（アクセス違反を防ぐ）
+	if (m_allStages.empty())
+	{
+		// ここで止まる場合は StageData.csv の読み込み自体に失敗しています
+		return;
+	}
 
-	// StageData.csvを読み込み、全ステージのCSVファイルを順番に読み込む
+	// 3. 各ステージの中身(Stage1.csvなど)を読み込む
 	for (int i = 0; i < (int)m_allStages.size(); i++)
 	{
-		// i番目のステージデータを読み込み関数に渡す処理
-		StageLoader::LoadMapCSV(m_allStages[i]);		// m_allStages.mapに2次元配列データが格納される
+		StageLoader::LoadMapCSV(m_allStages[i]);
 	}
 
-	if (m_allStages.empty() == false)
-	{
-		LoadLevel(0);		// 最初のレベルを呼び出す
-	}
+	// 4. 準備ができたら最初のレベルをロード
+	LoadLevel(0);
 }
 
 // 指定したレベルのステージを開始する
@@ -53,25 +55,30 @@ void StageManager::LoadLevel(int levelIndex)
 	// 「今使うデータ」だけにピンを立てる
 	m_pCurrentData = &m_allStages[m_currentLevel];
 
+	if (m_pCurrentData->map.empty())
+	{
+		return;
+	}
+
 	// ステージの詳細(ステージ配置)をロード
-	// StageLoader::LoadMapCSV(*m_pCurrentData);＊ワンちゃんいらないかもしれない
+	// StageLoader::LoadMapCSV(*m_pCurrentData);＊ワンちゃんいらないかもしれない(要らなかった)
 
 	// 手数制限をセット
 	m_currentMoveLimit = m_pCurrentData->moveLimit;
 
 
 	// マップデータに基づいて、実際にゲームオブジェクトを生成する
-	CreateStageObject();
+	CreateStageObject();				// (オブジェクトを生成するときに使う処理)
 }
 
 void StageManager::NextLevel()
 {
-	int nextlevel = m_currentLevel + 1;
+	int nextLevel = m_currentLevel + 1;
 
 	// 次のステージがあるか確認
-	if (nextlevel < (int)m_allStages.size())
+	if (nextLevel < (int)m_allStages.size())
 	{
-		LoadLevel(nextlevel);
+		LoadLevel(nextLevel);
 	}
 	else
 	{
