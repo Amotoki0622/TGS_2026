@@ -132,6 +132,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AppMain.cpp" />
+    <ClCompile Include="Utility\EffectManager\EffectManager.cpp" />
     <ClCompile Include="Object\Block\Block.cpp" />
     <ClCompile Include="Object\Key\Key.cpp" />
     <ClCompile Include="Object\Trap\MineBomb\MineBomb.cpp" />
@@ -162,6 +163,7 @@
     <ClCompile Include="Object\Wall\Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Utility\EffectManager\EffectManager.h" />
     <ClInclude Include="Object\Block\Block.h" />
     <ClInclude Include="Object\Key\Key.h" />
     <ClInclude Include="Object\Trap\MineBomb\MineBomb.h" />

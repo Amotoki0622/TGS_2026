@@ -95,7 +95,7 @@ void InGameScene::Initialize()
 
 
 	// 画面中央付近に、半径80pxの判定を持つトラバサミを配置
-	detectors.push_back(new LegTrap(640.0f, 400.0f, 80.0f));
+	detectors.push_back(new SpikeTrap(640.0f, 400.0f, 80.0f));
 
 	//出現位置設定↓
 	//player.x = 500;
