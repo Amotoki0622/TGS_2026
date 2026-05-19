@@ -48,7 +48,8 @@ void InGameScene::Initialize()
 	allObjects.push_back(new Block(448.0f, 386.0f, 128.0f, 128.0f));
 	allObjects.push_back(new Block(448.0f, 514.0f, 128.0f, 128.0f));
 
-	allObjects.push_back(new Warp(900.0f, 320.0f, 128.0f, 128.0f, 328.0f, 300.0f));
+	allObjects.push_back(new Warp(328.0f, 300.0f, 128.0f, 128.0f, 900.0f, 320.0f));
+
 	// 3. プレイヤーの初期化
 	player.Initialize();
 
@@ -127,6 +128,25 @@ eSceneType InGameScene::Update(const float& delta_second)
 
 	player.Update(delta_second);  
 	player.Move(allObjects);
+
+	//ワープ処理
+	int playerX, playerY;
+	player.GetLocation(playerX, playerY);
+
+	for (auto& obj : allObjects) {
+		if (obj == nullptr) continue;
+
+		Warp* warpObj = dynamic_cast<Warp*>(obj);
+
+		if (warpObj != nullptr) {
+			if (warpObj->IsHit(playerX, playerY, player.GetCollisionWidth(), player.GetCollisionHeight())) {
+				player.SetPosition(warpObj->GetToX(), warpObj->GetToY());
+
+				break;
+			}
+		}
+	}
+
 	goal.Update(delta_second);
 	/*warp->Update(delta_second);*/
 

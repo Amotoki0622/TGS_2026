@@ -19,6 +19,9 @@ public:
 	Warp(float x, float y, float w, float h, float toX, float toY);
 	~Warp();
 
+	float GetToX() const { return toX; }
+	float GetToY() const { return toY; }
+
 	//‰Šú‰»ˆ—
 	void Initialize() override;
 	//XVˆ—
