@@ -12,6 +12,7 @@ enum class eSceneType
 	eResult,
 	eRanking,
 	eEnd,
+	eGameOver,
 };
 
 class SceneBase

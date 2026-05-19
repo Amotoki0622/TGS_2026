@@ -2,15 +2,15 @@
 
 #include "../SceneBase.h"
 
-class TitleScene : public SceneBase
+class GameOverScene : public SceneBase
 {
 private:
     int menu_cursor;
-    eSceneType next_scene;      
+    eSceneType next_scene;
 
 public:
-    TitleScene();
-    ~TitleScene();
+    GameOverScene();
+    ~GameOverScene();
 
 public:
     virtual void Initialize() override;

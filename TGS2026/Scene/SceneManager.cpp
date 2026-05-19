@@ -10,6 +10,7 @@
 #include "Ranking/RankingScene.h"
 #include "Result/ResultScene.h"
 #include "End/EndScene.h"
+#include "GameOver/GameOverScene.h"
 
 
 //#define DEBUG
@@ -203,6 +204,9 @@ SceneBase* SceneManager::CreateScene(eSceneType new_scene_type)
 
 	case eSceneType::eEnd:
 		return dynamic_cast<SceneBase*>(new EndScene());
+
+	case eSceneType::eGameOver:
+		return dynamic_cast<SceneBase*>(new GameOverScene());
 
 	default:
 		return nullptr;
