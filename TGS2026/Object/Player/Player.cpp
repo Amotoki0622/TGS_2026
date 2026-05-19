@@ -155,7 +155,7 @@ void Player::Move(const std::vector<GameObject*>& objects) {
                 Block* targetBlock = dynamic_cast<Block*>(obj);
                 if (targetBlock != nullptr) {
                     printfDx("Block‚ğ•ûŒüw’è‚ÅR‚Á‚½I(X:%.0f, Y:%.0f)\n", kickX, kickY);
-                    targetBlock->Push(kickX, kickY);
+                    targetBlock->Push(kickX, kickY, objects);
                     return; // ¬Œ÷‚µ‚½‚çI—¹
                 }
             }
