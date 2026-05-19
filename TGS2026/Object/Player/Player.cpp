@@ -245,21 +245,54 @@ void Player::Move(const std::vector<GameObject*>& objects) {
     // =========================
     if (canMove)
     {
-        // ★ 1. 動く前の現在の座標（x, y）を一時的にキープしておく
         float oldX = (float)x;
         float oldY = (float)y;
 
+        // 変数の準備
+        float spawnX = oldX;
+        float spawnY = oldY;
+        float angle = 0.0f;
+        bool isReversedX = false;
+
+        // --- ★移動方向別の「正確な位置調整」と「見た目」の割り出し ---
+        if (moveX != 0)
+        {
+            // 【横移動】
+            spawnY = oldY + 20.0f; // 横移動のときは一律で少し下にずらす
+
+            if (moveX < 0) {
+                // 左移動：プレイヤーの画像基準が「左移動＝反転なし」なら、煙も合わせる
+                isReversedX = false;
+            }
+            else {
+                // 右移動：右を向くので反転させる
+                isReversedX = false;
+            }
+        }
+        else if (moveY != 0)
+        {
+            // 【縦移動】画像が縦向きに回転するため、上下でずらす方向を変える
+            if (moveY < 0)
+            {
+                // 上移動：一歩前の足元なので、少し「下」にずらして縦向き（270度）にする
+                spawnY = oldY + 10.0f;
+                angle = DX_PI * 1.5f;
+            }
+            else
+            {
+                // 下移動：一歩前の足元なので、少し「上」にずらして縦向き（90度）にする
+                spawnY = oldY - 10.0f;
+                angle = DX_PI * 0.5f;
+            }
+        }
+
+        // 座標更新と手数減算（既存の処理）
         x = nextX;
         y = nextY;
-
-        // 移動が成功したときだけ手数減少
         tekazu--;
 
-        // ★【ここに書く！】移動が確定した瞬間、動く「前」の床に煙を残す
-        // nextX/Y に動く前の座標は「現在の x, y」なので、
-        // 移動する直前の足元（x, y）にそのままエフェクトを生成すれば、
-        // 綺麗に「一歩前の位置」に煙がポッと残ります！
-        effectManager.AddEffect(oldX, oldY, EffectType::Smoke, "Resource/Images/Trap/SpikeTrap/SpikeTrap.png", 0.15f);
+        // 整理されたクリーンな引数でエフェクトを追加！
+        effectManager.AddEffect(spawnX, spawnY, EffectType::Smoke, "Resource/Images/Effect/Smoke.png", 0.2f, angle, isReversedX);
     }
 }
 
