@@ -11,7 +11,7 @@ EffectManager::~EffectManager() {
     ClearAll();
 }
 
-void EffectManager::AddEffect(float x, float y, EffectType type, const std::string& imagePath, float scale) {
+void EffectManager::AddEffect(float x, float y, EffectType type, const std::string& imagePath, float scale, float angle, bool isReversedX) {
     int handle = LoadGraph(imagePath.c_str());
     if (handle == -1) return;
 
@@ -23,11 +23,12 @@ void EffectManager::AddEffect(float x, float y, EffectType type, const std::stri
     newData.alpha = (type == EffectType::ActionUI) ? 0 : 255;
     newData.targetX = x;
     newData.targetY = y;
-    newData.scale = scale; // ★倍率を記憶する
+    newData.scale = scale;
+    newData.angle = angle;
+    newData.isReversedX = isReversedX; 
 
     effects.push_back(newData);
 }
-
 
 
 void EffectManager::Update(const Player& player, float delta_second) {
@@ -69,8 +70,19 @@ void EffectManager::Draw() const {
 
         SetDrawBlendMode(DX_BLENDMODE_ALPHA, effect.alpha);
 
-        // ★第3引数の「1.0」だった部分を「effect.scale」に書き換える！
-        DrawRotaGraph((int)effect.x, (int)effect.y, (double)effect.scale, 0.0, effect.imageHandle, TRUE);
+        // ★反転描画の実現
+        // DXライブラリの DrawRotaGraph には直接的な反転フラグがありません。
+        // 代わりに、scale（倍率）を負（マイナス）にすることで、反転描画を実現できます。
+        double finalScaleX = (double)effect.scale;
+        double finalScaleY = (double)effect.scale;
+
+        // 左右反転フラグが立っている場合、X軸の倍率を負にする
+        if (effect.isReversedX) {
+            finalScaleX = -finalScaleX;
+        }
+
+        // 引数に負の倍率を渡して描画する
+        DrawRotaGraph((int)effect.x, (int)effect.y, finalScaleX, (double)effect.angle, effect.imageHandle, TRUE);
     }
     SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }

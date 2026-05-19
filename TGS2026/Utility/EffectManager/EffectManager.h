@@ -19,6 +19,8 @@ private:
         int alpha;
         float targetX, targetY;
         float scale;
+        float angle;
+        bool isReversedX; // 左右反転フラグ（true: 反転あり）
     };
 
     std::vector<EffectData> effects;
@@ -28,7 +30,7 @@ public:
     EffectManager();
     ~EffectManager();
 
-    void AddEffect(float x, float y, EffectType type, const std::string& imagePath, float scale);
+    void AddEffect(float x, float y, EffectType type, const std::string& imagePath, float scale = 1.0f, float angle = 0.0f, bool isReversedX = false);
 
     void Update(const Player& player, float delta_second);
     void Draw() const;
