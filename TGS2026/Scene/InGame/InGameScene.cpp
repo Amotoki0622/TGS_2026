@@ -251,7 +251,7 @@ eSceneType InGameScene::Update(const float& delta_second)
 	if (goal.IsGoal())
 	{
 		// ƒV[ƒ“‚Ì‘JˆÚ
-		return eSceneType::eTitle;
+		return eSceneType::eGameOver;
 	}
 
 
