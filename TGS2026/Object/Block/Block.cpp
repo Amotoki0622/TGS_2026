@@ -18,8 +18,6 @@ Block::Block(float x, float y, float w, float h)
     this->location.y = y;
     this->box_size.x = w;
     this->box_size.y = h;
-
-   /* printfDx("Block Created at %.1f, %.1f\n", location.x, location.y);*/
 }
 
 Block::~Block()
@@ -100,6 +98,16 @@ void Block::Push(float moveX, float moveY, const std::vector<GameObject*>& objec
     int nextX = (int)(location.x + moveX);
     int nextY = (int)(location.y + moveY);
 
+    // 画面外チェック
+    float halfW = box_size.x / 2.0f;
+    float halfH = box_size.y / 2.0f;
+
+    if (nextX < halfW || nextX > 1280.0f - halfW ||
+        nextY < halfH || nextY > 720.0f - halfH)
+    {
+        return; // 画面外に出そうなら、ここで処理を中断して動かさない
+    }
+
     // 2. 移動先に他のオブジェクトがないかチェック
     bool canMove = true;
     for (const auto& obj : objects) {
@@ -118,9 +126,5 @@ void Block::Push(float moveX, float moveY, const std::vector<GameObject*>& objec
     if (canMove) {
         this->location.x += moveX;
         this->location.y += moveY;
-        printfDx("Block Moved to: %.1f, %.1f\n", location.x, location.y);
-    }
-    else {
-        printfDx("Block blocked by another object!\n");
     }
 }
