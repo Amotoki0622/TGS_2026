@@ -42,7 +42,7 @@ void InGameScene::Initialize()
 
 	// オブジェクトの生成
 	allObjects.push_back(new Wall(640.0f, 130.0f, 1280.0f, 128.0f));
-	allObjects.push_back(new Wall(640.0f, 640.0f, 1280.0f, 128.0f));
+	allObjects.push_back(new Wall(640.0f, 645.0f, 1280.0f, 128.0f));
 
 	allObjects.push_back(new Block(448.0f, 258.0f, 128.0f, 128.0f));
 	allObjects.push_back(new Block(448.0f, 386.0f, 128.0f, 128.0f));

@@ -1,6 +1,7 @@
 #include "Block.h"
 #include "../Player/Player.h"
 #include "DxLib.h"
+#include "../GameObject.h"
 
 #include <cmath>
 
@@ -17,8 +18,6 @@ Block::Block(float x, float y, float w, float h)
     this->location.y = y;
     this->box_size.x = w;
     this->box_size.y = h;
-
-   /* printfDx("Block Created at %.1f, %.1f\n", location.x, location.y);*/
 }
 
 Block::~Block()
@@ -94,9 +93,38 @@ bool Block::IsHit(int nextX, int nextY, int width, int height) const
 
 }
 
-void Block::Push(float moveX, float moveY) {
-    // 単純に今の座標に 128 を足す
-    location.x += moveX;
-    location.y += moveY;
+void Block::Push(float moveX, float moveY, const std::vector<GameObject*>& objects) {
+    // 1. 移動先の座標をあらかじめ計算する
+    int nextX = (int)(location.x + moveX);
+    int nextY = (int)(location.y + moveY);
 
+    // 画面外チェック
+    float halfW = box_size.x / 2.0f;
+    float halfH = box_size.y / 2.0f;
+
+    if (nextX < halfW || nextX > 1280.0f - halfW ||
+        nextY < halfH || nextY > 720.0f - halfH)
+    {
+        return; // 画面外に出そうなら、ここで処理を中断して動かさない
+    }
+
+    // 2. 移動先に他のオブジェクトがないかチェック
+    bool canMove = true;
+    for (const auto& obj : objects) {
+        // 自分自身（このブロック）との判定はスキップ
+        if (obj == this) continue;
+
+        // 移動先の座標、自分のサイズ(box_size)を使って衝突判定
+        // わずかな計算誤差を防ぐため、サイズを少し（例: 2ピクセル）小さくして判定するのがコツ
+        if (obj->IsHit(nextX, nextY, (int)box_size.x - 2, (int)box_size.y - 2)) {
+            canMove = false;
+            break; // 何か（壁や他のブロック）があったらループを抜ける
+        }
+    }
+
+    // 3. どこにもぶつからなければ、実際に座標を更新する
+    if (canMove) {
+        this->location.x += moveX;
+        this->location.y += moveY;
+    }
 }
