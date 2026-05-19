@@ -40,6 +40,13 @@ public:
 		return m_currentLevel;
 	}
 
+	// ステージの総数を取得
+	int GetTotalStages() const				// デバック用
+	{
+		return (int)m_allStages.size();
+	}
+
+
 private:
 	// 実際にオブジェクトを生成する内部関数
 	void CreateStageObject();

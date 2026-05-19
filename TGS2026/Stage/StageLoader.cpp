@@ -18,21 +18,48 @@ std::vector<StageData> StageLoader::LoadMapList(const std::string& filePath)
 	// ファイルチェック
 	if (ifs.fail())
 	{
-		throw(filePath + "が開けません (ステージCSVを格納するためのリスト)");
+		// throw(filePath + "が開けません (ステージCSVを格納するためのリスト)");
+		return AllStage;		// デバック用 これで止まったら、パスの間違い
 	}
 
 	// ファイルから1行ずつ読み込む
 	std::string line;
 	while (std::getline(ifs, line))
 	{
-		StageData data;
-		char MapFileBuffer[256] = { 0 };
-
-		// CSVから「手数」「ファイル名」を取得
-		if (sscanf_s(line.c_str(), "%d, %s", &data.moveLimit, MapFileBuffer, (unsigned int)sizeof(MapFileBuffer)) >= 2)
+		if (line.empty())
 		{
-			data.MapFileName = MapFileBuffer;
-			AllStage.push_back(data);
+			continue;
+		}
+
+		std::stringstream ss(line);
+		std::string moveLimitStr, fileName;
+
+		// カンマで分割して読み込む
+		if (std::getline(ss, moveLimitStr, ','))
+		{
+			if (std::getline(ss, fileName))
+			{
+				StageData data;
+				// 手数を数値に変換
+				data.moveLimit = std::atoi(moveLimitStr.c_str());
+
+				// 改行コードやスペースを削る処理
+				fileName.erase(0, fileName.find_first_not_of(" \t\r\n"));
+				size_t last = fileName.find_last_not_of(" \t\r\n");
+
+				if (last != std::string::npos) 
+				{
+					data.MapFileName = fileName.substr(0, last + 1);
+				}
+				else
+				{
+					data.MapFileName = fileName;
+				}
+				if (data.MapFileName.empty() == false) 
+				{
+					AllStage.push_back(data);
+				}
+			}
 		}
 	}
 
