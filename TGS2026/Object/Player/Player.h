@@ -8,6 +8,7 @@
 #include "../../Utility/Vector2D.h"
 #include "../Wall/Wall.h"
 #include "../GameObject.h"
+#include "../../Utility/EffectManager/EffectManager.h"
 
 #include <vector>
 
@@ -72,7 +73,12 @@ private:
     float actionTimer = 0.0f; // アクション画像の維持タイマー
     int motionTimer = 0; // 移動アニメーション維持用
 
-
+    // =========================================
+    // エフェクト用変数
+    // =========================================
+    EffectManager effectManager; // プレイヤー専用のエフェクトマネージャ
+    int lastPx = -1;             // 1フレーム前のX座標
+    int lastPy = -1;             // 1フレーム前のY座標
 
 public:
     void Initialize();

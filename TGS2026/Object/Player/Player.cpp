@@ -245,11 +245,21 @@ void Player::Move(const std::vector<GameObject*>& objects) {
     // =========================
     if (canMove)
     {
+        // ★ 1. 動く前の現在の座標（x, y）を一時的にキープしておく
+        float oldX = (float)x;
+        float oldY = (float)y;
+
         x = nextX;
         y = nextY;
 
         // 移動が成功したときだけ手数減少
         tekazu--;
+
+        // ★【ここに書く！】移動が確定した瞬間、動く「前」の床に煙を残す
+        // nextX/Y に動く前の座標は「現在の x, y」なので、
+        // 移動する直前の足元（x, y）にそのままエフェクトを生成すれば、
+        // 綺麗に「一歩前の位置」に煙がポッと残ります！
+        effectManager.AddEffect(oldX, oldY, EffectType::Smoke, "Resource/Images/Trap/SpikeTrap/SpikeTrap.png", 0.15f);
     }
 }
 
@@ -359,6 +369,9 @@ void Player::Draw() const
         // 他の描画に影響が出ないよう、最後に描画モードをリセットする
     SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
     }
+
+    // プレイヤーの背後に発生したエフェクトを描画
+    effectManager.Draw();
 
     // (x座標, y座標, 色, "書式文字列", 変数);
     DrawFormatString(0, 100, GetColor(255, 255, 255), "手数は %d です", tekazu);

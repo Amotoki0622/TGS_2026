@@ -6,7 +6,8 @@ class Player;
 
 enum class EffectType {
     FollowItem,
-    ActionUI
+    ActionUI,
+    Smoke
 };
 
 class EffectManager {
@@ -17,6 +18,7 @@ private:
         int imageHandle;
         int alpha;
         float targetX, targetY;
+        float scale;
     };
 
     std::vector<EffectData> effects;
@@ -26,7 +28,7 @@ public:
     EffectManager();
     ~EffectManager();
 
-    void AddEffect(float x, float y, EffectType type, const std::string& imagePath);
+    void AddEffect(float x, float y, EffectType type, const std::string& imagePath, float scale);
 
     void Update(const Player& player, float delta_second);
     void Draw() const;

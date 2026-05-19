@@ -11,14 +11,9 @@ EffectManager::~EffectManager() {
     ClearAll();
 }
 
-void EffectManager::AddEffect(float x, float y, EffectType type, const std::string& imagePath) {
-    // c_str() を使って DXライブラリが読める形式に変換
+void EffectManager::AddEffect(float x, float y, EffectType type, const std::string& imagePath, float scale) {
     int handle = LoadGraph(imagePath.c_str());
-    if (handle == -1) {
-        // エラーログを出して追跡しやすくする
-        OutputDebugString("エフェクト画像の読み込みに失敗しました。\n");
-        return;
-    }
+    if (handle == -1) return;
 
     EffectData newData;
     newData.x = x;
@@ -28,9 +23,12 @@ void EffectManager::AddEffect(float x, float y, EffectType type, const std::stri
     newData.alpha = (type == EffectType::ActionUI) ? 0 : 255;
     newData.targetX = x;
     newData.targetY = y;
+    newData.scale = scale; // ★倍率を記憶する
 
     effects.push_back(newData);
 }
+
+
 
 void EffectManager::Update(const Player& player, float delta_second) {
     int px, py;
@@ -57,6 +55,11 @@ void EffectManager::Update(const Player& player, float delta_second) {
                 if (effect.alpha < 0) effect.alpha = 0;
             }
         }
+        else if (effect.type == EffectType::Smoke) {
+            // プレイヤーを追いかけず（x, y はそのまま）、毎フレーム透明度（alpha）を減らす
+            effect.alpha -= 10; // 数値を大きくすると早く消え、小さくすると長く残ります
+            if (effect.alpha < 0) effect.alpha = 0;
+        }
     }
 }
 
@@ -65,9 +68,10 @@ void EffectManager::Draw() const {
         if (effect.imageHandle == -1 || effect.alpha == 0) continue;
 
         SetDrawBlendMode(DX_BLENDMODE_ALPHA, effect.alpha);
-        DrawRotaGraph((int)effect.x, (int)effect.y, 1.0, 0.0, effect.imageHandle, TRUE);
+
+        // ★第3引数の「1.0」だった部分を「effect.scale」に書き換える！
+        DrawRotaGraph((int)effect.x, (int)effect.y, (double)effect.scale, 0.0, effect.imageHandle, TRUE);
     }
-    // ループの外側で1回だけ戻す方が親切で安全です
     SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 
