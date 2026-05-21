@@ -2,6 +2,7 @@
 #include "../Block/Block.h"
 //#include "../Wall/Wall.h"
 #include "../../Utility/InputManager.h"
+#include "../../Utility/EffectManager/EffectManager.h"
 
 // =========================
 // ‰Šú‰»ˆ—
@@ -104,6 +105,7 @@ void Player::Update(const float& delta_second)
     //Move(walls);
     UpdateAnimation(delta_second);
 
+    effectManager.Update(*this, delta_second);
 }
 
 // =========================

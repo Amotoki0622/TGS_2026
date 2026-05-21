@@ -13,6 +13,7 @@
 #include <vector>
 
 class Wall;
+class EffectManager;
 
 class Player : public GameObject
 {

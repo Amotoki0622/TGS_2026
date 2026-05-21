@@ -16,7 +16,7 @@ private:
         float x, y;
         EffectType type;
         int imageHandle;
-        int alpha;
+        float alpha;
         float targetX, targetY;
         float scale;
         float angle;
