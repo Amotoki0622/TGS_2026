@@ -241,11 +241,11 @@ eSceneType InGameScene::Update(const float& delta_second)
 			// 「リスタート待機状態(Restarting)」へ移行し、画面演出を開始
 			state = SceneState::Restarting;
 
-			if (isLightDetected) {
+			if (isLightDetected || player.GetTekazu() == 0) {
 				// 【ライト演出】
 				// 画面全体が非常にゆっくり暗くなる(Normal)演出
 				// 1.0f(完了) / 3.0(秒) = 約 0.33f
-				fade->Start(FadeType::Normal, true, 0.8f);;
+				fade->Start(FadeType::Normal, true, 0.8f);
 			}
 			else {
 				// 【カメラ演出】見つかって捕まったイメージ
@@ -267,11 +267,17 @@ eSceneType InGameScene::Update(const float& delta_second)
 		}
 	}
 
+	// 手数が0になったらゲームオーバー
+	if (player.GetTekazu() == 0)
+	{
+		fade->Start(FadeType::IrisOut, true, 1.0f);
+	}
+
 	// ゴール判定
 	if (goal.IsGoal())
 	{
 		// シーンの遷移
-		return eSceneType::eGameOver;
+		return eSceneType::eTitle;
 	}
 
 

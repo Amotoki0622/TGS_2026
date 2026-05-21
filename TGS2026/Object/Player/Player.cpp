@@ -156,7 +156,6 @@ void Player::Move(const std::vector<GameObject*>& objects) {
             if (obj->IsHit((int)checkX, (int)checkY, 60, 60)) { // ­‚µ—V‚Ñ(60)‚ğ‚½‚¹‚é
                 Block* targetBlock = dynamic_cast<Block*>(obj);
                 if (targetBlock != nullptr) {
-                    printfDx("Block‚ğ•ûŒüw’è‚ÅR‚Á‚½I(X:%.0f, Y:%.0f)\n", kickX, kickY);
                     targetBlock->Push(kickX, kickY, objects);
                     return; // ¬Œ÷‚µ‚½‚çI—¹
                 }
@@ -450,4 +449,9 @@ void Player::SetPosition(float newX, float newY)
 {
     x = newX;
     y = newY;
+}
+
+float Player::GetTekazu()
+{
+    return tekazu;
 }
