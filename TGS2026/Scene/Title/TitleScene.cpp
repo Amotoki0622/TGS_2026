@@ -38,7 +38,7 @@ eSceneType TitleScene::Update(const float& delta_second)
     }
 
     // Œˆ’è
-    if (input->GetButtonInputState(XINPUT_BUTTON_A) == eInputState::ePress)
+    if (input->GetButtonInputState(XINPUT_BUTTON_B) == eInputState::ePress)
     {
         switch (menu_cursor)
         {
