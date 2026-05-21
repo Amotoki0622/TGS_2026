@@ -77,7 +77,7 @@ eSceneType GameOverScene::Update(const float& delta_second)
         case 1: return eSceneType::eTitle;
         }
     }
-    return eSceneType::eTitle;
+    return eSceneType::eGameOver;
 }
 
 // •`‰æˆ—
@@ -107,5 +107,5 @@ void GameOverScene::Finalize()
 // Œ»İ‚ÌƒV[ƒ“î•ñ‚ğ•Ô‚·
 eSceneType GameOverScene::GetNowSceneType() const
 {
-    return eSceneType::eTitle;
+    return eSceneType::eGameOver;
 }
