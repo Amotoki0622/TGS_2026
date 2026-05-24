@@ -1,11 +1,11 @@
-#include "Block.h"
+ï»¿#include "Block.h"
 #include "../Player/Player.h"
 #include "DxLib.h"
 #include "../GameObject.h"
 
 #include <cmath>
 
-// ƒvƒŒƒCƒ„[‚ğƒZƒbƒg
+// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’ã‚»ãƒƒãƒˆ
 void Block::SetPlayer(Player* p)
 {
     player = p;
@@ -13,7 +13,7 @@ void Block::SetPlayer(Player* p)
 
 Block::Block(float x, float y, float w, float h)
 {
-    // eƒNƒ‰ƒX GameObject ‚ª‚Á‚Ä‚¢‚é location ‚Æ box_size ‚É‘ã“ü‚·‚é
+    // è¦ªã‚¯ãƒ©ã‚¹ GameObject ãŒæŒã£ã¦ã„ã‚‹ location ã¨ box_size ã«ä»£å…¥ã™ã‚‹
     this->location.x = x;
     this->location.y = y;
     this->box_size.x = w;
@@ -25,21 +25,24 @@ Block::~Block()
 
 }
 
-// ‰Šú‰»
+// åˆæœŸåŒ–
 void Block::Initialize()
 {
 
 }
 
-// XV
+// æ›´æ–°
 void Block::Update(float delta_second)
 {
-
+    effectManager.Update(delta_second);
 }
 
-// •`‰æ
+// æç”»
 void Block::Draw() const
 {
+    // ãƒ–ãƒ­ãƒƒã‚¯ã‹ã‚‰ç™ºç”Ÿã—ãŸç…™ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’ã“ã“ã§æç”»ã™ã‚‹ï¼
+    effectManager.Draw();
+
     DrawBox(
         (int)(location.x - box_size.x / 2),
         (int)(location.y - box_size.y / 2),
@@ -48,32 +51,31 @@ void Block::Draw() const
         GetColor(255, 0, 0),
         FALSE
     );
-
 }
 
-// I—¹
+// çµ‚äº†
 void Block::Finalize()
 {
 }
 
 // =========================
-// “–‚½‚è”»’èi’†SÀ•W‘Î‰j
+// å½“ãŸã‚Šåˆ¤å®šï¼ˆä¸­å¿ƒåº§æ¨™å¯¾å¿œï¼‰
 // =========================
 bool Block::IsHit(int nextX, int nextY, int width, int height) const
 {
     // =========================================================
-    // 1. ƒvƒŒƒCƒ„[iˆÚ“®æj‚Ìl‹÷‚ğŒvZ
-    // ˆø”‚Å“n‚³‚ê‚½ nextX, nextY, width, height ‚ğg—p‚µ‚Ü‚·
+    // 1. ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ï¼ˆç§»å‹•å…ˆï¼‰ã®å››éš…ã‚’è¨ˆç®—
+    // å¼•æ•°ã§æ¸¡ã•ã‚ŒãŸ nextX, nextY, width, height ã‚’ä½¿ç”¨ã—ã¾ã™
     // =========================================================
-// ”»’è‚ğ0.5ƒsƒNƒZƒ‹•ª‚¾‚¯“à‘¤‚É‚·‚é—á
+// åˆ¤å®šã‚’0.5ãƒ”ã‚¯ã‚»ãƒ«åˆ†ã ã‘å†…å´ã«ã™ã‚‹ä¾‹
     float pLeft = (float)nextX - (float)width / 2.0f + 0.5f;
     float pRight = (float)nextX + (float)width / 2.0f - 0.5f;
     float pTop = (float)nextY - (float)height / 2.0f + 0.5f;
     float pBottom = (float)nextY + (float)height / 2.0f - 0.5f;
 
     // =========================================================
-    // 2. ‚±‚Ì•Ç©‘Ì‚Ìl‹÷‚ğŒvZ
-    // GameObject ‚©‚çŒp³‚µ‚½ location ‚Æ box_size ‚ğg—p‚µ‚Ü‚·
+    // 2. ã“ã®å£è‡ªä½“ã®å››éš…ã‚’è¨ˆç®—
+    // GameObject ã‹ã‚‰ç¶™æ‰¿ã—ãŸ location ã¨ box_size ã‚’ä½¿ç”¨ã—ã¾ã™
     // =========================================================
     float bLeft = location.x - box_size.x / 2.0f;
     float bRight = location.x + box_size.x / 2.0f;
@@ -81,8 +83,8 @@ bool Block::IsHit(int nextX, int nextY, int width, int height) const
     float bBottom = location.y + box_size.y / 2.0f;
 
     // =========================================================
-    // 3. Õ“Ë”»’èiAABB•û®j
-    // ‚·‚×‚Ä‚ÌğŒ‚ªd‚È‚Á‚Ä‚¢‚éê‡‚Ì‚İ true ‚ğ•Ô‚µ‚Ü‚·
+    // 3. è¡çªåˆ¤å®šï¼ˆAABBæ–¹å¼ï¼‰
+    // ã™ã¹ã¦ã®æ¡ä»¶ãŒé‡ãªã£ã¦ã„ã‚‹å ´åˆã®ã¿ true ã‚’è¿”ã—ã¾ã™
     // =========================================================
     return (
         pLeft < bRight &&
@@ -94,37 +96,109 @@ bool Block::IsHit(int nextX, int nextY, int width, int height) const
 }
 
 void Block::Push(float moveX, float moveY, const std::vector<GameObject*>& objects) {
-    // 1. ˆÚ“®æ‚ÌÀ•W‚ğ‚ ‚ç‚©‚¶‚ßŒvZ‚·‚é
+    // 1. ç§»å‹•å…ˆã®åº§æ¨™ã‚’ã‚ã‚‰ã‹ã˜ã‚è¨ˆç®—ã™ã‚‹
     int nextX = (int)(location.x + moveX);
     int nextY = (int)(location.y + moveY);
 
-    // ‰æ–ÊŠOƒ`ƒFƒbƒN
+    // ç”»é¢å¤–ãƒã‚§ãƒƒã‚¯
     float halfW = box_size.x / 2.0f;
     float halfH = box_size.y / 2.0f;
 
     if (nextX < halfW || nextX > 1280.0f - halfW ||
         nextY < halfH || nextY > 720.0f - halfH)
     {
-        return; // ‰æ–ÊŠO‚Éo‚»‚¤‚È‚çA‚±‚±‚Åˆ—‚ğ’†’f‚µ‚Ä“®‚©‚³‚È‚¢
+        return; // ç”»é¢å¤–ã«å‡ºãã†ãªã‚‰ã€ã“ã“ã§å‡¦ç†ã‚’ä¸­æ–­ã—ã¦å‹•ã‹ã•ãªã„
     }
 
-    // 2. ˆÚ“®æ‚É‘¼‚ÌƒIƒuƒWƒFƒNƒg‚ª‚È‚¢‚©ƒ`ƒFƒbƒN
+    // 2. ç§»å‹•å…ˆã«ä»–ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãŒãªã„ã‹ãƒã‚§ãƒƒã‚¯
     bool canMove = true;
     for (const auto& obj : objects) {
-        // ©•ª©gi‚±‚ÌƒuƒƒbƒNj‚Æ‚Ì”»’è‚ÍƒXƒLƒbƒv
+        // è‡ªåˆ†è‡ªèº«ï¼ˆã“ã®ãƒ–ãƒ­ãƒƒã‚¯ï¼‰ã¨ã®åˆ¤å®šã¯ã‚¹ã‚­ãƒƒãƒ—
         if (obj == this) continue;
 
-        // ˆÚ“®æ‚ÌÀ•WA©•ª‚ÌƒTƒCƒY(box_size)‚ğg‚Á‚ÄÕ“Ë”»’è
-        // ‚í‚¸‚©‚ÈŒvZŒë·‚ğ–h‚®‚½‚ßAƒTƒCƒY‚ğ­‚µi—á: 2ƒsƒNƒZƒ‹j¬‚³‚­‚µ‚Ä”»’è‚·‚é‚Ì‚ªƒRƒc
+        // ç§»å‹•å…ˆã®åº§æ¨™ã€è‡ªåˆ†ã®ã‚µã‚¤ã‚º(box_size)ã‚’ä½¿ã£ã¦è¡çªåˆ¤å®š
+        // ã‚ãšã‹ãªè¨ˆç®—èª¤å·®ã‚’é˜²ããŸã‚ã€ã‚µã‚¤ã‚ºã‚’å°‘ã—ï¼ˆä¾‹: 2ãƒ”ã‚¯ã‚»ãƒ«ï¼‰å°ã•ãã—ã¦åˆ¤å®šã™ã‚‹ã®ãŒã‚³ãƒ„
         if (obj->IsHit(nextX, nextY, (int)box_size.x - 2, (int)box_size.y - 2)) {
             canMove = false;
-            break; // ‰½‚©i•Ç‚â‘¼‚ÌƒuƒƒbƒNj‚ª‚ ‚Á‚½‚çƒ‹[ƒv‚ğ”²‚¯‚é
+            break; // ä½•ã‹ï¼ˆå£ã‚„ä»–ã®ãƒ–ãƒ­ãƒƒã‚¯ï¼‰ãŒã‚ã£ãŸã‚‰ãƒ«ãƒ¼ãƒ—ã‚’æŠœã‘ã‚‹
         }
     }
 
-    // 3. ‚Ç‚±‚É‚à‚Ô‚Â‚©‚ç‚È‚¯‚ê‚ÎAÀÛ‚ÉÀ•W‚ğXV‚·‚é
-    if (canMove) {
-        this->location.x += moveX;
-        this->location.y += moveY;
+    // 3. ã©ã“ã«ã‚‚ã¶ã¤ã‹ã‚‰ãªã‘ã‚Œã°ã€å®Ÿéš›ã«åº§æ¨™ã‚’æ›´æ–°ã™ã‚‹
+    if (canMove)
+    {
+        // Blockã®å…ƒã®åº§æ¨™ã‚’ float ã§å–å¾—
+        float oldX = this->location.x;
+        float oldY = this->location.y;
+
+        // ã‚¨ãƒ•ã‚§ã‚¯ãƒˆç”¨ã®å¤‰æ•°æº–å‚™
+        float spawnX = oldX;
+        float spawnY = oldY;
+        float angle = 0.0f;
+        bool isReversedX = false;
+
+        // ç”»åƒãƒ‘ã‚¹ã‚’ä¿å­˜ã™ã‚‹å¤‰æ•°ã‚’1ã¤ç”¨æ„ã™ã‚‹
+        std::string effectImagePath = "Resource/Images/Effect/Smoke3.png"; // ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆ
+
+        // --- ç§»å‹•æ–¹å‘åˆ¥ã®ã€Œæ­£ç¢ºãªä½ç½®èª¿æ•´ã€ã¨ã€Œè¦‹ãŸç›®ã€ã®å‰²ã‚Šå‡ºã— ---
+        if (moveX != 0)
+        {
+            // ã€æ¨ªç§»å‹•ã€‘
+            spawnY = oldY + 20.0f; // æ¨ªç§»å‹•ã®ã¨ãã¯ä¸€å¾‹ã§å°‘ã—ä¸‹ã«ãšã‚‰ã™
+
+            if (moveX < 0) {
+                // å·¦ç§»å‹•ï¼šãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ç”»åƒåŸºæº–ãŒã€Œå·¦ç§»å‹•ï¼åè»¢ãªã—ã€ãªã‚‰ã€ç…™ã‚‚åˆã‚ã›ã‚‹
+                isReversedX = false;
+            }
+            else {
+                // å³ç§»å‹•ï¼šå³ã‚’å‘ãã®ã§åè»¢ã•ã›ã‚‹
+                isReversedX = true;
+            }
+
+            // æ¨ªç§»å‹•ã®ã¨ãã¯ã€æ¨ªå°‚ç”¨ã®ç…™ç”»åƒã‚’ã‚»ãƒƒãƒˆï¼
+            effectImagePath = "Resource/Images/Effect/Smoke.png";
+        }
+        else if (moveY != 0)
+        {
+            // ã€ç¸¦ç§»å‹•ã€‘
+            if (moveY < 0)
+            {
+                // ä¸Šã«å‹•ãã¨ã
+                spawnX = oldX;
+                spawnY = oldY + (this->box_size.y / 2.0f) - 20.0f;
+                angle = 0.0f;
+            }
+            else
+            {
+                // ä¸‹ã«å‹•ãã¨ã
+                spawnX = oldX;
+                spawnY = oldY - (this->box_size.y / 2.0f) + 20.0f;
+                angle = 0.0f;
+            }
+
+            // ã€ç¸¦ç§»å‹•ã€‘ç”»åƒãŒç¸¦å‘ãã«å›è»¢ã™ã‚‹ãŸã‚ã€ä¸Šä¸‹ã§ãšã‚‰ã™æ–¹å‘ã‚’å¤‰ãˆã‚‹
+            if (moveY < 0)
+            {
+                // ä¸Šç§»å‹•ï¼šä¸€æ­©å‰ã®è¶³å…ƒãªã®ã§ã€å°‘ã—ã€Œä¸‹ã€ã«ãšã‚‰ã—ã¦ç¸¦å‘ãï¼ˆ270åº¦ï¼‰ã«ã™ã‚‹
+                spawnY = oldY + 10.0f;
+                angle = 0.0f;
+            }
+            else
+            {
+                // ä¸‹ç§»å‹•ï¼šä¸€æ­©å‰ã®è¶³å…ƒãªã®ã§ã€å°‘ã—ã€Œä¸Šã€ã«ãšã‚‰ã—ã¦ç¸¦å‘ãï¼ˆ90åº¦ï¼‰ã«ã™ã‚‹
+                spawnY = oldY - 10.0f;
+                angle = 0.0f;
+            }
+
+            // ç¸¦ç§»å‹•ã®ã¨ãã¯ã€ç¸¦å°‚ç”¨ã®ç…™ç”»åƒã‚’ã‚»ãƒƒãƒˆï¼
+            effectImagePath = "Resource/Images/Effect/Smoke3.png";
+        }
+
+        // å®Ÿéš›ã«æœ¨ç®±ã®åº§æ¨™ã‚’æ›´æ–°
+        this->location.x = (float)nextX;
+        this->location.y = (float)nextY;
+
+        // æœ€å¾Œã®å¼•æ•°ã«ã€ä¸Šã§åˆ‡ã‚Šæ›¿ãˆãŸã€ŒeffectImagePathã€ã‚’ãã®ã¾ã¾æ¸¡ã™ï¼
+        effectManager.AddEffect(spawnX, spawnY, EffectType::Smoke, effectImagePath, 0.2f, angle, isReversedX);
     }
 }

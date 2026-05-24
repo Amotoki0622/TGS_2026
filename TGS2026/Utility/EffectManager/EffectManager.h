@@ -33,6 +33,7 @@ public:
     void AddEffect(float x, float y, EffectType type, const std::string& imagePath, float scale = 1.0f, float angle = 0.0f, bool isReversedX = false);
 
     void Update(const Player& player, float delta_second);
+    void Update(float delta_second);
     void Draw() const;
     void ClearAll();
 };

@@ -12,6 +12,7 @@
 #include "../../Object/Trap/Light/Light.h"               // 子クラス(ライト)
 #include "../../Object/Trap/LegTrap/LegTrap.h"           // 子クラス(トラバサミ)
 #include "../../Object/Trap/SpikeTrap/SpikeTrap.h"       // 子クラス(トゲ床)
+#include "../../Object/Key/Key.h"
 #include "../../Utility/Fade/Fade.h"
 #include <vector>
 
@@ -32,7 +33,7 @@ private:
 	/*Wall wall;*/
 	std::vector<Wall> walls;
 	std::vector<Block> blocks;
-
+	std::vector<Key> key;
 	std::vector<GameObject*> allObjects;
 
 	// リソースマネージャー

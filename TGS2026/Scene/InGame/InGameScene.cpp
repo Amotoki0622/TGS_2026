@@ -1,46 +1,51 @@
-#include "InGameScene.h"
+ï»¿#include "InGameScene.h"
 #include "DxLib.h"
 
-// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 InGameScene::InGameScene()
 {
 	isBgmStarted = false;
 
-	// ƒƒCƒ“BGM
+	// ãƒ¡ã‚¤ãƒ³BGM
 	mainBGM = LoadSoundMem("Resource/Sounds/BGM/main/main01.mp3");
-	// ‰¹—Ê‚ğİ’èi—áF”¼•ª‚Ì 128 ‚âA‚©‚È‚èT‚¦‚ß‚È 80 ‚È‚Çj
+	// éŸ³é‡ã‚’è¨­å®šï¼ˆä¾‹ï¼šåŠåˆ†ã® 128 ã‚„ã€ã‹ãªã‚Šæ§ãˆã‚ãª 80 ãªã©ï¼‰
 	ChangeVolumeSoundMem(85, mainBGM);
 
-	// Œx•ñ‰¹
+	// è­¦å ±éŸ³
 	beepSE = LoadSoundMem("Resource/Sounds/SE/object/cam/cam3.mp3");
-	freq = GetFrequencySoundMem(beepSE); // Œ³‚Ìü”g”‚ğæ“¾
-	// ‰¹—Ê‚ğİ’èi—áF”¼•ª‚Ì 128 ‚âA‚©‚È‚èT‚¦‚ß‚È 80 ‚È‚Çj
+	freq = GetFrequencySoundMem(beepSE); // å…ƒã®å‘¨æ³¢æ•°ã‚’å–å¾—
+	// éŸ³é‡ã‚’è¨­å®šï¼ˆä¾‹ï¼šåŠåˆ†ã® 128 ã‚„ã€ã‹ãªã‚Šæ§ãˆã‚ãª 80 ãªã©ï¼‰
 	ChangeVolumeSoundMem(70, beepSE);
-	// ”{‘¬‚É‚·‚éê‡
+	// å€é€Ÿã«ã™ã‚‹å ´åˆ
 	SetFrequencySoundMem((int)(freq * 0.6f), beepSE);
 
 
 }
 
-// ƒfƒXƒgƒ‰ƒNƒ^
+// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 InGameScene::~InGameScene()
 {
-	// ƒƒ‚ƒŠ‰ğ•ú
+	// ãƒ¡ãƒ¢ãƒªè§£æ”¾
 	Finalize();
 }
 
-// ‰Šú‰»ˆ—
+// åˆæœŸåŒ–å‡¦ç†
 void InGameScene::Initialize()
 {
+	for (auto obj : allObjects) {
+		delete obj; // ãƒ¡ãƒ¢ãƒªã‹ã‚‰æ¶ˆå»
+	}
+	allObjects.clear(); // é…åˆ—ã‚’ç©ºã£ã½ã«ã™ã‚‹
+
 	/*warp = new Warp(120, 320, 80, 80, 900, 320);*/
 
-	player.Initialize();  // ©’Ç‰Á
+	player.Initialize();  
 	goal.Initialize();
 	/*warp.Initialize();*/
 	goal.SetPlayer(&player);
 	/*warp.SetPlayer(&player);*/
 
-	// ƒIƒuƒWƒFƒNƒg‚Ì¶¬
+	// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ç”Ÿæˆ
 	allObjects.push_back(new Wall(640.0f, 130.0f, 1280.0f, 128.0f));
 	allObjects.push_back(new Wall(640.0f, 645.0f, 1280.0f, 128.0f));
 
@@ -48,16 +53,19 @@ void InGameScene::Initialize()
 	allObjects.push_back(new Block(448.0f, 386.0f, 128.0f, 128.0f));
 	allObjects.push_back(new Block(448.0f, 514.0f, 128.0f, 128.0f));
 
+  
+	allObjects.push_back(new Key(250.0f, 250.0f, &player));
+
 	allObjects.push_back(new Warp(328.0f, 300.0f, 128.0f, 128.0f, 900.0f, 320.0f));
 
-	// 3. ƒvƒŒƒCƒ„[‚Ì‰Šú‰»
+	// 3. ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®åˆæœŸåŒ–
 	player.Initialize();
 
-	if (!fade) fade = new Fade(); // ¶¬
+	if (!fade) fade = new Fade(); // ç”Ÿæˆ
 	state = SceneState::Playing;
 	detectionTimer = 0.0f;
 
-		// ƒvƒŒƒCƒ„[‚ğƒZƒbƒg
+		// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’ã‚»ãƒƒãƒˆ
 	//for (auto& wall : walls)
 	//{
 	//	wall.SetPlayer(&player);
@@ -69,67 +77,67 @@ void InGameScene::Initialize()
 	//}
 
 
-	background = LoadGraph("Resource/Images/GameMain/background2.png");   // ”wŒi‰æ‘œ
+	background = LoadGraph("Resource/Images/GameMain/background2.png");   // èƒŒæ™¯ç”»åƒ
 
-	// ‰¹Œ¹ŠÖ˜AE“Ç‚İ‚İ
+	// éŸ³æºé–¢é€£ãƒ»èª­ã¿è¾¼ã¿
 	dieSE = LoadSoundMem("Resource/Sounds/SE/object/player/light_die01.mp3");
-	freq = GetFrequencySoundMem(dieSE); // Œ³‚Ìü”g”‚ğæ“¾
-	// ‰¹—Ê‚ğİ’èi—áF”¼•ª‚Ì 128 ‚âA‚©‚È‚èT‚¦‚ß‚È 80 ‚È‚Çj
+	freq = GetFrequencySoundMem(dieSE); // å…ƒã®å‘¨æ³¢æ•°ã‚’å–å¾—
+	// éŸ³é‡ã‚’è¨­å®šï¼ˆä¾‹ï¼šåŠåˆ†ã® 128 ã‚„ã€ã‹ãªã‚Šæ§ãˆã‚ãª 80 ãªã©ï¼‰
 	ChangeVolumeSoundMem(70, dieSE);
-	// ”{‘¬‚É‚·‚éê‡
+	// å€é€Ÿã«ã™ã‚‹å ´åˆ
 	SetFrequencySoundMem((int)(freq * 1.0f), dieSE);
 
 	
-	// --- ŒŸ’mƒIƒuƒWƒFƒNƒg‚Ì”z’u ---
-	// ˆê’UƒŠƒXƒg‚ğ‘|œiƒŠƒZƒbƒg—pj
+	// --- æ¤œçŸ¥ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®é…ç½® ---
+	// ä¸€æ—¦ãƒªã‚¹ãƒˆã‚’æƒé™¤ï¼ˆãƒªã‚»ãƒƒãƒˆæ™‚ç”¨ï¼‰
 	for (auto d : detectors) delete d;
 	detectors.clear();
 
-	// ƒJƒƒ‰”z’u: (x, y, Šp“x, ‹——£, ‹–ìŠp)
-	// Œü‚«(Šp“x)‚Íƒ‰ƒWƒAƒ“: 0=‰E, PI/2=‰º, PI=¶, PI*1.5=ã
+	// ã‚«ãƒ¡ãƒ©é…ç½®: (x, y, è§’åº¦, è·é›¢, è¦–é‡è§’)
+	// å‘ã(è§’åº¦)ã¯ãƒ©ã‚¸ã‚¢ãƒ³: 0=å³, PI/2=ä¸‹, PI=å·¦, PI*1.5=ä¸Š
 	detectors.push_back(new Cam(400.0f, 150.0f, DX_PI_F / 2.0f, 350.0f, 0.8f));
 	detectors.push_back(new Cam(950.0f, 600.0f, DX_PI_F * 1.5f, 400.0f, 0.7f));
 
-	//// Æ–¾”z’u: (x, y, ”¼Œa)
+	//// ç…§æ˜é…ç½®: (x, y, åŠå¾„)
 	//detectors.push_back(new Light(640.0f, 360.0f, 120.0f));
 	//detectors.push_back(new Light(200.0f, 500.0f, 80.0f));
 
 
-	// ‰æ–Ê’†‰›•t‹ß‚ÉA”¼Œa80px‚Ì”»’è‚ğ‚Âƒgƒ‰ƒoƒTƒ~‚ğ”z’u
+	// ç”»é¢ä¸­å¤®ä»˜è¿‘ã«ã€åŠå¾„80pxã®åˆ¤å®šã‚’æŒã¤ãƒˆãƒˆã‚²ã‚’é…ç½®
 	detectors.push_back(new SpikeTrap(640.0f, 400.0f, 80.0f));
 
-	//oŒ»ˆÊ’uİ’è«
+	//å‡ºç¾ä½ç½®è¨­å®šâ†“
 	//player.x = 500;
 	//player.y = 200;
 }
 
-// XVˆ—
+// æ›´æ–°å‡¦ç†
 eSceneType InGameScene::Update(const float& delta_second)
 {
-	// ƒtƒF[ƒh‚ÌXV‚ğí‚És‚¤
+	// ãƒ•ã‚§ãƒ¼ãƒ‰ã®æ›´æ–°ã‚’å¸¸ã«è¡Œã†
 	fade->Update(delta_second);
 
-	// ‰¹‚ÌÄ¶
+	// éŸ³ã®å†ç”Ÿ
 	if (CheckSoundMem(mainBGM) == 0) {
-		// ƒ‹[ƒvÄ¶
+		// ãƒ«ãƒ¼ãƒ—å†ç”Ÿ
 		PlaySoundMem(mainBGM, DX_PLAYTYPE_LOOP);
 	}
 
-	// ƒtƒF[ƒhƒAƒEƒg’†iƒŠƒXƒ^[ƒg‘Ò‹@’†j‚Ìˆ—
+	// ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¢ã‚¦ãƒˆä¸­ï¼ˆãƒªã‚¹ã‚¿ãƒ¼ãƒˆå¾…æ©Ÿä¸­ï¼‰ã®å‡¦ç†
 	if (state == SceneState::Restarting)
 	{
 		if (fade->IsFinished()) {
-			Initialize(); // ˆÃ“]‚µ‚«‚Á‚½‚ç‰Šú‰»
-			fade->Start(FadeType::IrisOut, false, 1.0f);  // ƒtƒF[ƒhƒCƒ“ŠJn
+			Initialize(); // æš—è»¢ã—ãã£ãŸã‚‰åˆæœŸåŒ–
+			fade->Start(FadeType::IrisOut, false, 1.0f);  // ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¤ãƒ³é–‹å§‹
 			state = SceneState::Playing;
 		}
-		return GetNowSceneType(); // ƒŠƒXƒ^[ƒg’†‚ÍˆÈ‰º‚Ìˆ—‚ğƒXƒLƒbƒv
+		return GetNowSceneType(); // ãƒªã‚¹ã‚¿ãƒ¼ãƒˆä¸­ã¯ä»¥ä¸‹ã®å‡¦ç†ã‚’ã‚¹ã‚­ãƒƒãƒ—
 	}
 
 	player.Update(delta_second);  
 	player.Move(allObjects);
 
-	//ƒ[ƒvˆ—
+	//ãƒ¯ãƒ¼ãƒ—å‡¦ç†
 	int playerX, playerY;
 	player.GetLocation(playerX, playerY);
 
@@ -150,54 +158,60 @@ eSceneType InGameScene::Update(const float& delta_second)
 	goal.Update(delta_second);
 	/*warp->Update(delta_second);*/
 
-	for (auto& wall : walls)
-	{
-		wall.Update(delta_second);
+	for (const auto& obj : allObjects) {
+		if (obj != nullptr) {
+			obj->Update(delta_second);
+		}
 	}
 
-	for (auto& block : blocks)
-	{
-		block.Update(delta_second);
-	}
+	//for (auto& wall : walls)
+	//{
+	//	wall.Update(delta_second);
+	//}
 
-	for (auto& warp : warps)
-	{
-		warp.Update(delta_second);
-	}
+	//for (auto& block : blocks)
+	//{
+	//	block.Update(delta_second);
+	//}
 
-	// --- 1. ŒŸ’m”»’èƒtƒF[ƒY ---
-    // –ˆƒtƒŒ[ƒ€A‚Ü‚¸‚ÍuŒ©‚Â‚©‚Á‚Ä‚¢‚È‚¢vó‘Ô‚©‚çƒ`ƒFƒbƒN‚ğŠJn‚·‚é
-	bool isCamDetected = false;          // ƒJƒƒ‰‚ÉŒŸ’m
-	bool isLightDetected = false;        // ƒ‰ƒCƒg‚ÉŒŸ’m
+	//for (auto& warp : warps)
+	//{
+	//	warp.Update(delta_second);
+	//}
+
+	// --- 1. æ¤œçŸ¥åˆ¤å®šãƒ•ã‚§ãƒ¼ã‚º ---
+    // æ¯ãƒ•ãƒ¬ãƒ¼ãƒ ã€ã¾ãšã¯ã€Œè¦‹ã¤ã‹ã£ã¦ã„ãªã„ã€çŠ¶æ…‹ã‹ã‚‰ãƒã‚§ãƒƒã‚¯ã‚’é–‹å§‹ã™ã‚‹
+	bool isCamDetected = false;          // ã‚«ãƒ¡ãƒ©ã«æ¤œçŸ¥
+	bool isLightDetected = false;        // ãƒ©ã‚¤ãƒˆã«æ¤œçŸ¥
 
 	for (auto d : detectors) {
-		// İ’u•¨iƒJƒƒ‰Eƒ‰ƒCƒgj‚Ìó‘Ô‚ğXViƒvƒŒƒCƒ„[‚Æ‚Ì‹——£ŒvZ‚È‚Çj
+		// è¨­ç½®ç‰©ï¼ˆã‚«ãƒ¡ãƒ©ãƒ»ãƒ©ã‚¤ãƒˆï¼‰ã®çŠ¶æ…‹ã‚’æ›´æ–°ï¼ˆãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¨ã®è·é›¢è¨ˆç®—ãªã©ï¼‰
 		d->Update(player,delta_second);
 
-		// ‚»‚Ìİ’u•¨‚ÌŒŸ’m”ÍˆÍ“à‚ÉƒvƒŒƒCƒ„[‚ª“ü‚Á‚Ä‚¢‚é‚©”»’è
+		// ãã®è¨­ç½®ç‰©ã®æ¤œçŸ¥ç¯„å›²å†…ã«ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒå…¥ã£ã¦ã„ã‚‹ã‹åˆ¤å®š
 		if (d->IsDetected()) {
-			// ƒJƒƒ‰‚ÉŒŸ’m‚³‚ê‚½ê‡
+			// ã‚«ãƒ¡ãƒ©ã«æ¤œçŸ¥ã•ã‚ŒãŸå ´åˆ
 			if (d->GetType() == TrapType::Camera) {
 				isCamDetected = true;
 			}
-			// ƒ‰ƒCƒg‚ÉŒŸ’m‚³‚êA‚©‚ÂƒvƒŒƒCƒ„[‚ªu‰eó‘Ôv‚¾‚Á‚½ê‡
+			// ãƒ©ã‚¤ãƒˆã«æ¤œçŸ¥ã•ã‚Œã€ã‹ã¤ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒã€Œå½±çŠ¶æ…‹ã€ã ã£ãŸå ´åˆ
 			else if (d->GetType() == TrapType::Light && player.GetState() == Player::State::Shadow) {
 				isLightDetected = true;
 			}
 		}
 	}
 
-	// ƒJƒƒ‰‚Ì‰¹Œ¹ˆ—
+	// ã‚«ãƒ¡ãƒ©ã®éŸ³æºå‡¦ç†
 	if (isCamDetected) {
-		// yŒ©‚Â‚©‚Á‚Ä‚¢‚éŠÔz
-		// ‚Ü‚¾–Â‚Á‚Ä‚¢‚È‚¯‚ê‚ÎAƒ‹[ƒvÄ¶‚ğŠJn
+		// ã€è¦‹ã¤ã‹ã£ã¦ã„ã‚‹é–“ã€‘
+		// ã¾ã é³´ã£ã¦ã„ãªã‘ã‚Œã°ã€ãƒ«ãƒ¼ãƒ—å†ç”Ÿã‚’é–‹å§‹
 		if (CheckSoundMem(beepSE) == 0) {
 			PlaySoundMem(beepSE, DX_PLAYTYPE_LOOP);
 		}
 	}
 	else {
-		// y“¦‚°Ø‚Á‚½A‚Ü‚½‚Í”ÍˆÍŠOz
-		// –Â‚Á‚Ä‚¢‚½‚ç~‚ß‚é
+		// ã€é€ƒã’åˆ‡ã£ãŸã€ã¾ãŸã¯ç¯„å›²å¤–ã€‘
+		// é³´ã£ã¦ã„ãŸã‚‰æ­¢ã‚ã‚‹
 		if (CheckSoundMem(beepSE) == 1) {
 			StopSoundMem(beepSE);
 		}
@@ -209,74 +223,81 @@ eSceneType InGameScene::Update(const float& delta_second)
 	}
 
 
-	// --- 2. ƒXƒe[ƒgiisó‹µjŠÇ—ƒtƒF[ƒY ---
-	// ƒJƒƒ‰‚©ƒ‰ƒCƒgA‚Ç‚¿‚ç‚©‚ÉŒŸ’m‚³‚ê‚Ä‚¢‚éê‡
+	// --- 2. ã‚¹ãƒ†ãƒ¼ãƒˆï¼ˆé€²è¡ŒçŠ¶æ³ï¼‰ç®¡ç†ãƒ•ã‚§ãƒ¼ã‚º ---
+	// ã‚«ãƒ¡ãƒ©ã‹ãƒ©ã‚¤ãƒˆã€ã©ã¡ã‚‰ã‹ã«æ¤œçŸ¥ã•ã‚Œã¦ã„ã‚‹å ´åˆ
 	if (isCamDetected || isLightDetected) {
 
-		// ’ÊíƒvƒŒƒC’†(Playing)‚ÉŒ©‚Â‚©‚Á‚½‚çA‘¦À‚ÉuŒŸ’m—P—\ó‘Ô(Detected)v‚ÖˆÚs
+		// é€šå¸¸ãƒ—ãƒ¬ã‚¤ä¸­(Playing)ã«è¦‹ã¤ã‹ã£ãŸã‚‰ã€å³åº§ã«ã€Œæ¤œçŸ¥çŒ¶äºˆçŠ¶æ…‹(Detected)ã€ã¸ç§»è¡Œ
 		if (state == SceneState::Playing) {
 			state = SceneState::Detected;
-			detectionTimer = 0.0f; // ƒ^ƒCƒ}[‚ğƒŠƒZƒbƒg‚µ‚ÄƒJƒEƒ“ƒgŠJn
+			detectionTimer = 0.0f; // ã‚¿ã‚¤ãƒãƒ¼ã‚’ãƒªã‚»ãƒƒãƒˆã—ã¦ã‚«ã‚¦ãƒ³ãƒˆé–‹å§‹
 		}
 
-		// yd—vzƒ‰ƒCƒgi‰e‚ÅG‚ê‚½j‚È‚ç—P—\‚È‚µAƒJƒƒ‰‚È‚çŠÔŒo‰ß‚Åƒ^ƒCƒ}[‚ği‚ß‚é
+		// ã€é‡è¦ã€‘ãƒ©ã‚¤ãƒˆï¼ˆå½±ã§è§¦ã‚ŒãŸï¼‰ãªã‚‰çŒ¶äºˆãªã—ã€ã‚«ãƒ¡ãƒ©ãªã‚‰æ™‚é–“çµŒéã§ã‚¿ã‚¤ãƒãƒ¼ã‚’é€²ã‚ã‚‹
 		if (isLightDetected) {
-			// ó‘Ô‚ªØ‚è‘Ö‚í‚éƒ^ƒCƒ~ƒ“ƒO‚ÅÄ¶
+			// çŠ¶æ…‹ãŒåˆ‡ã‚Šæ›¿ã‚ã‚‹ã‚¿ã‚¤ãƒŸãƒ³ã‚°ã§å†ç”Ÿ
 			PlaySoundMem(dieSE, DX_PLAYTYPE_BACK);
-			detectionTimer = LIMIT_TIME; // ƒ‰ƒCƒg‚Ìê‡‚Í‹­§“I‚Éƒ^ƒCƒ€ƒAƒbƒvó‘Ô‚É‚·‚é
+			detectionTimer = LIMIT_TIME; // ãƒ©ã‚¤ãƒˆã®å ´åˆã¯å¼·åˆ¶çš„ã«ã‚¿ã‚¤ãƒ ã‚¢ãƒƒãƒ—çŠ¶æ…‹ã«ã™ã‚‹
 		}
 		else {
-			detectionTimer += delta_second; // ƒJƒƒ‰‚Ìê‡‚ÍŒ»ÀŠÔ‚ÌŒo‰ß•b”‚ğ‰ÁZ
+			detectionTimer += delta_second; // ã‚«ãƒ¡ãƒ©ã®å ´åˆã¯ç¾å®Ÿæ™‚é–“ã®çµŒéç§’æ•°ã‚’åŠ ç®—
 		}
 
 		
 
-		// --- 3. ¸”siƒŠƒZƒbƒgjŠm’è”»’è ---
-		// ƒ^ƒCƒ}[‚ª§ŒÀŠÔ‚ğ’´‚¦‚½i•ß‚Ü‚Á‚½jê‡‚Ìˆ—
+		// --- 3. å¤±æ•—ï¼ˆãƒªã‚»ãƒƒãƒˆï¼‰ç¢ºå®šåˆ¤å®š ---
+		// ã‚¿ã‚¤ãƒãƒ¼ãŒåˆ¶é™æ™‚é–“ã‚’è¶…ãˆãŸï¼ˆï¼æ•ã¾ã£ãŸï¼‰å ´åˆã®å‡¦ç†
 		if (detectionTimer >= LIMIT_TIME) {
-			// —áF“ü‚ê‚é‚©‚Í•ÊB‚±‚±‚Åã‹L‚Ìƒ‹[ƒv‰¹‚ğ~‚ßAuƒKƒVƒƒ[ƒ“Iv‚È‚Ç‚Ì¸”s‰¹‚ğÄ¶‚·‚é
-			// ‚±‚±‚É“ü‚ê‚é
+			// ä¾‹ï¼šå…¥ã‚Œã‚‹ã‹ã¯åˆ¥ã€‚ã“ã“ã§ä¸Šè¨˜ã®ãƒ«ãƒ¼ãƒ—éŸ³ã‚’æ­¢ã‚ã€ã€Œã‚¬ã‚·ãƒ£ãƒ¼ãƒ³ï¼ã€ãªã©ã®å¤±æ•—éŸ³ã‚’å†ç”Ÿã™ã‚‹
+			// ã“ã“ã«å…¥ã‚Œã‚‹
 			StopSoundMem(beepSE);
 		
-			// uƒŠƒXƒ^[ƒg‘Ò‹@ó‘Ô(Restarting)v‚ÖˆÚs‚µA‰æ–Ê‰‰o‚ğŠJn
+			// ã€Œãƒªã‚¹ã‚¿ãƒ¼ãƒˆå¾…æ©ŸçŠ¶æ…‹(Restarting)ã€ã¸ç§»è¡Œã—ã€ç”»é¢æ¼”å‡ºã‚’é–‹å§‹
 			state = SceneState::Restarting;
 
 			if (isLightDetected || player.GetTekazu() == 0) {
-				// yƒ‰ƒCƒg‰‰oz
-				// ‰æ–Ê‘S‘Ì‚ª”ñí‚É‚ä‚Á‚­‚èˆÃ‚­‚È‚é(Normal)‰‰o
-				// 1.0f(Š®—¹) / 3.0(•b) = –ñ 0.33f
+				// ã€ãƒ©ã‚¤ãƒˆæ¼”å‡ºã€‘
+				// ç”»é¢å…¨ä½“ãŒéå¸¸ã«ã‚†ã£ãã‚Šæš—ããªã‚‹(Normal)æ¼”å‡º
+				// 1.0f(å®Œäº†) / 3.0(ç§’) = ç´„ 0.33f
 				fade->Start(FadeType::Normal, true, 0.8f);
 			}
 			else {
-				// yƒJƒƒ‰‰‰ozŒ©‚Â‚©‚Á‚Ä•ß‚Ü‚Á‚½ƒCƒ[ƒW
-				// ‰~Œ`‚É‰æ–Ê‚ª•Â‚¶‚Ä‚¢‚­(IrisOut)‰‰o
-				// ƒpƒVƒb‚Æ1•b‚ÅˆÃ‚­‚·‚éê‡
-	            // 1.0f(Š®—¹) / 1.0(•b) = 1.0f
+				// ã€ã‚«ãƒ¡ãƒ©æ¼”å‡ºã€‘è¦‹ã¤ã‹ã£ã¦æ•ã¾ã£ãŸã‚¤ãƒ¡ãƒ¼ã‚¸
+				// å††å½¢ã«ç”»é¢ãŒé–‰ã˜ã¦ã„ã(IrisOut)æ¼”å‡º
+				// ãƒ‘ã‚·ãƒƒã¨1ç§’ã§æš—ãã™ã‚‹å ´åˆ
+	            // 1.0f(å®Œäº†) / 1.0(ç§’) = 1.0f
 				fade->Start(FadeType::IrisOut, true, 1.0f);
 			}
 		}
 	}
-	// ‚Ç‚¿‚ç‚É‚àŒŸ’m‚³‚ê‚Ä‚¢‚È‚¢ê‡
+	// ã©ã¡ã‚‰ã«ã‚‚æ¤œçŸ¥ã•ã‚Œã¦ã„ãªã„å ´åˆ
 	else {
-		// ‚à‚µuŒŸ’m—P—\’†v‚É”ÍˆÍŠO‚Ö“¦‚°o‚¹‚½‚çA’ÊíƒvƒŒƒCó‘Ô‚É–ß‚·
+		// ã‚‚ã—ã€Œæ¤œçŸ¥çŒ¶äºˆä¸­ã€ã«ç¯„å›²å¤–ã¸é€ƒã’å‡ºã›ãŸã‚‰ã€é€šå¸¸ãƒ—ãƒ¬ã‚¤çŠ¶æ…‹ã«æˆ»ã™
 		if (state == SceneState::Detected) {
 			state = SceneState::Playing;
-			detectionTimer = 0.0f; // —P—\ƒ^ƒCƒ}[‚ğƒŠƒZƒbƒg
+			detectionTimer = 0.0f; // çŒ¶äºˆã‚¿ã‚¤ãƒãƒ¼ã‚’ãƒªã‚»ãƒƒãƒˆ
 
-			// ‚±‚±‚Åƒ‹[ƒv‰¹‚ğ~‚ß‚é
+			// ã“ã“ã§ãƒ«ãƒ¼ãƒ—éŸ³ã‚’æ­¢ã‚ã‚‹
 		}
 	}
 
-	// è”‚ª0‚É‚È‚Á‚½‚çƒQ[ƒ€ƒI[ƒo[
-	if (player.GetTekazu() == 0)
+
+    // æ‰‹æ•°ãŒ0ã«ãªã£ãŸã‚‰ã‚²ãƒ¼ãƒ ã‚ªãƒ¼ãƒãƒ¼ï¼ˆãƒªã‚¹ã‚¿ãƒ¼ãƒˆå‡¦ç†ã¸ï¼‰
+	if (player.GetTekazu() == 0 && state != SceneState::Restarting)
 	{
+		StopSoundMem(beepSE); // éŸ³ã‚’æ­¢ã‚ã‚‹
+
+		// 1. çŠ¶æ…‹ã‚’ãƒªã‚¹ã‚¿ãƒ¼ãƒˆä¸­ï¼ˆæš—è»¢ä¸­ï¼‰ã«å¤‰æ›´ã™ã‚‹
+		state = SceneState::Restarting;
+
+		// 2. ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¢ã‚¦ãƒˆã‚’é–‹å§‹ï¼ˆ1ç§’ã‹ã‘ã¦IrisOutã§ç”»é¢ã‚’é–‰ã˜ã‚‹ï¼‰
 		fade->Start(FadeType::IrisOut, true, 1.0f);
 	}
 
-	// ƒS[ƒ‹”»’è
+	// ã‚´ãƒ¼ãƒ«åˆ¤å®š
 	if (goal.IsGoal())
 	{
-		// ƒV[ƒ“‚Ì‘JˆÚ
+		// ã‚·ãƒ¼ãƒ³ã®é·ç§»
 		return eSceneType::eTitle;
 	}
 
@@ -285,16 +306,16 @@ eSceneType InGameScene::Update(const float& delta_second)
 	return GetNowSceneType();
 }
 
-// •`‰æˆ—
+// æç”»å‡¦ç†
 void InGameScene::Draw() const
 {
 	SetFontSize(20);
 	DrawString(10, 10, "INGAME", 0xffffff);
 	
-	// ƒ^ƒCƒgƒ‹‰æ‘œ‚Ì•`‰æ
+	// ã‚¿ã‚¤ãƒˆãƒ«ç”»åƒã®æç”»
 	DrawExtendGraph(0, 0, 1280, 720, background, TRUE);
 
-	// ’Ç‰Á‚µ‚½ƒIƒuƒWƒFƒNƒgi•Ç‚âƒuƒƒbƒNj‚ğ‘S‚Ä•`‰æ
+	// è¿½åŠ ã—ãŸã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆï¼ˆå£ã‚„ãƒ–ãƒ­ãƒƒã‚¯ï¼‰ã‚’å…¨ã¦æç”»
 	for (const auto& obj : allObjects) {
 		if (obj != nullptr) {
 			obj->Draw();
@@ -315,27 +336,27 @@ void InGameScene::Draw() const
 	player.Draw();
 	/*warp->Draw();*/
 
-	//// --- ƒJƒƒ‰EÆ–¾‚Ì•`‰æ ---
-	//// ƒvƒŒƒCƒ„[‚æ‚èŒã‚É•`‚­‚±‚Æ‚ÅA‹ŠE”ÍˆÍ‚ğƒvƒŒƒCƒ„[‚Ìã‚Éd‚Ë‚ÄŠm”F‚µ‚â‚·‚­‚·‚é
+	//// --- ã‚«ãƒ¡ãƒ©ãƒ»ç…§æ˜ã®æç”» ---
+	//// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚ˆã‚Šå¾Œã«æãã“ã¨ã§ã€è¦–ç•Œç¯„å›²ã‚’ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä¸Šã«é‡ã­ã¦ç¢ºèªã—ã‚„ã™ãã™ã‚‹
 	/*for (auto d : detectors)
 	{
 		d->Draw();
 	}*/
 
-	//// Æ–¾‚Ì‚İ
+	//// ç…§æ˜ã®ã¿
 	//for (auto d : detectors)
 	//{
-	//	// ©•ª‚Ìƒ^ƒCƒv‚ª Light ‚Ì‚¾‚¯ Draw ‚ğŒÄ‚Ô
+	//	// è‡ªåˆ†ã®ã‚¿ã‚¤ãƒ—ãŒ Light ã®æ™‚ã ã‘ Draw ã‚’å‘¼ã¶
 	//	if (d->GetType() == DetectiveType::Light)
 	//	{
 	//		d->Draw();
 	//	}
 	//}
 
-	//// ƒJƒƒ‰‚Ì‚İ
+	//// ã‚«ãƒ¡ãƒ©ã®ã¿
 	for (auto d : detectors)
 	{
-		// ©•ª‚Ìƒ^ƒCƒv‚ª Light ‚Ì‚¾‚¯ Camera ‚ğŒÄ‚Ô
+		// è‡ªåˆ†ã®ã‚¿ã‚¤ãƒ—ãŒ Light ã®æ™‚ã ã‘ Camera ã‚’å‘¼ã¶
 		if (d->GetType() == TrapType::Camera)
 		{
 			d->Draw();
@@ -344,10 +365,10 @@ void InGameScene::Draw() const
 
 	for (auto d : detectors) d->Draw();
 
-	// —P—\ŠúŠÔ’†‚Ì‰‰o
+	// çŒ¶äºˆæœŸé–“ä¸­ã®æ¼”å‡º
 	if (state == SceneState::Detected) {
 
-		// ƒJƒƒ‰ŒŸ’m‚ª‚ ‚é‚©Šm”F
+		// ã‚«ãƒ¡ãƒ©æ¤œçŸ¥ãŒã‚ã‚‹ã‹ç¢ºèª
 		bool isCameraDetecting = false;
 		for (auto d : detectors) {
 			if (d->GetType() == TrapType::Camera && d->IsDetected()) {
@@ -356,25 +377,25 @@ void InGameScene::Draw() const
 			}
 		}
 
-		// ƒJƒƒ‰ŒŸ’m‚Ì‚İ“_–Å‚³‚¹‚é
+		// ã‚«ãƒ¡ãƒ©æ¤œçŸ¥æ™‚ã®ã¿ç‚¹æ»…ã•ã›ã‚‹
 		if (isCameraDetecting) {
-			// detectionTimer‚ğg‚Á‚Ä“_–ÅƒƒWƒbƒN‚ğì‚é 
+			// detectionTimerã‚’ä½¿ã£ã¦ç‚¹æ»…ãƒ­ã‚¸ãƒƒã‚¯ã‚’ä½œã‚‹ 
 			if ((int)(detectionTimer * 2) % 2 == 0) {
 				SetDrawBlendMode(DX_BLENDMODE_ALPHA, 80);
 				DrawBox(0, 0, 1280, 720, GetColor(255, 0, 0), TRUE);
 				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 			}
 		}
-		// Light‚Ì‚ÍÔF‚ğ•\¦‚µ‚È‚¢‚Ì‚ÅA‚±‚±‚É else ‚Í‘‚©‚È‚¢
+		// Lightã®æ™‚ã¯èµ¤è‰²ã‚’è¡¨ç¤ºã—ãªã„ã®ã§ã€ã“ã“ã« else ã¯æ›¸ã‹ãªã„
 	}
-	// ƒtƒF[ƒh‚ğÅ‘O–Ê‚É•`‰æ
+	// ãƒ•ã‚§ãƒ¼ãƒ‰ã‚’æœ€å‰é¢ã«æç”»
 	if (fade) fade->Draw();
 }
 
-// I—¹ˆ—
+// çµ‚äº†æ™‚å‡¦ç†
 void InGameScene::Finalize()
 {
-	// “®“I‚É¶¬‚µ‚½ƒIƒuƒWƒFƒNƒg‚ğíœ‚µ‚Äƒƒ‚ƒŠƒŠ[ƒN‚ğ–h‚®
+	// å‹•çš„ã«ç”Ÿæˆã—ãŸã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å‰Šé™¤ã—ã¦ãƒ¡ãƒ¢ãƒªãƒªãƒ¼ã‚¯ã‚’é˜²ã
 	for (auto d : detectors)
 	{
 		delete d;
@@ -386,9 +407,19 @@ void InGameScene::Finalize()
 		DeleteGraph(background);
 		background = -1;
 	}
+
+	for (auto& obj : allObjects)
+	{
+		if (obj != nullptr)
+		{
+			delete obj;
+			obj = nullptr;
+		}
+	}
+	allObjects.clear();
 }
 
-// Œ»İ‚ÌƒV[ƒ“î•ñ‚ğ•Ô‚·
+// ç¾åœ¨ã®ã‚·ãƒ¼ãƒ³æƒ…å ±ã‚’è¿”ã™
 eSceneType InGameScene::GetNowSceneType() const
 {
 	return eSceneType::eInGame;

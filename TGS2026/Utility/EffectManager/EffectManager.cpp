@@ -1,4 +1,4 @@
-#include "EffectManager.h"
+ï»¿#include "EffectManager.h"
 #include "../../Object/Player/Player.h" 
 #include "DxLib.h"
 #include <cmath>
@@ -14,8 +14,8 @@ EffectManager::~EffectManager() {
 }
 
 void EffectManager::AddEffect(float x, float y, EffectType type, const std::string& imagePath, float scale, float angle, bool isReversedX) {
-    // šyC³z–ˆ‰ñLoadGraph‚·‚é‚Ì‚ğ‚â‚ßA‚·‚Å‚É“Ç‚İ‚İÏ‚İ‚Ì‰æ‘œ‚ª‚ ‚ê‚Î‚»‚Ìƒnƒ“ƒhƒ‹‚ğg‚¢‰ñ‚·
-    // ‚±‚ê‚É‚æ‚èADXƒ‰ƒCƒuƒ‰ƒŠ‚Ì“à•”ƒƒ‚ƒŠ‚ªƒoƒO‚é‚Ì‚ğ–h‚¬‚Ü‚·B
+    // â˜…ã€ä¿®æ­£ã€‘æ¯å›LoadGraphã™ã‚‹ã®ã‚’ã‚„ã‚ã€ã™ã§ã«èª­ã¿è¾¼ã¿æ¸ˆã¿ã®ç”»åƒãŒã‚ã‚Œã°ãã®ãƒãƒ³ãƒ‰ãƒ«ã‚’ä½¿ã„å›ã™
+    // ã“ã‚Œã«ã‚ˆã‚Šã€DXãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®å†…éƒ¨ãƒ¡ãƒ¢ãƒªãŒãƒã‚°ã‚‹ã®ã‚’é˜²ãã¾ã™ã€‚
     static std::unordered_map<std::string, int> imageCache;
     int handle = -1;
 
@@ -32,10 +32,11 @@ void EffectManager::AddEffect(float x, float y, EffectType type, const std::stri
     if (handle == -1) return;
 
     EffectData newData;
+    EffectData newEffect;
     newData.x = x;
     newData.y = y;
     newData.type = type;
-    newData.imageHandle = handle; // ˆÀ‘S‚Ég‚¢‰ñ‚³‚ê‚½ƒnƒ“ƒhƒ‹
+    newData.imageHandle = handle; // å®‰å…¨ã«ä½¿ã„å›ã•ã‚ŒãŸãƒãƒ³ãƒ‰ãƒ«
     newData.alpha = (type == EffectType::ActionUI) ? 0 : 255;
     newData.targetX = x;
     newData.targetY = y;
@@ -43,51 +44,34 @@ void EffectManager::AddEffect(float x, float y, EffectType type, const std::stri
     newData.angle = angle;
     newData.isReversedX = isReversedX;
 
+    // â˜…åˆæœŸã®ä¸é€æ˜åº¦ã¯MAXï¼ˆ255ï¼‰ã«ã—ã¦ãŠã
+    newEffect.alpha = 255.0f;
+
+    effects.push_back(newEffect);
+
     effects.push_back(newData);
 }
 
-void EffectManager::Update(const Player& player, float delta_second) {
-    int px, py;
-    player.GetLocation(px, py);
 
-    // 1. ŠeƒGƒtƒFƒNƒg‚Ì”’l‚ğŒÂ•Ê‚ÉXV
+void EffectManager::Update(float delta_second) {
+    
+    // 1. ã™ã¹ã¦ã®ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®æ™‚é–“æ›´æ–°
     for (auto& effect : effects) {
 
-        // --- ƒAƒCƒeƒ€‚Ìˆ— ---
-        if (effect.type == EffectType::FollowItem) {
-            effect.targetX = (float)px - 40.0f;
-            effect.targetY = (float)py;
-            effect.x += (effect.targetX - effect.x) * 0.1f;
-            effect.y += (effect.targetY - effect.y) * 0.1f;
-        }
+        // â˜…ãƒã‚¤ãƒ³ãƒˆï¼š1ç§’é–“ã«ã€Œ255ï¼ˆå®Œå…¨é€æ˜ï¼‰ã€ã«å‘ã‹ã£ã¦ã€delta_secondãƒ™ãƒ¼ã‚¹ã§æ¸›ã‚‰ã™
+        // ã“ã‚Œã§å‡¦ç†è½ã¡ã—ã¦ã‚‚ã€ã©ã‚“ãªã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãŒå‘¼ã‚“ã§ã‚‚ã€åŒã˜é€Ÿåº¦ã§ç¶ºéº—ã«æ¶ˆãˆã‚‹ï¼
+        float fadeSpeed = 500.0f; // å¥½ã¿ã®æ¶ˆãˆã‚‹é€Ÿã•ã«èª¿æ•´ã—ã¦ãã ã•ã„ï¼ˆæ•°å€¤ãŒå¤§ãã„ã»ã©æ—©ãæ¶ˆãˆã‚‹ï¼‰
+        effect.alpha -= fadeSpeed * delta_second;
 
-        // --- UI‚Ìˆ— ---
-        if (effect.type == EffectType::ActionUI) {
-            float dist = sqrtf(powf((float)px - effect.x, 2) + powf((float)py - effect.y, 2));
-            if (dist < 150.0f) {
-                effect.alpha += 15;
-                if (effect.alpha > 200) effect.alpha = 200;
-            }
-            else {
-                effect.alpha -= 15;
-                if (effect.alpha < 0) effect.alpha = 0;
-            }
-        }
-
-        // --- ‰Œ‚Ìˆ— ---
-        if (effect.type == EffectType::Smoke) {
-            // š ƒJƒEƒ“ƒ^[‘ã‚í‚è‚ÉAŒ»İ‚Ì alpha ‚Ì’l‚ª‹ô”‚Ì‚Æ‚«‚¾‚¯ˆø‚­A
-            // ‚Ü‚½‚ÍA’Pƒ‚Éu1v‚¸‚Âˆø‚­Œ`‚É‚·‚é
-            effect.alpha -= 0.3; // ˆê”ÔÅ’x‚Ìu1v‚É‚·‚é
-
-            if (effect.alpha < 0) effect.alpha = 0;
+        if (effect.alpha < 0.0f) {
+            effect.alpha = 0.0f;
         }
     }
 
-    // 2. Š®‘S‚É“§–¾‚É‚È‚Á‚½‰Œ‚ğ‚¨‘|œ
+    // 2. é€æ˜ã«ãªã£ãŸã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’è‡ªå‹•ã§ãŠæƒé™¤ï¼ˆä¸€æ‹¬å‰Šé™¤ï¼‰
     effects.erase(
         std::remove_if(effects.begin(), effects.end(), [](const EffectData& effect) {
-            return (effect.type == EffectType::Smoke && effect.alpha <= 0);
+            return effect.alpha <= 0.0f;
             }),
         effects.end()
     );
@@ -97,11 +81,11 @@ void EffectManager::Draw() const {
     for (const auto& effect : effects) {
         if (effect.imageHandle == -1 || effect.alpha == 0) continue;
 
-        // “§–¾“x‚ğ“K—p
+        // é€æ˜åº¦ã‚’é©ç”¨
         SetDrawBlendMode(DX_BLENDMODE_ALPHA, (int)effect.alpha);
 
-        // šyC³zPlayer‘¤‚ÅŠ®àø‚É§Œä‚³‚ê‚½ isReversedX ‚ğA‘æ7ˆø”iTurnFlagj‚É‚»‚Ì‚Ü‚Ü“n‚·I
-        // ƒ}ƒCƒiƒX”{—¦‚È‚Ç‚ÌƒgƒŠƒbƒL[‚ÈŒvZ‚ğ”p~‚µADXƒ‰ƒCƒuƒ‰ƒŠ•W€‚Ì‹@”\‚ÅˆÀ‘S‚É•`‰æ‚µ‚Ü‚·B
+        // Playerå´ã§å®Œç’§ã«åˆ¶å¾¡ã•ã‚ŒãŸ isReversedX ã‚’ã€ç¬¬7å¼•æ•°ï¼ˆTurnFlagï¼‰ã«ãã®ã¾ã¾æ¸¡ã™ï¼
+        // ãƒã‚¤ãƒŠã‚¹å€ç‡ãªã©ã®ãƒˆãƒªãƒƒã‚­ãƒ¼ãªè¨ˆç®—ã‚’å»ƒæ­¢ã—ã€DXãƒ©ã‚¤ãƒ–ãƒ©ãƒªæ¨™æº–ã®æ©Ÿèƒ½ã§å®‰å…¨ã«æç”»ã—ã¾ã™ã€‚
         DrawRotaGraph(
             (int)effect.x,
             (int)effect.y,
@@ -109,7 +93,7 @@ void EffectManager::Draw() const {
             (double)effect.angle,
             effect.imageHandle,
             TRUE,
-            effect.isReversedX // š‚±‚±‚ªDXƒ‰ƒCƒuƒ‰ƒŠ–{—ˆ‚Ì”½“]ƒtƒ‰ƒOˆÊ’u‚Å‚·
+            effect.isReversedX // â˜…ã“ã“ãŒDXãƒ©ã‚¤ãƒ–ãƒ©ãƒªæœ¬æ¥ã®åè»¢ãƒ•ãƒ©ã‚°ä½ç½®ã§ã™
         );
 
     }
@@ -117,6 +101,6 @@ void EffectManager::Draw() const {
 }
 
 void EffectManager::ClearAll() {
-    // ¦‰æ‘œƒnƒ“ƒhƒ‹‚Íã‚ÌƒLƒƒƒbƒVƒ…‚ÅˆêŒ³ŠÇ—‚³‚ê‚é‚½‚ßA‚±‚±‚Å–ˆ‰ñ DeleteGraph ‚µ‚È‚­‚ÄˆÀ‘S‚É‚È‚è‚Ü‚·
+    // â€»ç”»åƒãƒãƒ³ãƒ‰ãƒ«ã¯ä¸Šã®ã‚­ãƒ£ãƒƒã‚·ãƒ¥ã§ä¸€å…ƒç®¡ç†ã•ã‚Œã‚‹ãŸã‚ã€ã“ã“ã§æ¯å› DeleteGraph ã—ãªãã¦å®‰å…¨ã«ãªã‚Šã¾ã™
     effects.clear();
 }

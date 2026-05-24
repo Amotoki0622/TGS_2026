@@ -2,8 +2,10 @@
 #include <vector>
 #include "../../Utility/Vector2D.h"
 #include "../GameObject.h"
+#include "../../Utility/EffectManager/EffectManager.h"
 
 class Player;
+class EffectManager;
 
 //壁クラス
 class Block :public GameObject
@@ -11,6 +13,13 @@ class Block :public GameObject
 private:
 
 	Player* player; // プレイヤー参照
+	
+    // =========================================
+    // エフェクト用変数
+    // =========================================
+    EffectManager effectManager; // プレイヤー専用のエフェクトマネージャ
+    int lastPx = -1;             // 1フレーム前のX座標
+    int lastPy = -1;             // 1フレーム前のY座標
 
 
 public:

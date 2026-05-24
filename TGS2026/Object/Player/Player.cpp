@@ -31,6 +31,8 @@ void Player::Initialize()
 
     tekazu = 18;
 
+    revers = TRUE;
+
     // 音源読み込み・関連
     //moveSE = LoadSoundMem("Resource/Sounds/SE/object/player/");
 
@@ -105,7 +107,7 @@ void Player::Update(const float& delta_second)
     //Move(walls);
     UpdateAnimation(delta_second);
 
-    effectManager.Update(*this, delta_second);
+    effectManager.Update(delta_second);
 }
 
 // =========================
@@ -255,6 +257,9 @@ void Player::Move(const std::vector<GameObject*>& objects) {
         float angle = 0.0f;
         bool isReversedX = false;
 
+        // 画像パスを保存する変数を1つ用意する
+        std::string effectImagePath = "Resource/Images/Effect/Smoke3.png"; // デフォルト
+
         // --- ★移動方向別の「正確な位置調整」と「見た目」の割り出し ---
         if (moveX != 0)
         {
@@ -267,8 +272,11 @@ void Player::Move(const std::vector<GameObject*>& objects) {
             }
             else {
                 // 右移動：右を向くので反転させる
-                isReversedX = false;
+                isReversedX = true;
             }
+
+            // 横移動のときは、横専用の煙画像をセット！
+            effectImagePath = "Resource/Images/Effect/Smoke.png";
         }
         else if (moveY != 0)
         {
@@ -277,14 +285,17 @@ void Player::Move(const std::vector<GameObject*>& objects) {
             {
                 // 上移動：一歩前の足元なので、少し「下」にずらして縦向き（270度）にする
                 spawnY = oldY + 10.0f;
-                angle = DX_PI * 1.5f;
+                angle = 0.0f;
             }
             else
             {
                 // 下移動：一歩前の足元なので、少し「上」にずらして縦向き（90度）にする
                 spawnY = oldY - 10.0f;
-                angle = DX_PI * 0.5f;
+                angle = 0.0f;
             }
+
+            // 縦移動のときは、縦専用の煙画像をセット！
+            effectImagePath = "Resource/Images/Effect/Smoke3.png";
         }
 
         // 座標更新と手数減算（既存の処理）
@@ -292,8 +303,8 @@ void Player::Move(const std::vector<GameObject*>& objects) {
         y = nextY;
         tekazu--;
 
-        // 整理されたクリーンな引数でエフェクトを追加！
-        effectManager.AddEffect(spawnX, spawnY, EffectType::Smoke, "Resource/Images/Effect/Smoke.png", 0.2f, angle, isReversedX);
+        // 最後の引数に、上で切り替えた「effectImagePath」をそのまま渡す！
+        effectManager.AddEffect(spawnX, spawnY, EffectType::Smoke, effectImagePath, 0.2f, angle, isReversedX);
     }
 }
 

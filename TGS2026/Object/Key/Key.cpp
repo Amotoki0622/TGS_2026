@@ -1,1 +1,141 @@
-#include "Key.h"
+﻿#include "Key.h"
+#include "../Player/Player.h"
+#include "DxLib.h"
+#include <cmath>
+
+Key::Key(float x, float y, Player* p)
+{
+    this->location.x = x;
+    this->location.y = y;
+
+    // 当たり判定のサイズ
+    this->box_size.x = 64.0f;
+    this->box_size.y = 64.0f;
+
+    this->isPickedUp = false;
+    this->targetPlayer = p;
+    this->angle = 0.0f; // この角度を全演出に共通して使います
+}
+
+Key::~Key()
+{
+    this->Finalize();
+}
+
+void Key::Initialize() {}
+
+void Key::Update(float delta_second)
+{
+    if (targetPlayer == nullptr) return;
+
+    if (!isPickedUp)
+    {
+        // -------------------------------------------------------------
+        // 【状態1】拾われる前：その場でフワフワ（変更なし）
+        // -------------------------------------------------------------
+        int px, py;
+        targetPlayer->GetLocation(px, py);
+        float pw = targetPlayer->GetCollisionWidth();
+        float ph = targetPlayer->GetCollisionHeight();
+
+        float halfW = box_size.x * 0.5f;
+        float halfH = box_size.y * 0.5f;
+        float left = location.x - halfW;
+        float right = location.x + halfW;
+        float top = location.y - halfH;
+        float bottom = location.y + halfH;
+
+        float pLeft = (float)px - pw * 0.5f;
+        float pRight = (float)px + pw * 0.5f;
+        float pTop = (float)py - ph * 0.5f;
+        float pBottom = (float)py + ph * 0.5f;
+
+        if (left < pRight && right > pLeft && top < pBottom && bottom > pTop)
+        {
+            isPickedUp = true; // 重なったら取得！
+        }
+
+        // 演出用の角度を更新（拾う前と同じゆったりしたテンポ）
+        angle += 2.0f * delta_second;
+    }
+    else
+    {
+        // -------------------------------------------------------------
+        // 【状態2】拾われた後：しっかり離れてフワフワ浮きながら追従
+        // -------------------------------------------------------------
+        int px, py;
+        targetPlayer->GetLocation(px, py);
+
+        // 1. 💡 角度は拾う前と全く同じテンポ（2.0f）で更新し続ける！
+        // これで、拾う前後でフワフワのリズムがシームレスに繋がります
+        angle += 2.0f * delta_second;
+
+        // 2. 💡 向きに合わせて目標地点を左右に切り替える（被り防止）
+        float offsetX = -40.0f; // 基本はプレイヤーの左（後ろ）
+        if (location.x > (float)px)
+        {
+            // プレイヤーより右にいる（＝左に移動中）なら目標を「右（+50px）」に
+            offsetX = 40.0f;
+        }
+
+        float targetX = (float)px + offsetX;
+        float targetY = (float)py + 10.0f; // 💡 プレイヤーの背中あたりの高さにする
+
+        // 3. 鍵と目標点の現在の距離を計算
+        float dx = targetX - location.x;
+        float dy = targetY - location.y;
+        float distance = sqrtf(dx * dx + dy * dy);
+
+        // 💡 近づかない最低距離を思い切って「80ピクセル」まで拡大！
+        // これでキャラクターとの間にしっかりとした「後ろの距離」が生まれます
+        float keepDistance = 80.0f;
+
+        if (distance > keepDistance)
+        {
+            // ストッパーより離れているときだけ、少しゆっくり（0.06f）近づく
+            // 💡 数値を落としたことで、プレイヤーが動くと自然と引き離されて遅れてついてきます
+            location.x += dx * 0.06f;
+            location.y += dy * 0.06f;
+        }
+    }
+}
+
+// -----------------------------------------------------------------
+// 【浮遊感の肝】描画関数
+// -----------------------------------------------------------------
+void Key::Draw() const
+{
+    unsigned int color = GetColor(255, 220, 0); // 黄色
+
+    if (!isPickedUp)
+    {
+        // --- 拾われる前 ---
+        // ベースとなる位置（location.y）に、サイン波で上下の揺れ（±8.0f）を加える
+        float bounceY = location.y + sinf(angle * 2.0f) * 8.0f;
+        DrawCircle((int)location.x, (int)bounceY, 15, color, FALSE, 3);
+    }
+    else
+    {
+        // --- ⭕ 拾われた後 ---
+        // 💡【ここが一番重要！】
+        // 追従しているベース位置（location.y）に、拾う前と全く同じ幅（* 8.0f）と速度（angle * 2.0f）
+        // のサイン波を上乗せして描画します！！！
+        //
+        // これにより、しっかり離れた位置に追従しつつ、立ち止まったときも
+        // その場で「フワフワ…ゆらゆら…」と上下に揺れ続けてくれます。
+        float bounceY = location.y + sinf(angle * 2.0f) * 8.0f;
+
+        // 拾った後は小さめの塗りつぶし円にして「所持している」感を出します
+        DrawCircle((int)location.x, (int)bounceY, 12, color, TRUE);
+    }
+
+#if _DEBUG
+    // デバッグ枠の表示
+    Vector2D a = location - (box_size * 0.5f);
+    Vector2D b = a + box_size;
+    DrawBoxAA(a.x, a.y, b.x, b.y, GetColor(0, 255, 0), FALSE);
+#endif
+}
+
+bool Key::IsHit(int nextX, int nextY, int width, int height) const { return false; }
+void Key::Finalize() {}

@@ -69,4 +69,6 @@ public:
 
 	// 「動かせるかどうか」のフラグ（デフォルトはfalse、ブロッククラスでtrueにする）
 	virtual bool IsMovable() const { return false; }
+
+	virtual bool IsPassable() const { return false; }
 };

@@ -37,6 +37,11 @@ public:
     // 手数用テスト
     int tekazu;
 
+    void AddEffectFromObject(float x, float y) {
+        // プレイヤー自身が持っている effectManager にそのまま横流しする
+        effectManager.AddEffect(x, y, EffectType::Smoke, "Resource/Images/GameMain/smoke.png", 0.6f, 0.0f, false);
+    }
+
 private:
     // 位置情報
     int x;
