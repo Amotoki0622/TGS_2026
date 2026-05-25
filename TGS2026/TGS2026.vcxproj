@@ -164,6 +164,7 @@
     <ClCompile Include="Object\Wall\Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Object\Trap\TrapObject\TrapObject.h" />
     <ClInclude Include="Scene\GameOver\GameOverScene.h" />
     <ClInclude Include="Utility\EffectManager\EffectManager.h" />
     <ClInclude Include="Object\Block\Block.h" />
@@ -173,7 +174,6 @@
     <ClInclude Include="Object\Warp\Warp.h" />
     <ClInclude Include="Object\Trap\SpikeTrap\SpikeTrap.h" />
     <ClInclude Include="Utility\Fade\Fade.h" />
-    <ClInclude Include="Object\Trap\TrapObject\TrapObject.h" />
     <ClInclude Include="Object\Trap\Light\Light.h" />
     <ClInclude Include="Object\Trap\Cam\Cam.h" />
     <ClInclude Include="Object\Goal\Goal.h" />
