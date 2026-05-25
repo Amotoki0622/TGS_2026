@@ -1,6 +1,7 @@
 #pragma once
 #include "DxLib.h"
 #include "../../Player/Player.h"
+#include "../../GameObject.h"
 #include <cmath>
 
 // オブジェクトの種類を定義
@@ -11,7 +12,7 @@ enum class TrapType {
     SpikeTrap          // トゲ床トラップ
 };
 
-class TrapObject {
+class TrapObject : public GameObject{
 protected:
     float x, y;
     bool detected;
@@ -23,6 +24,9 @@ public:
     }
 
     virtual ~TrapObject() {}
+
+    void Initialize() override {}
+    void Finalize() override {}
 
     virtual void Update(const Player& player, float delta_second) = 0;
     virtual void Draw() const = 0;

@@ -1,5 +1,20 @@
 #include "Cam.h"
 
+Cam::Cam()
+    : TrapObject(0.0f, 0.0f, TrapType::Camera)
+    , range(0.0f)
+    , angle(0.0f)
+    , fov(0.0f)
+    , baseAngle(0.0f)
+{
+    this->currentSwingAngle = 0.0f;
+    this->swingAngle = 0.8f;
+    this->swingSpeed = 0.4f;
+    this->direction = 1;
+    this->isPausing = false;
+    this->pauseTimer = 0.0f;
+}
+
 // コンストラクタ
 Cam::Cam(float x, float y, float angle, float range, float fov)
     : TrapObject(x, y, TrapType::Camera) // 親のコンストラクタ呼び出し
@@ -15,6 +30,21 @@ Cam::Cam(float x, float y, float angle, float range, float fov)
     this->direction = 1;
     this->isPausing = false;
     this->pauseTimer = 0.0f;
+}
+
+void Cam::Initialize()
+{
+    this->x = this->location.x;
+    this->y = this->location.y;
+
+    
+    this->currentSwingAngle = 0.0f;
+    this->swingAngle = 0.8f;
+    this->swingSpeed = 0.4f;
+    this->direction = 1;
+    this->isPausing = false;
+    this->pauseTimer = 0.0f;
+    this->detected = false;
 }
 
 // 引数に delta_second を追加しましょう

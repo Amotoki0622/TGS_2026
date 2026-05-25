@@ -10,6 +10,13 @@ void Wall::SetPlayer(Player* p)
     player = p;
 }
 
+Wall::Wall()
+    : player(nullptr)
+{
+    location = Vector2D(2.0f, 2.0f);
+    box_size = Vector2D(2.0f, 2.0f);
+}
+
 Wall::Wall(float x, float y, float w, float h) {
     // êeÉNÉâÉX GameObject Ç™éùÇ¡ÇƒÇ¢ÇÈ location Ç∆ box_size Ç…ë„ì¸Ç∑ÇÈ
     this->location.x = x;
@@ -21,6 +28,12 @@ Wall::Wall(float x, float y, float w, float h) {
 Wall::~Wall()
 {
 
+}
+
+void Wall::SetSize(float w, float h)
+{
+    box_size.x = w;
+    box_size.y = h;
 }
 
 // èâä˙âª

@@ -25,6 +25,8 @@ private:
 public:
 	void SetPlayer(Player* p); // 追加
 
+	Block();
+
 	Block(float x, float y, float w, float h);
 	~Block();
 
@@ -41,5 +43,11 @@ public:
 
 	// プレイヤーがキックするとブロックが動く
 	void Push(float moveX, float moveY, const std::vector<GameObject*>& objects);
+
+	void SetSize(float w, float h)
+	{
+		this->box_size.x = w;
+		this->box_size.y = h;
+	}
 };
 

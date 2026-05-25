@@ -14,7 +14,6 @@ void Player::Initialize()
     y = 250;
 
 
-
     radius = 64;
     speed = 128; 
 
