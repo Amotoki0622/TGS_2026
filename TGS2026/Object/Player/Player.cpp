@@ -1,15 +1,15 @@
-#include "Player.h"
+ï»¿#include "Player.h"
 #include "../Block/Block.h"
 //#include "../Wall/Wall.h"
 #include "../../Utility/InputManager.h"
 #include "../../Utility/EffectManager/EffectManager.h"
 
 // =========================
-// ‰Šú‰»ˆ—
+// åˆæœŸåŒ–å‡¦ç†
 // =========================
 void Player::Initialize()
 {
-    // ‰ŠúˆÊ’u
+    // åˆæœŸä½ç½®
     x = 64;
     y = 250;
 
@@ -18,10 +18,10 @@ void Player::Initialize()
     speed = 128; 
 
     state = State::Normal;
-    currentImage = 0; // Å‰‚Í’Êíƒ|[ƒY
+    currentImage = 0; // æœ€åˆã¯é€šå¸¸ãƒãƒ¼ã‚º
 
     currentImage = 0;
-    // ƒRƒŠƒWƒ‡ƒ“ƒTƒCƒY
+    // ã‚³ãƒªã‚¸ãƒ§ãƒ³ã‚µã‚¤ã‚º
     /*collisionWidth = radius * 1.5f;
     collisionHeight = radius * 1.5f;*/
 
@@ -32,52 +32,52 @@ void Player::Initialize()
 
     revers = TRUE;
 
-    // ‰¹Œ¹“Ç‚İ‚İEŠÖ˜A
+    // éŸ³æºèª­ã¿è¾¼ã¿ãƒ»é–¢é€£
     //moveSE = LoadSoundMem("Resource/Sounds/SE/object/player/");
 
 
-    // •Ïg
+    // å¤‰èº«æ™‚
     changeStateSE = LoadSoundMem("Resource/Sounds/SE/object/player/change.mp3");
-    // “Ç‚İ‚İ’¼Œã‚Éİ’è
-    // Šî–{‚Ìü”g”‚Í 44100 ‚ªˆê”Ê“I‚Å‚·
-    freq = GetFrequencySoundMem(changeStateSE); // Œ³‚Ìü”g”‚ğæ“¾
-    // ‰¹—Ê‚ğİ’èi—áF”¼•ª‚Ì 128 ‚âA‚©‚È‚èT‚¦‚ß‚È 80 ‚È‚Çj
+    // èª­ã¿è¾¼ã¿ç›´å¾Œã«è¨­å®š
+    // åŸºæœ¬ã®å‘¨æ³¢æ•°ã¯ 44100 ãŒä¸€èˆ¬çš„ã§ã™
+    freq = GetFrequencySoundMem(changeStateSE); // å…ƒã®å‘¨æ³¢æ•°ã‚’å–å¾—
+    // éŸ³é‡ã‚’è¨­å®šï¼ˆä¾‹ï¼šåŠåˆ†ã® 128 ã‚„ã€ã‹ãªã‚Šæ§ãˆã‚ãª 80 ãªã©ï¼‰
     ChangeVolumeSoundMem(70, changeStateSE);
-    // ”{‘¬‚É‚·‚éê‡
+    // å€é€Ÿã«ã™ã‚‹å ´åˆ
     SetFrequencySoundMem((int)(freq * 2.0f), changeStateSE);
 
-    // ƒvƒŒƒCƒ„[ƒLƒƒƒ‰‰æ‘œ•ªŠ„“Ç‚İ‚İ
-    // 1. ’Êíó‘Ô‚Ì‰æ‘œ“Ç‚İ‚İiplayer_01.pngj
-    // i‘O‰ñ‚Ìİ’è‚Ì‚Ü‚ÜF1536x1024‚ğ‘z’èj
+    // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚­ãƒ£ãƒ©ç”»åƒåˆ†å‰²èª­ã¿è¾¼ã¿
+    // 1. é€šå¸¸çŠ¶æ…‹ã®ç”»åƒèª­ã¿è¾¼ã¿ï¼ˆplayer_01.pngï¼‰
+    // ï¼ˆå‰å›ã®è¨­å®šã®ã¾ã¾ï¼š1536x1024ã‚’æƒ³å®šï¼‰
     LoadDivGraph(
         "Resource/Images/Player/player_01.png",
         2, 2, 1, 768, 1024, images
     );
 
     // =============================================================
-    // yd—vz2. ƒVƒƒƒhƒEó‘Ô‚Ì‰æ‘œ“Ç‚İ‚İishadow.pngj‚ÌC³
+    // ã€é‡è¦ã€‘2. ã‚·ãƒ£ãƒ‰ã‚¦çŠ¶æ…‹ã®ç”»åƒèª­ã¿è¾¼ã¿ï¼ˆshadow.pngï¼‰ã®ä¿®æ­£
     // =============================================================
-    // ƒvƒƒpƒeƒB‚ÅŠm”F‚µ‚½ 612x408 ‚Ì‰æ‘œ‚É‡‚í‚¹‚Äˆø”‚ğC³‚µ‚Ü‚·B
+    // ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã§ç¢ºèªã—ãŸ 612x408 ã®ç”»åƒã«åˆã‚ã›ã¦å¼•æ•°ã‚’ä¿®æ­£ã—ã¾ã™ã€‚
     int result = LoadDivGraph(
         "Resource/Images/Player/shadow2.png",
-        2,      // ‘–‡”
-        2, 1,   // ‰¡2, c1
-        768,    // 1–‡‚ ‚½‚è‚Ì‰¡• (612 / 2)
-        1024,    // 1–‡‚ ‚½‚è‚Ìc• (‚»‚Ì‚Ü‚Ü)
-        images2 // shadow—p”z—ñ‚ÉŠi”[
+        2,      // ç·æšæ•°
+        2, 1,   // æ¨ª2, ç¸¦1
+        768,    // 1æšã‚ãŸã‚Šã®æ¨ªå¹… (612 / 2)
+        1024,    // 1æšã‚ãŸã‚Šã®ç¸¦å¹… (ãã®ã¾ã¾)
+        images2 // shadowç”¨é…åˆ—ã«æ ¼ç´
     );
 
     if (result == -1) {
-        printfDx("‰æ‘œ“Ç‚İ‚İ¸”s\n");
+        printfDx("ç”»åƒèª­ã¿è¾¼ã¿å¤±æ•—\n");
     }
 
   //  // =============================================================
-  //// ˆÚ“®—p‰æ‘œ‚İ‚Ål‚¦‚éê‡@
+  //// ç§»å‹•ç”¨ç”»åƒè¾¼ã¿ã§è€ƒãˆã‚‹å ´åˆã€€
   //// =============================================================
   //  int fullNormal = LoadGraph("Resource/Images/Player/player_03.png");
   //  int fullShadow = LoadGraph("Resource/Images/Player/shadow3.png");
 
-  //  // --- 1. ’Êíó‘Ôi‚±‚ê‚Í®—ñ‚³‚ê‚Ä‚¢‚é‚Ì‚Åƒ‹[ƒv‚ÅOKj ---
+  //  // --- 1. é€šå¸¸çŠ¶æ…‹ï¼ˆã“ã‚Œã¯æ•´åˆ—ã•ã‚Œã¦ã„ã‚‹ã®ã§ãƒ«ãƒ¼ãƒ—ã§OKï¼‰ ---
   //  for (int i = 0; i < 3; i++) {
   //      images[i] = DerivationGraph(i * 512, 0, 512, 1024, fullNormal);
   //  }
@@ -86,19 +86,19 @@ void Player::Initialize()
   //      images2[i] = DerivationGraph(i * 512, 0, 480, 1024, fullShadow);
   //  }
 
-  //  // 3. e‰æ‘œ‚ğ‰ğ•úi‚±‚ê‚Åq‰æ‘œ‚¾‚¯‚ªƒƒ‚ƒŠ‚Éc‚éj
+  //  // 3. è¦ªç”»åƒã‚’è§£æ”¾ï¼ˆã“ã‚Œã§å­ç”»åƒã ã‘ãŒãƒ¡ãƒ¢ãƒªã«æ®‹ã‚‹ï¼‰
   //  DeleteGraph(fullNormal);
   //  DeleteGraph(fullShadow);
 
-  //  // 4. ƒGƒ‰[ƒ`ƒFƒbƒN
+  //  // 4. ã‚¨ãƒ©ãƒ¼ãƒã‚§ãƒƒã‚¯
   //  if (images2[0] == -1 || images2[1] == -1) {
-  //      printfDx("ƒVƒƒƒhƒE‰æ‘œ‚ÌØ‚èo‚µ‚É¸”s‚µ‚Ü‚µ‚½B\n");
+  //      printfDx("ã‚·ãƒ£ãƒ‰ã‚¦ç”»åƒã®åˆ‡ã‚Šå‡ºã—ã«å¤±æ•—ã—ã¾ã—ãŸã€‚\n");
   //  }
 
 }
 
 // =========================
-// XVˆ—
+// æ›´æ–°å‡¦ç†
 // =========================
 void Player::Update(const float& delta_second)
 {
@@ -110,20 +110,20 @@ void Player::Update(const float& delta_second)
 }
 
 // =========================
-// ˆÚ“®ˆ—
+// ç§»å‹•å‡¦ç†
 // =========================
 void Player::Move(const std::vector<GameObject*>& objects) {
     InputManager* input = InputManager::GetInstance();
 
-    // Bƒ{ƒ^ƒ“iR‚éj‚ÅƒuƒƒbƒN‚ğ“®‚©‚·
+    // Bãƒœã‚¿ãƒ³ï¼ˆè¹´ã‚‹ï¼‰ã§ãƒ–ãƒ­ãƒƒã‚¯ã‚’å‹•ã‹ã™
     if (input->GetButtonInputState(XINPUT_BUTTON_B) == eInputState::ePress ||
         input->GetKeyInputState(KEY_INPUT_SPACE) == eInputState::ePress)
     {
-        // --- 1. R‚é•ûŒüiƒxƒNƒgƒ‹j‚ğŒˆ’è‚·‚é ---
+        // --- 1. è¹´ã‚‹æ–¹å‘ï¼ˆãƒ™ã‚¯ãƒˆãƒ«ï¼‰ã‚’æ±ºå®šã™ã‚‹ ---
         float kickX = 0.0f;
         float kickY = 0.0f;
 
-        // \šƒL[‚Ü‚½‚ÍƒL[ƒ{[ƒh‚Ì“ü—Í‚ğƒ`ƒFƒbƒN
+        // åå­—ã‚­ãƒ¼ã¾ãŸã¯ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ã®å…¥åŠ›ã‚’ãƒã‚§ãƒƒã‚¯
         if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_LEFT) == eInputState::eHold ||
             input->GetKeyInputState(KEY_INPUT_LEFT) == eInputState::eHold) {
             kickX = -128.0f;
@@ -141,24 +141,24 @@ void Player::Move(const std::vector<GameObject*>& objects) {
             kickY = 128.0f;
         }
         else {
-            // ‰½‚à•ûŒü‚ª‰Ÿ‚³‚ê‚Ä‚¢‚È‚¢ê‡‚ÍA¡‚ÌƒvƒŒƒCƒ„[‚ÌŒü‚«(revers)‚ÉR‚é
+            // ä½•ã‚‚æ–¹å‘ãŒæŠ¼ã•ã‚Œã¦ã„ãªã„å ´åˆã¯ã€ä»Šã®ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å‘ã(revers)ã«è¹´ã‚‹
             kickX = (revers == TRUE) ? 128.0f : -128.0f;
         }
 
-        // --- 2. ”»’è‚ğo‚·ˆÊ’uicheckÀ•Wj‚ğŒvZ ---
-        // ÀÛ‚ÉR‚è‚¾‚·—Ê(128)‚Å‚Í‚È‚­A–Ú‚Ì‘O(64)‚ÉƒuƒƒbƒN‚ª‚ ‚é‚©’²‚×‚é
+        // --- 2. åˆ¤å®šã‚’å‡ºã™ä½ç½®ï¼ˆcheckåº§æ¨™ï¼‰ã‚’è¨ˆç®— ---
+        // å®Ÿéš›ã«è¹´ã‚Šã ã™é‡(128)ã§ã¯ãªãã€ç›®ã®å‰(64)ã«ãƒ–ãƒ­ãƒƒã‚¯ãŒã‚ã‚‹ã‹èª¿ã¹ã‚‹
         float checkX = (float)x + (kickX != 0 ? (kickX > 0 ? 64.0f : -64.0f) : 0.0f);
         float checkY = (float)y + (kickY != 0 ? (kickY > 0 ? 64.0f : -64.0f) : 0.0f);
 
-        // --- 3. Õ“Ë”»’è‚ÆPush‚ÌÀs ---
+        // --- 3. è¡çªåˆ¤å®šã¨Pushã®å®Ÿè¡Œ ---
         for (auto& obj : objects) {
             if (obj == this) continue;
 
-            if (obj->IsHit((int)checkX, (int)checkY, 60, 60)) { // ­‚µ—V‚Ñ(60)‚ğ‚½‚¹‚é
+            if (obj->IsHit((int)checkX, (int)checkY, 60, 60)) { // å°‘ã—éŠã³(60)ã‚’æŒãŸã›ã‚‹
                 Block* targetBlock = dynamic_cast<Block*>(obj);
                 if (targetBlock != nullptr) {
                     targetBlock->Push(kickX, kickY, objects);
-                    return; // ¬Œ÷‚µ‚½‚çI—¹
+                    return; // æˆåŠŸã—ãŸã‚‰çµ‚äº†
                 }
             }
         }
@@ -169,7 +169,7 @@ void Player::Move(const std::vector<GameObject*>& objects) {
     int moveY = 0;
 
     // =========================
-    // “ü—Íi1•ûŒü‚¾‚¯‚É§ŒÀj
+    // å…¥åŠ›ï¼ˆ1æ–¹å‘ã ã‘ã«åˆ¶é™ï¼‰
     // =========================
     if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_LEFT) == eInputState::ePress ||
         input->GetKeyInputState(KEY_INPUT_LEFT) == eInputState::ePress)
@@ -194,121 +194,121 @@ void Player::Move(const std::vector<GameObject*>& objects) {
         moveY = speed;
     }
 
-    // “ü—Í‚ª‚È‚¯‚ê‚Î‰½‚à‚µ‚È‚¢
+    // å…¥åŠ›ãŒãªã‘ã‚Œã°ä½•ã‚‚ã—ãªã„
     if (moveX == 0 && moveY == 0) return;
 
     // =========================
-    // Ÿ‚ÌÀ•W‚ğŒvZ
+    // æ¬¡ã®åº§æ¨™ã‚’è¨ˆç®—
     // =========================
     int nextX = x + moveX;
     int nextY = y + moveY;
 
     // =========================
-    // ‰æ–ÊŠOƒ`ƒFƒbƒN
+    // ç”»é¢å¤–ãƒã‚§ãƒƒã‚¯
     // =========================
-    if (nextX < radius || nextX > 1280 - radius || // ‰E’[‚àradius‚ğl—¶
+    if (nextX < radius || nextX > 1280 - radius || // å³ç«¯ã‚‚radiusã‚’è€ƒæ…®
         nextY < radius || nextY > 720 - radius)
     {
         return;
     }
 
     // =========================
-    // ƒIƒuƒWƒFƒNƒg‚Æ‚Ì“–‚½‚è”»’è
+    // ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¨ã®å½“ãŸã‚Šåˆ¤å®š
     // =========================
     bool canMove = true;
 
     for (const auto& obj : objects)
     {
-        // ©•ª©giƒvƒŒƒCƒ„[j‚Æ‚Ì”»’è‚ÍƒXƒLƒbƒv
+        // è‡ªåˆ†è‡ªèº«ï¼ˆãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ï¼‰ã¨ã®åˆ¤å®šã¯ã‚¹ã‚­ãƒƒãƒ—
         if (obj == this) continue;
 
-        // GameObjectƒNƒ‰ƒX‚É’Ç‰Á‚µ‚½IsHit‚ğŒÄ‚Ño‚·
+        // GameObjectã‚¯ãƒ©ã‚¹ã«è¿½åŠ ã—ãŸIsHitã‚’å‘¼ã³å‡ºã™
         if (obj->IsHit(nextX, nextY, collisionWidth, collisionHeight))
         {
-            // ‰½‚©‚É‚Ô‚Â‚©‚Á‚½‚Ì‚ÅAŠî–{‚ÍˆÚ“®•s‰Â
+            // ä½•ã‹ã«ã¶ã¤ã‹ã£ãŸã®ã§ã€åŸºæœ¬ã¯ç§»å‹•ä¸å¯
             canMove = false;
             break;
-            // --- ”­“WFƒIƒuƒWƒFƒNƒg‚²‚Æ‚Ì“Áêˆ— ---
-            // ‚à‚µu“®‚©‚¹‚éƒuƒƒbƒNv‚¾‚Á‚½ê‡‚Ìˆ—‚ğ‚±‚±‚É‘‚­
+            // --- ç™ºå±•ï¼šã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã”ã¨ã®ç‰¹æ®Šå‡¦ç† ---
+            // ã‚‚ã—ã€Œå‹•ã‹ã›ã‚‹ãƒ–ãƒ­ãƒƒã‚¯ã€ã ã£ãŸå ´åˆã®å‡¦ç†ã‚’ã“ã“ã«æ›¸ã
             if (obj->IsMovable())
             {
-                // ‚±‚±‚ÅƒuƒƒbƒN‘¤‚ÌMove‚È‚Ç‚ğŒÄ‚Ño‚µA
-                // ƒuƒƒbƒN‚ªˆÚ“®‚É¬Œ÷‚µ‚½‚ç canMove = true ‚É‚·‚éA‚Æ‚¢‚Á‚½ˆ—‚ª‰Â”\
+                // ã“ã“ã§ãƒ–ãƒ­ãƒƒã‚¯å´ã®Moveãªã©ã‚’å‘¼ã³å‡ºã—ã€
+                // ãƒ–ãƒ­ãƒƒã‚¯ãŒç§»å‹•ã«æˆåŠŸã—ãŸã‚‰ canMove = true ã«ã™ã‚‹ã€ã¨ã„ã£ãŸå‡¦ç†ãŒå¯èƒ½
             }
 
-            // ‚Ô‚Â‚©‚Á‚½“_‚Å‚±‚Ìƒ‹[ƒv‚Í”²‚¯‚é
+            // ã¶ã¤ã‹ã£ãŸæ™‚ç‚¹ã§ã“ã®ãƒ«ãƒ¼ãƒ—ã¯æŠœã‘ã‚‹
             break;
         }
 
     }
 
     // =========================
-    // ˆÚ“®Šm’èˆ—
+    // ç§»å‹•ç¢ºå®šå‡¦ç†
     // =========================
     if (canMove)
     {
         float oldX = (float)x;
         float oldY = (float)y;
 
-        // •Ï”‚Ì€”õ
+        // å¤‰æ•°ã®æº–å‚™
         float spawnX = oldX;
         float spawnY = oldY;
         float angle = 0.0f;
         bool isReversedX = false;
 
-        // ‰æ‘œƒpƒX‚ğ•Û‘¶‚·‚é•Ï”‚ğ1‚Â—pˆÓ‚·‚é
-        std::string effectImagePath = "Resource/Images/Effect/Smoke3.png"; // ƒfƒtƒHƒ‹ƒg
+        // ç”»åƒãƒ‘ã‚¹ã‚’ä¿å­˜ã™ã‚‹å¤‰æ•°ã‚’1ã¤ç”¨æ„ã™ã‚‹
+        std::string effectImagePath = "Resource/Images/Effect/Smoke3.png"; // ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆ
 
-        // --- šˆÚ“®•ûŒü•Ê‚Ìu³Šm‚ÈˆÊ’u’²®v‚ÆuŒ©‚½–Úv‚ÌŠ„‚èo‚µ ---
+        // --- â˜…ç§»å‹•æ–¹å‘åˆ¥ã®ã€Œæ­£ç¢ºãªä½ç½®èª¿æ•´ã€ã¨ã€Œè¦‹ãŸç›®ã€ã®å‰²ã‚Šå‡ºã— ---
         if (moveX != 0)
         {
-            // y‰¡ˆÚ“®z
-            spawnY = oldY + 20.0f; // ‰¡ˆÚ“®‚Ì‚Æ‚«‚Íˆê—¥‚Å­‚µ‰º‚É‚¸‚ç‚·
+            // ã€æ¨ªç§»å‹•ã€‘
+            spawnY = oldY + 20.0f; // æ¨ªç§»å‹•ã®ã¨ãã¯ä¸€å¾‹ã§å°‘ã—ä¸‹ã«ãšã‚‰ã™
 
             if (moveX < 0) {
-                // ¶ˆÚ“®FƒvƒŒƒCƒ„[‚Ì‰æ‘œŠî€‚ªu¶ˆÚ“®”½“]‚È‚µv‚È‚çA‰Œ‚à‡‚í‚¹‚é
+                // å·¦ç§»å‹•ï¼šãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ç”»åƒåŸºæº–ãŒã€Œå·¦ç§»å‹•ï¼åè»¢ãªã—ã€ãªã‚‰ã€ç…™ã‚‚åˆã‚ã›ã‚‹
                 isReversedX = false;
             }
             else {
-                // ‰EˆÚ“®F‰E‚ğŒü‚­‚Ì‚Å”½“]‚³‚¹‚é
+                // å³ç§»å‹•ï¼šå³ã‚’å‘ãã®ã§åè»¢ã•ã›ã‚‹
                 isReversedX = true;
             }
 
-            // ‰¡ˆÚ“®‚Ì‚Æ‚«‚ÍA‰¡ê—p‚Ì‰Œ‰æ‘œ‚ğƒZƒbƒgI
+            // æ¨ªç§»å‹•ã®ã¨ãã¯ã€æ¨ªå°‚ç”¨ã®ç…™ç”»åƒã‚’ã‚»ãƒƒãƒˆï¼
             effectImagePath = "Resource/Images/Effect/Smoke.png";
         }
         else if (moveY != 0)
         {
-            // ycˆÚ“®z‰æ‘œ‚ªcŒü‚«‚É‰ñ“]‚·‚é‚½‚ßAã‰º‚Å‚¸‚ç‚·•ûŒü‚ğ•Ï‚¦‚é
+            // ã€ç¸¦ç§»å‹•ã€‘ç”»åƒãŒç¸¦å‘ãã«å›è»¢ã™ã‚‹ãŸã‚ã€ä¸Šä¸‹ã§ãšã‚‰ã™æ–¹å‘ã‚’å¤‰ãˆã‚‹
             if (moveY < 0)
             {
-                // ãˆÚ“®Fˆê•à‘O‚Ì‘«Œ³‚È‚Ì‚ÅA­‚µu‰ºv‚É‚¸‚ç‚µ‚ÄcŒü‚«i270“xj‚É‚·‚é
+                // ä¸Šç§»å‹•ï¼šä¸€æ­©å‰ã®è¶³å…ƒãªã®ã§ã€å°‘ã—ã€Œä¸‹ã€ã«ãšã‚‰ã—ã¦ç¸¦å‘ãï¼ˆ270åº¦ï¼‰ã«ã™ã‚‹
                 spawnY = oldY + 10.0f;
                 angle = 0.0f;
             }
             else
             {
-                // ‰ºˆÚ“®Fˆê•à‘O‚Ì‘«Œ³‚È‚Ì‚ÅA­‚µuãv‚É‚¸‚ç‚µ‚ÄcŒü‚«i90“xj‚É‚·‚é
+                // ä¸‹ç§»å‹•ï¼šä¸€æ­©å‰ã®è¶³å…ƒãªã®ã§ã€å°‘ã—ã€Œä¸Šã€ã«ãšã‚‰ã—ã¦ç¸¦å‘ãï¼ˆ90åº¦ï¼‰ã«ã™ã‚‹
                 spawnY = oldY - 10.0f;
                 angle = 0.0f;
             }
 
-            // cˆÚ“®‚Ì‚Æ‚«‚ÍAcê—p‚Ì‰Œ‰æ‘œ‚ğƒZƒbƒgI
+            // ç¸¦ç§»å‹•ã®ã¨ãã¯ã€ç¸¦å°‚ç”¨ã®ç…™ç”»åƒã‚’ã‚»ãƒƒãƒˆï¼
             effectImagePath = "Resource/Images/Effect/Smoke3.png";
         }
 
-        // À•WXV‚Æè”Œ¸ZiŠù‘¶‚Ìˆ—j
+        // åº§æ¨™æ›´æ–°ã¨æ‰‹æ•°æ¸›ç®—ï¼ˆæ—¢å­˜ã®å‡¦ç†ï¼‰
         x = nextX;
         y = nextY;
         tekazu--;
 
-        // ÅŒã‚Ìˆø”‚ÉAã‚ÅØ‚è‘Ö‚¦‚½ueffectImagePathv‚ğ‚»‚Ì‚Ü‚Ü“n‚·I
+        // æœ€å¾Œã®å¼•æ•°ã«ã€ä¸Šã§åˆ‡ã‚Šæ›¿ãˆãŸã€ŒeffectImagePathã€ã‚’ãã®ã¾ã¾æ¸¡ã™ï¼
         effectManager.AddEffect(spawnX, spawnY, EffectType::Smoke, effectImagePath, 0.2f, angle, isReversedX);
     }
 }
 
 // =========================
-// ó‘ÔØ‚è‘Ö‚¦
+// çŠ¶æ…‹åˆ‡ã‚Šæ›¿ãˆ
 // =========================
 void Player::ChangeState()
 {
@@ -318,7 +318,7 @@ void Player::ChangeState()
         input->GetButtonInputState(XINPUT_BUTTON_RIGHT_SHOULDER) == eInputState::ePress ||
         input->GetKeyInputState(KEY_INPUT_RETURN) == eInputState::ePress)
     {
-        // ó‘Ô‚ªØ‚è‘Ö‚í‚éƒ^ƒCƒ~ƒ“ƒO‚ÅÄ¶
+        // çŠ¶æ…‹ãŒåˆ‡ã‚Šæ›¿ã‚ã‚‹ã‚¿ã‚¤ãƒŸãƒ³ã‚°ã§å†ç”Ÿ
         PlaySoundMem(changeStateSE, DX_PLAYTYPE_BACK);
 
         state = (state == State::Normal) ? State::Shadow : State::Normal;
@@ -328,99 +328,70 @@ void Player::ChangeState()
 }
 
 // =========================
-// ƒAƒjƒ[ƒVƒ‡ƒ“ˆ—
+// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å‡¦ç†
 // =========================
 void Player::UpdateAnimation(float delta_second)
 {
     InputManager* input = InputManager::GetInstance();
 
-    //// 1. ‰æ‘œ‚ÌØ‚è‘Ö‚¦”»’èieHoldFƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚Ä‚¢‚éŠÔ‚¸‚Á‚Æj
-    //if (input->GetButtonInputState(XINPUT_BUTTON_A) == eInputState::eHold ||
-    //    input->GetKeyInputState(KEY_INPUT_SPACE) == eInputState::eHold)
-    //{
-    //    currentImage = 1; // ‰Ÿ‚µ‚Ä‚¢‚éŠÔ‚ÍƒAƒNƒVƒ‡ƒ“‰æ‘œ
-    //}
-    //else
-    //{
-    //    currentImage = 0; // —£‚¹‚Î’Êí—§‚¿
-    //}
-
-    //// 2. è”‚ÌŒ¸Z”»’èiePressF‰Ÿ‚µ‚½uŠÔ‚¾‚¯1‰ñj
-    //if (input->GetButtonInputState(XINPUT_BUTTON_A) == eInputState::ePress ||
-    //    input->GetKeyInputState(KEY_INPUT_SPACE) == eInputState::ePress)
-    //{
-    //    tekazu--; // ‰Ÿ‚µ‚½uŠÔ‚É1‰ñ‚¾‚¯ƒ}ƒCƒiƒX
-    //}
-
-    // --- 1. “ü—Í”»’è ---
-    bool isPushing = (input->GetButtonInputState(XINPUT_BUTTON_B) == eInputState::eHold ||
-        input->GetKeyInputState(KEY_INPUT_SPACE) == eInputState::eHold);
-
+    // 1. ãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚ŒãŸç¬é–“ã‚’æ¤œçŸ¥
     bool isPressed = (input->GetButtonInputState(XINPUT_BUTTON_B) == eInputState::ePress ||
         input->GetKeyInputState(KEY_INPUT_SPACE) == eInputState::ePress);
 
-    // --- 2. ƒ^ƒCƒ}[‚Æ‰æ‘œ‚Ì§Œä ---
-    if (isPushing)
+    // ãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚Œã¦ã„ã¦ã€ã‹ã¤ã€Œä»Šã¯ç¡¬ç›´ä¸­ã§ãªã„ï¼ˆã‚¿ã‚¤ãƒãƒ¼ãŒ0ï¼‰ã€ã¨ãã ã‘å®Ÿè¡Œã™ã‚‹
+    if (isPressed && actionTimer <= 0.0f)
     {
-        currentImage = 1;      // ‰Ÿ‚µ‚Ä‚¢‚éŠÔ‚Í‰æ‘œ1
-        actionTimer = 0.25f;    // í‚Éu—]‰Cƒ^ƒCƒ}[v‚ğÅ‘å’li—áF0.25•bj‚ÉƒŠƒZƒbƒg‚µ‘±‚¯‚é
+        actionTimer = 0.25f; // è¹´ã‚Šç™ºå‹•ï¼0.25ç§’ã®ç¡¬ç›´ã‚¹ã‚¿ãƒ¼ãƒˆ
+        tekazu--;            // æ‰‹æ•°ã‚’1æ¸›ã‚‰ã™
+    }
+
+    // ã‚¿ã‚¤ãƒãƒ¼ã®ã‚«ã‚¦ãƒ³ãƒˆãƒ€ã‚¦ãƒ³ã¨ç”»åƒã®åˆ¶å¾¡ï¼ˆå¤‰æ›´ãªã—ï¼‰
+    if (actionTimer > 0.0f)
+    {
+        currentImage = 1;           // ç¡¬ç›´ä¸­ã¯ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ç”»åƒ
+        actionTimer -= delta_second; // ã‚¿ã‚¤ãƒãƒ¼ã‚’æ¸›ã‚‰ã—ã¦ã„ã
     }
     else
     {
-        // ƒ{ƒ^ƒ“‚ğ—£‚µ‚Ä‚¢‚é‚Æ‚«
-        if (actionTimer > 0.0f)
-        {
-            currentImage = 1;           // ƒ^ƒCƒ}[‚ªc‚Á‚Ä‚¢‚ê‚Î‰æ‘œ1‚ğˆÛ
-            actionTimer -= delta_second; // ƒ^ƒCƒ}[‚ğŒ¸‚ç‚µ‚Ä‚¢‚­
-        }
-        else
-        {
-            currentImage = 0;           // ƒ^ƒCƒ}[‚ªØ‚ê‚½‚ç’Êí‰æ‘œ‚É–ß‚é
-        }
-    }
-
-    // --- 3. è”‚ÌŒ¸Z ---
-    if (isPressed)
-    {
-        tekazu--;
+        currentImage = 0;           // é€šå¸¸ç”»åƒã«æˆ»ã‚‹
+        actionTimer = 0.0f;
     }
 }
-
 
 void Player::Draw() const
 {
     if (state == State::Normal)
     {
-        // ’Êíó‘Ôiplayer_01.png ‚Í‘å‚«‚¢‚Ì‚Å 0.17”{j
+        // é€šå¸¸çŠ¶æ…‹ï¼ˆplayer_01.png ã¯å¤§ãã„ã®ã§ 0.17å€ï¼‰
         if (images[currentImage] != -1)
         {
-                               //«ˆÚ“®‚Ì‰æ‘œ‚Ì’Ç‰Á‚Í‚±‚±‚ğ0.3
+                               //â†“ç§»å‹•ã®ç”»åƒã®è¿½åŠ æ™‚ã¯ã“ã“ã‚’0.3
             DrawRotaGraph(x, y, 0.2, 0.0, images[currentImage], TRUE, revers);
         }
     }
-    else // Shadowó‘Ô
+    else // ShadowçŠ¶æ…‹æ™‚
     {
-        // ƒVƒƒƒhƒEó‘ÔF­‚µ“§‚¯‚³‚¹‚éiƒAƒ‹ƒtƒ@’l 150‘OŒãj
-        // ‚±‚ê‚É‚æ‚èu‰B‚ê‚Ä‚¢‚évuÀ‘Ì‚ª‚È‚¢vŠ´‚¶‚É
+        // ã‚·ãƒ£ãƒ‰ã‚¦çŠ¶æ…‹ï¼šå°‘ã—é€ã‘ã•ã›ã‚‹ï¼ˆã‚¢ãƒ«ãƒ•ã‚¡å€¤ 150å‰å¾Œï¼‰
+        // ã“ã‚Œã«ã‚ˆã‚Šã€Œéš ã‚Œã¦ã„ã‚‹ã€ã€Œå®Ÿä½“ãŒãªã„ã€æ„Ÿã˜ã«
         SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
 
-        // ƒVƒƒƒhƒEó‘Ôishadow.png ‚Í¬‚³‚¢‚Ì‚ÅA‚à‚Á‚Æ‘å‚«‚­‚·‚éj
+        // ã‚·ãƒ£ãƒ‰ã‚¦çŠ¶æ…‹ï¼ˆshadow.png ã¯å°ã•ã„ã®ã§ã€ã‚‚ã£ã¨å¤§ããã™ã‚‹ï¼‰
         if (images2[currentImage] != -1)
         {
-                              //«ˆÚ“®‚Ì‰æ‘œ‚Ì’Ç‰Á‚Í‚±‚±‚ğ0.3
+                              //â†“ç§»å‹•ã®ç”»åƒã®è¿½åŠ æ™‚ã¯ã“ã“ã‚’0.3
             DrawRotaGraph(x, y, 0.2, 0.0, images2[currentImage], TRUE, revers);
         }
-        // ‘¼‚Ì•`‰æ‚É‰e‹¿‚ªo‚È‚¢‚æ‚¤AÅŒã‚É•`‰æƒ‚[ƒh‚ğƒŠƒZƒbƒg‚·‚é
+        // ä»–ã®æç”»ã«å½±éŸ¿ãŒå‡ºãªã„ã‚ˆã†ã€æœ€å¾Œã«æç”»ãƒ¢ãƒ¼ãƒ‰ã‚’ãƒªã‚»ãƒƒãƒˆã™ã‚‹
     SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
     }
 
-    // ƒvƒŒƒCƒ„[‚Ì”wŒã‚É”­¶‚µ‚½ƒGƒtƒFƒNƒg‚ğ•`‰æ
+    // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®èƒŒå¾Œã«ç™ºç”Ÿã—ãŸã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’æç”»
     effectManager.Draw();
 
-    // (xÀ•W, yÀ•W, F, "‘®•¶š—ñ", •Ï”);
-    DrawFormatString(0, 100, GetColor(255, 255, 255), "è”‚Í %d ‚Å‚·", tekazu);
+    // (xåº§æ¨™, yåº§æ¨™, è‰², "æ›¸å¼æ–‡å­—åˆ—", å¤‰æ•°);
+    DrawFormatString(0, 100, GetColor(255, 255, 255), "æ‰‹æ•°ã¯ %d ã§ã™", tekazu);
 
-    // —Î‚Ì“–‚½‚è”»’è˜g‚à‚»‚Ì‚Ü‚Ü•\¦‚µ‚Ä‚¨‚­‚ÆA’†S‚ª‡‚Á‚Ä‚¢‚é‚©Šm”F‚µ‚â‚·‚¢‚Å‚·
+    // ç·‘ã®å½“ãŸã‚Šåˆ¤å®šæ ã‚‚ãã®ã¾ã¾è¡¨ç¤ºã—ã¦ãŠãã¨ã€ä¸­å¿ƒãŒåˆã£ã¦ã„ã‚‹ã‹ç¢ºèªã—ã‚„ã™ã„ã§ã™
     int left = (int)(x - collisionWidth / 2);
     int right = (int)(x + collisionWidth / 2);
     int top = (int)(y - collisionHeight / 2);
@@ -429,7 +400,7 @@ void Player::Draw() const
 }
 
 // =========================
-// ƒRƒŠƒWƒ‡ƒ“æ“¾
+// ã‚³ãƒªã‚¸ãƒ§ãƒ³å–å¾—
 // =========================
 Vector2D Player::GetCollisionPos() const
 {
@@ -447,7 +418,7 @@ float Player::GetCollisionHeight() const
 }
 
 // =========================
-// À•Wæ“¾
+// åº§æ¨™å–å¾—
 // =========================
 void Player::GetLocation(int& outX, int& outY) const
 {

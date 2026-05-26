@@ -59,6 +59,17 @@ private:
 	float detectionTimer = 0.0f;   // 猶予タイマー
 	const float LIMIT_TIME = 2.5f; // 見つかってからの制限時間
 
+
+
+
+
+private:
+	bool isPaused = false;            // ポーズ中かどうかのフラグ
+	int pauseBackgroundHandle = -1;   // ボカシ背景画像を保存するハンドル
+	int pauseSelectIndex = 0;         // メニューの選択位置（0: 戻る, 1: タイトル）
+
+
+
 public:
 	// コンストラクタ
 	InGameScene();

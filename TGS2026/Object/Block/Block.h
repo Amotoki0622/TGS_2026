@@ -20,7 +20,8 @@ private:
     EffectManager effectManager; // プレイヤー専用のエフェクトマネージャ
     int lastPx = -1;             // 1フレーム前のX座標
     int lastPy = -1;             // 1フレーム前のY座標
-
+	
+	int block_image;  // ブロックの画像
 
 public:
 	void SetPlayer(Player* p); // 追加
