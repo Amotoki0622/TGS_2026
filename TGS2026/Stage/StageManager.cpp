@@ -1,4 +1,11 @@
 #include "StageManager.h"
+#include "../Object/Player/Player.h"
+
+// 追加した所
+#include "../Object/Block/Block.h"
+#include "../Object/Wall/Wall.h"
+#include "../Object/Trap/Cam/Cam.h"
+#include <DxLib.h>
 
 // インストラクタ
 StageManager::StageManager()
@@ -11,6 +18,8 @@ StageManager::StageManager()
 
 StageManager::~StageManager()
 {
+	// もし残ってたら消すため
+	ClearObjects();
 }
 
 // 初期化処理
@@ -82,10 +91,16 @@ void StageManager::NextLevel()
 	}
 	else
 	{
-		// 全ステージクリアした時の処理(エンディング?)
+		// 全ステージクリアした時の処理(エンディングがあったらここで処理)
 	}
 
 }
+
+void StageManager::ClearObjects()
+{
+	m_Object.clear();
+}
+
 
 // 実際にオブジェクトを生成する内部関数
 void StageManager::CreateStageObject()
@@ -96,6 +111,13 @@ void StageManager::CreateStageObject()
 		return;
 	}
 
+	// 古いデータが有れば一回リセットする
+	ClearObjects();
+
+	// ★デバック用の1マスサイズ
+	const float CHIP_SIZE = 128.0f;
+
+
 	for (int y = 0; y < m_pCurrentData->height; ++y) 
 	{
 		for (int x = 0; x < (int)m_pCurrentData->map[y].size(); ++x) 
@@ -104,19 +126,64 @@ void StageManager::CreateStageObject()
 
 			// 座標計算する処理
 
+			/*マスの中心座標を求めてる*/
+			const float start_x = CHIP_SIZE / 2.0f;
+			const float start_y = CHIP_SIZE / 2.0f;
+
+			float posX = start_x + (x * CHIP_SIZE);
+			float posY = start_y + (y * CHIP_SIZE);
+			
 			// modeに応じた生成処理	(コメント文の中に詳細を書く)
 			switch (mode)
 			{
+			case 'B':
+			{
+				m_debug_isB_Detected = true;
+				m_debug_bX = posX;
+				m_debug_bY = posY;
+
+				// デバック
+				//DrawFormatString(20, 320, GetColor(255, 255, 255), "CSV 'B' Detect! X: %f Y: %f", posX, posY);
+				//AppLogAdd("★CSVから 'B' を検知しました！ マップデータ位置: [x:%d, y:%d] 計算座標: (X:%f, Y:%f)\n", x, y, posX, posY);
+
+				// 動かせる壁を生成する処理
+				Block * new_block = CreateStageObjectInstance<Block>(Vector2D(posX, posY));
+
+				if (new_block != nullptr)
+				{
+					new_block->SetSize(CHIP_SIZE, CHIP_SIZE);
+				}
+
+				break;
+			}	
 			case 'W':
+			{
 				// 壁を生成する処理
+				Wall* new_wall = CreateStageObjectInstance<Wall>(Vector2D(posX, posY));
+				if (new_wall != nullptr)
+				{
+					new_wall->SetSize(CHIP_SIZE, CHIP_SIZE);
+				}
+			}
 				break;
 
 			case 'P':
 				// プレイヤーを生成する処理
+				m_playerSpawnPos = Vector2D(posX, posY);
 				break;
 
 			case 'C':
+			{
 				// カメラを生成する処理
+				Cam* new_cam = CreateStageObjectInstance<Cam>(Vector2D(posX, posY));
+
+				if (new_cam != nullptr)
+				{
+					// 2. カメラの初期パラメータをセット
+					// 例：下向き（DX_PI_F / 2.0f）、距離350.0f、視野角0.8f
+					new_cam->SetUpCamera(DX_PI_F / 2.0f, 350.0f, 0.8f);
+				}
+			}
 				break;
 
 			case 'L':
@@ -124,7 +191,7 @@ void StageManager::CreateStageObject()
 				break;
 
 			case 'T':
-				// トラップを生成する処理
+				// トラップ(トラばさみのような地面に設置する罠)を生成する処理
 				break;
 
 			case 'F':
@@ -139,5 +206,23 @@ void StageManager::CreateStageObject()
 				break;
 			}
 		}
+	}
+}
+
+Vector2D StageManager::GetPlayerSpawnPosition() const
+{
+	return m_playerSpawnPos;
+}
+
+void StageManager::DrawDebugInfo() const
+{
+	// もし 'B' が一度でも読み込まれていたら、画面の左上にずっと文字を出し続ける デバック用
+	if (m_debug_isB_Detected == true)
+	{
+		DrawFormatString(20, 20, GetColor(255, 255, 0), "【DEBUG】CSV 'B' Loaded! Pos:(%f, %f)", m_debug_bX, m_debug_bY);
+	}
+	else
+	{
+		DrawFormatString(20, 20, GetColor(255, 0, 0), "【DEBUG】CSV 'B' NOT FOUND...");
 	}
 }

@@ -14,6 +14,7 @@
 #include "../../Object/Trap/SpikeTrap/SpikeTrap.h"       // 子クラス(トゲ床)
 #include "../../Object/Key/Key.h"
 #include "../../Utility/Fade/Fade.h"
+#include "../../Stage/StageManager.h"
 #include <vector>
 
 class InGameScene : public SceneBase
@@ -27,6 +28,7 @@ class InGameScene : public SceneBase
 	};
 
 private:
+	StageManager m_stageManager;		// StageManagerのクラスを持つ
 	Player player;
 	Goal goal;
 	std::vector<Warp> warps;

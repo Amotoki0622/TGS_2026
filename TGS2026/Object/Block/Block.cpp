@@ -11,6 +11,14 @@ void Block::SetPlayer(Player* p)
     player = p;
 }
 
+Block::Block()
+{
+    this->location.x = 0.0f;
+    this->location.y = 0.0f;
+    this->box_size.x = 0.0f;
+    this->box_size.y = 0.0f;
+}
+
 Block::Block(float x, float y, float w, float h)
 {
     // 親クラス GameObject が持っている location と box_size に代入する

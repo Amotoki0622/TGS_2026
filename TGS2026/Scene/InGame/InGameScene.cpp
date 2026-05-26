@@ -32,14 +32,30 @@ InGameScene::~InGameScene()
 // 初期化処理
 void InGameScene::Initialize()
 {
-	for (auto obj : allObjects) {
-		delete obj; // メモリから消去
-	}
+	// 一旦処理をコメント文
+	//for (auto obj : allObjects) {
+	//	delete obj; // メモリから消去
+	//}
 	allObjects.clear(); // 配列を空っぽにする
-
+	detectors.clear();
 	/*warp = new Warp(120, 320, 80, 80, 900, 320);*/
 
-	player.Initialize();  
+	// m_stageManager.Initialize();
+
+	// StageManagerが生成したブロックをInGameSceneのリストに追加する
+	for (auto* obj : m_stageManager.GetGenerateObject())
+	{
+		allObjects.push_back(obj);
+	}
+
+	// プレイヤーを初期化
+	player.Initialize();
+	// StageManagerから、CSVに書かれたプレイヤーの初期座標をもらう
+	// Vector2D playerSpawnPos = m_stageManager.GetPlayerSpawnPosition();
+
+	// プレイヤーにCSVから読み込んだ座標をセットする
+	// player.SetPosition(playerSpawnPos.x, playerSpawnPos.y);
+
 	goal.Initialize();
 	/*warp.Initialize();*/
 	goal.SetPlayer(&player);
@@ -49,6 +65,7 @@ void InGameScene::Initialize()
 	allObjects.push_back(new Wall(640.0f, 130.0f, 1280.0f, 128.0f));
 	allObjects.push_back(new Wall(640.0f, 645.0f, 1280.0f, 128.0f));
 
+	// 一旦オブジェクトを削除
 	allObjects.push_back(new Block(448.0f, 258.0f, 128.0f, 128.0f));
 	allObjects.push_back(new Block(448.0f, 386.0f, 128.0f, 128.0f));
 	allObjects.push_back(new Block(448.0f, 514.0f, 128.0f, 128.0f));
@@ -57,6 +74,7 @@ void InGameScene::Initialize()
 	allObjects.push_back(new Key(250.0f, 250.0f, &player));
 
 	allObjects.push_back(new Warp(328.0f, 300.0f, 128.0f, 128.0f, 900.0f, 320.0f));
+	
 
 	// 3. プレイヤーの初期化
 	player.Initialize();
@@ -390,6 +408,19 @@ void InGameScene::Draw() const
 	}
 	// フェードを最前面に描画
 	if (fade) fade->Draw();
+
+	// �X�e�[�W���`�悳��Ă��Ȃ����m�F���鏈��
+	int level = m_stageManager.GetCurrentLevel() + 1;
+	int moves = m_stageManager.GetCurrentMoveLimit();
+	int total = m_stageManager.GetTotalStages();
+
+	// ��F����ɁuSTAGE 1 / 8�v
+	DrawFormatString(20, 120, 0xff0000, "STAGE %d / %d", level, total);
+
+	// ��F�E��ɁuMOVE LIMIT : �v
+	DrawFormatString(20, 140, 0x00ff00, "MOVE LIMIT : %d", moves);
+
+	m_stageManager.DrawDebugInfo();		// �f�o�b�N
 }
 
 // 終了時処理

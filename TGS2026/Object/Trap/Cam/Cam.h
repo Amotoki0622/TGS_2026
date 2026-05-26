@@ -18,9 +18,20 @@ private:
     int direction;           // 1 なら右、-1 なら左へ動く
 
 public:
+    Cam();
     // 引数の型を float に統一しておくと計算ミスが減ります
     Cam(float x, float y, float angle, float range, float fov);
 
+    // 追加点
+    void SetUpCamera(float angle, float range, float fov)
+    {
+        this->baseAngle = angle;
+        this->angle = angle;
+        this->range = range;
+        this->fov = fov;
+    }
+
+    void Initialize();
     void Update(const Player& player, float delta_second) override;
     void Draw() const override;
 };
