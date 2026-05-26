@@ -1,4 +1,5 @@
 ﻿#include "InGameScene.h"
+#include "../../Utility/InputManager.h"
 #include "DxLib.h"
 
 // コンストラクタ
@@ -132,6 +133,68 @@ void InGameScene::Initialize()
 // 更新処理
 eSceneType InGameScene::Update(const float& delta_second)
 {
+	// -------------------------------------------------------------
+	// ⭕ 【追加】一時停止（ポーズ）の入力・制御フェーズ
+	// -------------------------------------------------------------
+	InputManager* input = InputManager::GetInstance();
+
+	// Escキーが押されたらポーズ状態を切り替える
+	if (input->GetKeyInputState(KEY_INPUT_ESCAPE) == eInputState::ePress)
+	{
+		isPaused = !isPaused;
+
+		if (isPaused)
+		{
+			// ポーズした瞬間のゲーム画面をキャプチャしてボカす
+			if (pauseBackgroundHandle != -1) DeleteGraph(pauseBackgroundHandle);
+
+			pauseBackgroundHandle = MakeScreen(1280, 720, FALSE); // 画面サイズに合わせる
+			GetDrawScreenGraph(0, 0, 1280, 720, pauseBackgroundHandle);
+
+			// ガウスぼかしをかける（1280x720なので、ボカシ範囲「16」くらいが綺麗です）
+			GraphFilter(pauseBackgroundHandle, DX_GRAPH_FILTER_GAUSS, 16, 800);
+
+			pauseSelectIndex = 0; // メニュー選択を「ゲームに戻る」にリセット
+		}
+	}
+
+	// 💡 もしポーズ中なら、裏のオブジェクト（プレイヤー等）の更新をすべてストップ！
+	if (isPaused)
+	{
+		// ポーズメニューの操作（上下キーで選択変更）
+		if (input->GetKeyInputState(KEY_INPUT_UP) == eInputState::ePress ||
+			input->GetKeyInputState(KEY_INPUT_W) == eInputState::ePress)
+		{
+			pauseSelectIndex = 0;
+		}
+		if (input->GetKeyInputState(KEY_INPUT_DOWN) == eInputState::ePress ||
+			input->GetKeyInputState(KEY_INPUT_S) == eInputState::ePress)
+		{
+			pauseSelectIndex = 1;
+		}
+
+		// スペースキーまたは決定ボタンが押されたときの処理
+		if (input->GetKeyInputState(KEY_INPUT_RETURN) == eInputState::ePress)
+		{
+			if (pauseSelectIndex == 0)
+			{
+				// ゲームに戻る
+				isPaused = false;
+			}
+			else if (pauseSelectIndex == 1)
+			{
+				// タイトルに戻る（BGMなどを止めて遷移）
+				StopSoundMem(mainBGM);
+				StopSoundMem(beepSE);
+				isPaused = false;
+				return eSceneType::eTitle;
+			}
+		}
+
+		return GetNowSceneType(); // 💡 ここで終わらせることで、これより下の移動やタイマー処理をフリーズさせる
+	}
+
+
 	// フェードの更新を常に行う
 	fade->Update(delta_second);
 
@@ -303,6 +366,7 @@ eSceneType InGameScene::Update(const float& delta_second)
     // 手数が0になったらゲームオーバー（リスタート処理へ）
 	if (player.GetTekazu() == 0 && state != SceneState::Restarting)
 	{
+		StopSoundMem(mainBGM); // 音を止める
 		StopSoundMem(beepSE); // 音を止める
 
 		// 1. 状態をリスタート中（暗転中）に変更する
@@ -421,11 +485,52 @@ void InGameScene::Draw() const
 	DrawFormatString(20, 140, 0x00ff00, "MOVE LIMIT : %d", moves);
 
 	m_stageManager.DrawDebugInfo();		// �f�o�b�N
+
+	// -------------------------------------------------------------
+	// ⭕ 【追加】ポーズ画面の描画処理（一番手前に重ねる）
+	// -------------------------------------------------------------
+	if (isPaused)
+	{
+		// 1. キャプチャしたボカシ背景を描画
+		DrawGraph(0, 0, pauseBackgroundHandle, FALSE);
+
+		// 2. 画面中央（1280x720の真ん中）にメニュー用ボックスを半透明で描画
+		int menuLeft = 640 - 200; // 440
+		int menuTop = 360 - 150; // 210
+		int menuRight = 640 + 200; // 840
+		int menuBottom = 360 + 150; // 510
+
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200); // 少し濃いめの暗闇
+		DrawBox(menuLeft, menuTop, menuRight, menuBottom, GetColor(15, 15, 15), TRUE);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		DrawBox(menuLeft, menuTop, menuRight, menuBottom, GetColor(255, 255, 255), FALSE); // 白枠
+
+		// 3. メニューテキストの描画
+		SetFontSize(32); // 文字を少し大きめに
+		DrawString(640 - 80, 240, "- PAUSE -", GetColor(255, 255, 255));
+
+		SetFontSize(24);
+		// 選択状態によって色と矢印（▶）の位置を変える
+		unsigned int colorResume = (pauseSelectIndex == 0) ? GetColor(255, 220, 0) : GetColor(200, 200, 200);
+		unsigned int colorTitle = (pauseSelectIndex == 1) ? GetColor(255, 220, 0) : GetColor(200, 200, 200);
+
+		DrawFormatString(640 - 100, 320, colorResume, "%s ゲームに戻る", (pauseSelectIndex == 0) ? "▶" : " ");
+		DrawFormatString(640 - 100, 380, colorTitle, "%s リスタート", (pauseSelectIndex == 1) ? "▶" : " ");
+		DrawFormatString(640 - 100, 440, colorTitle, "%s ヘルプ", (pauseSelectIndex == 1) ? "▶" : " ");
+		DrawFormatString(640 - 100, 500, colorTitle, "%s タイトルに戻る", (pauseSelectIndex == 1) ? "▶" : " ");
+	}
 }
 
 // 終了時処理
 void InGameScene::Finalize()
 {
+	// ⭕ 【追加】ポーズ用グラフィックハンドルの解放
+	if (pauseBackgroundHandle != -1)
+	{
+		DeleteGraph(pauseBackgroundHandle);
+		pauseBackgroundHandle = -1;
+	}
+
 	// 動的に生成したオブジェクトを削除してメモリリークを防ぐ
 	for (auto d : detectors)
 	{
