@@ -6,6 +6,8 @@
 #include "../Object/Wall/Wall.h"
 #include "../Object/Goal/Goal.h"
 #include "../Object/Trap/Cam/Cam.h"
+#include "../Object/Trap/SpikeTrap/SpikeTrap.h"
+#include "../Object/Key/Key.h"
 #include <DxLib.h>
 
 // インストラクタ
@@ -137,87 +139,114 @@ void StageManager::CreateStageObject()
 			// modeに応じた生成処理	(コメント文の中に詳細を書く)
 			switch (mode)
 			{
-			case 'B':
-			{
-				m_debug_isB_Detected = true;
-				m_debug_bX = posX;
-				m_debug_bY = posY;
-
-				// デバック
-				//DrawFormatString(20, 320, GetColor(255, 255, 255), "CSV 'B' Detect! X: %f Y: %f", posX, posY);
-				//AppLogAdd("★CSVから 'B' を検知しました！ マップデータ位置: [x:%d, y:%d] 計算座標: (X:%f, Y:%f)\n", x, y, posX, posY);
-
-				// 動かせる壁を生成する処理
-				Block * new_block = CreateStageObjectInstance<Block>(Vector2D(posX, posY));
-
-				if (new_block != nullptr)
+				case 'B':
 				{
-					new_block->SetSize(CHIP_SIZE, CHIP_SIZE);
-				}
+					m_debug_isB_Detected = true;
+					m_debug_bX = posX;
+					m_debug_bY = posY;
 
-				break;
-			}	
-			case 'W':
-			{
-				// 壁を生成する処理
-				Wall* new_wall = CreateStageObjectInstance<Wall>(Vector2D(posX, posY));
-				if (new_wall != nullptr)
+					// デバック
+					//DrawFormatString(20, 320, GetColor(255, 255, 255), "CSV 'B' Detect! X: %f Y: %f", posX, posY);
+					//AppLogAdd("★CSVから 'B' を検知しました！ マップデータ位置: [x:%d, y:%d] 計算座標: (X:%f, Y:%f)\n", x, y, posX, posY);
+
+					// 動かせる壁を生成する処理
+					Block * new_block = CreateStageObjectInstance<Block>(Vector2D(posX, posY));
+
+					if (new_block != nullptr)
+					{
+						new_block->SetSize(CHIP_SIZE, CHIP_SIZE);
+					}
+				}	
+					break;
+
+				case 'W':
 				{
-					new_wall->SetSize(CHIP_SIZE, CHIP_SIZE);
+					// 壁を生成する処理
+					Wall* new_wall = CreateStageObjectInstance<Wall>(Vector2D(posX, posY));
+					if (new_wall != nullptr)
+					{
+						new_wall->SetSize(CHIP_SIZE, CHIP_SIZE);
+					}
 				}
-			}
-				break;
+					break;
 
-			case 'P':
-				// プレイヤーを生成する処理
-				m_playerSpawnPos = Vector2D(posX, posY);
-				break;
+				case 'P':
+					// プレイヤーを生成する処理
+					m_playerSpawnPos = Vector2D(posX, posY);
+					break;
 
-			case 'C':
-			{
-				// カメラを生成する処理
-				Cam* new_cam = CreateStageObjectInstance<Cam>(Vector2D(posX, posY));
-
-				if (new_cam != nullptr)
+				case 'C':
 				{
-					// 2. カメラの初期パラメータをセット
-					// 例：下向き（DX_PI_F / 2.0f）、距離350.0f、視野角0.8f
-					new_cam->SetUpCamera(DX_PI_F / 2.0f, 350.0f, 0.8f);
+					// カメラを生成する処理
+					Cam* new_cam = CreateStageObjectInstance<Cam>(Vector2D(posX, posY));
+
+					if (new_cam != nullptr)
+					{
+						// 2. カメラの初期パラメータをセット
+						// 例：下向き（DX_PI_F / 2.0f）、距離350.0f、視野角0.8f
+						new_cam->SetUpCamera(DX_PI_F / 2.0f, 350.0f, 0.8f);
+					}
 				}
-			}
-				break;
-			case 'G':
-			{
-				// ゴールのサイズの変数を定義(70.0f)に設定
-				const float GOAL_SIZE = 70.0f;
+					break;
 
-				Goal* new_goal = CreateStageObjectInstance<Goal>(Vector2D(posX, posY));
-
-				if (new_goal != nullptr)
+				case 'G':
 				{
-					new_goal->SetSize(GOAL_SIZE, GOAL_SIZE);
+					// ゴールのサイズの変数を定義(70.0f)に設定
+					const float GOAL_SIZE = 70.0f;
+
+					Goal* new_goal = CreateStageObjectInstance<Goal>(Vector2D(posX, posY));
+
+					if (new_goal != nullptr)
+					{
+						new_goal->SetSize(GOAL_SIZE, GOAL_SIZE);
+					}
 				}
-				break;
-			}
+					break;
 
-			case 'L':
-				// ライトを生成する処理
-				break;
+				case 'L':
+				{
+					// ライトを生成する処理
+				}
+					break;
 
-			case 'T':
-				// トラップ(トラばさみのような地面に設置する罠)を生成する処理
-				break;
+				case 'T':
+				{
+					// トラップ(トラばさみのような地面に設置する罠)を生成する処理
+					const float TRAP_RADIUS = 100.0f;
 
-			case 'F':
-				// 床を生成する処理
-				break;
+					SpikeTrap* new_spike = CreateStageObjectInstance<SpikeTrap>(Vector2D(posX, posY));
+					if (new_spike != nullptr)
+					{
+						// 半径をセット
+						new_spike->SetRadius(TRAP_RADIUS);
 
-			case 'w':
-				// ワープを生成する処理
-				break;
+						new_spike->Initialize();
+					}
+				}
+					break;
 
-			default:
-				break;
+				case 'F':
+				{
+
+					// 床を生成する処理
+				}
+					break;
+
+				case 'w':
+				{
+
+					// ワープを生成する処理
+				}
+					break;
+				case 'K':
+				{
+					// 鍵を生成する処理
+					Key* new_key = CreateStageObjectInstance<Key>(Vector2D(posX, posY));
+				}
+					break;
+
+				default:
+					break;
 			}
 		}
 	}

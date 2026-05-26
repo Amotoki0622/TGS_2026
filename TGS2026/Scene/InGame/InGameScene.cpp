@@ -41,12 +41,20 @@ void InGameScene::Initialize()
 	detectors.clear();
 	/*warp = new Warp(120, 320, 80, 80, 900, 320);*/
 
+	// StageManagerで読みこんだものを呼び出す
 	// m_stageManager.Initialize();
 
 	// StageManagerが生成したブロックをInGameSceneのリストに追加する
 	for (auto* obj : m_stageManager.GetGenerateObject())
 	{
 		allObjects.push_back(obj);
+
+		// もしオブジェクトの正体が「鍵」だったら、プレイヤーのアドレスをセットする
+		Key* keyObj = dynamic_cast<Key*>(obj);
+		if (keyObj != nullptr)
+		{
+			keyObj->SetPlayer(&player); // これで鍵がプレイヤーを追いかけられるようになります！
+		}
 	}
 
 	// プレイヤーを初期化
@@ -63,8 +71,8 @@ void InGameScene::Initialize()
 	/*warp.SetPlayer(&player);*/
 
 	// オブジェクトの生成
-	allObjects.push_back(new Wall(640.0f, 130.0f, 1280.0f, 128.0f));
-	allObjects.push_back(new Wall(640.0f, 645.0f, 1280.0f, 128.0f));
+	 allObjects.push_back(new Wall(640.0f, 130.0f, 1280.0f, 128.0f));
+	 allObjects.push_back(new Wall(640.0f, 645.0f, 1280.0f, 128.0f));
 
 	// 一旦オブジェクトを削除
 	allObjects.push_back(new Block(448.0f, 258.0f, 128.0f, 128.0f));
@@ -72,7 +80,7 @@ void InGameScene::Initialize()
 	allObjects.push_back(new Block(448.0f, 514.0f, 128.0f, 128.0f));
 
   
-	allObjects.push_back(new Key(250.0f, 250.0f, &player));
+	// allObjects.push_back(new Key(250.0f, 250.0f, &player));
 
 	allObjects.push_back(new Warp(328.0f, 300.0f, 128.0f, 128.0f, 900.0f, 320.0f));
 
@@ -132,7 +140,7 @@ void InGameScene::Initialize()
 
 
 	// 画面中央付近に、半径80pxの判定を持つトトゲを配置
-	detectors.push_back(new SpikeTrap(640.0f, 400.0f, 80.0f));
+	// detectors.push_back(new SpikeTrap(640.0f, 400.0f, 80.0f));
 
 	//出現位置設定↓
 	//player.x = 500;

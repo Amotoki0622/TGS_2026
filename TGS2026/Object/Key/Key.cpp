@@ -3,15 +3,23 @@
 #include "DxLib.h"
 #include <cmath>
 
+Key::Key()
+    : targetPlayer(nullptr)
+    , isPickedUp(false)
+    , angle(0.0f)
+{
+}
+
 Key::Key(float x, float y, Player* p)
 {
     this->location.x = x;
     this->location.y = y;
+    Initialize();
 
     // 当たり判定のサイズ
-    this->box_size.x = 64.0f;
-    this->box_size.y = 64.0f;
-
+    // this->box_size.x = 64.0f;
+    // this->box_size.y = 64.0f;
+    
     this->isPickedUp = false;
     this->targetPlayer = p;
     this->angle = 0.0f; // この角度を全演出に共通して使います
@@ -22,7 +30,15 @@ Key::~Key()
     this->Finalize();
 }
 
-void Key::Initialize() {}
+void Key::Initialize() 
+{
+    // isPickedUp = false;
+    // angle = 0.0f;
+
+    // 鍵のサイズを設定
+    this->box_size.x = 64.0f;
+    this->box_size.y = 64.0f;
+}
 
 void Key::Update(float delta_second)
 {
@@ -138,4 +154,10 @@ void Key::Draw() const
 }
 
 bool Key::IsHit(int nextX, int nextY, int width, int height) const { return false; }
+
+void Key::SetPlayer(Player* p)
+{
+    targetPlayer = p;
+}
+
 void Key::Finalize() {}

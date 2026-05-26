@@ -24,8 +24,8 @@ void Goal::Initialize()
     width = 70.0f;
     height = 70.0f;
 
-    /*this->x = this->location.x - (width / 2.0f);
-    this->y = this->location.y - (height / 2.0f);*/
+    // this->x = this->location.x - (width / 2.0f);
+    // this->y = this->location.y - (height / 2.0f);
 
     isGoal = false;
 }
@@ -51,8 +51,6 @@ void Goal::Draw() const
         (int)(location.y + box_size.y / 2),
         GetColor(255, 255, 255),
         TRUE
-
-        
     );*/
 
     DrawBox((int)x,(int)y,(int)(x + width),(int)(y + height), GetColor(255, 255, 255),TRUE);
@@ -107,10 +105,10 @@ bool Goal::CheckCollision() const
     float gBottom = y + height;
 
     // ゴール側も中心座標（location）とサイズ（box_size）で判定
-    //float gLeft = location.x - box_size.x / 2;
-    //float gRight = location.x + box_size.x / 2;
-    //float gTop = location.y - box_size.y / 2;
-    //float gBottom = location.y + box_size.y / 2;
+    // float gLeft = location.x - box_size.x / 2;
+    // float gRight = location.x + box_size.x / 2;
+    // float gTop = location.y - box_size.y / 2;
+    // float gBottom = location.y + box_size.y / 2;
 
     // AABB判定
     return (
