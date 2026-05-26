@@ -13,6 +13,9 @@ private:
 
 	Player* player;
 
+	//’Ç‰Á
+	bool isWarping = false;
+
 public:
 	void SetPlayer(Player* p);
 

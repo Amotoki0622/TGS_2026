@@ -28,6 +28,25 @@ void Warp::Initialize()
 
 void Warp::Update(float delta_second)
 {
+	//’Ç‰Á
+	if (player == nullptr)return;
+
+	int playerX, playerY;
+	player->GetLocation(playerX, playerY);
+
+	bool hit = IsHit(playerX, playerY, player->GetCollisionWidth(), player->GetCollisionHeight());
+
+	if (hit && !isWarping)
+	{
+		player->SetPosition(toX, toY);
+
+		isWarping = true;
+	}
+
+	if (!hit)
+	{
+		isWarping = false;
+	}
 }
 
 void Warp::Draw() const
@@ -62,10 +81,10 @@ bool Warp::IsHit(int nextX, int nextY, float pW, float pH) const
 	float pTop = nextY - pH / 2;
 	float pBottom = nextY + pH / 2;
 
-	float wLeft = x - width / 2;
-	float wRight = x + width / 2;
-	float wTop = y - height / 2;
-	float wBottom = y + height / 2;
+	float wLeft = x /*- width / 2*/;
+	float wRight = x + width /*/ 2*/;
+	float wTop = y /*- height / 2*/;
+	float wBottom = y + height /*/ 2*/;
 
 	return (
 		pLeft < wRight &&
