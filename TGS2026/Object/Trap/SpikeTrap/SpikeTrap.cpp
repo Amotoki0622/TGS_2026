@@ -2,13 +2,38 @@
 #include "../../Player/Player.h" 
 #include <cmath>
 
+SpikeTrap::SpikeTrap()
+    : TrapObject(0.0f, 0.0f, TrapType::SpikeTrap)
+    , radius(0.0f)
+    , spikeImage(-1)
+{
+}   
+
 SpikeTrap::SpikeTrap(float x, float y, float radius)
     : TrapObject(x, y, TrapType::SpikeTrap), radius(radius)
 {
+    Initialize();
+
     // 画像の読み込み（右側のトゲあり画像だけを使用）
-    int handles[2];
-    LoadDivGraph("Resource/Images/Trap/SpikeTrap/SpikeTrap2.png", 2, 2, 1, 735, 930, handles);
-    spikeImage = handles[1];
+    // int handles[2];
+    // LoadDivGraph("Resource/Images/Trap/SpikeTrap/SpikeTrap2.png", 2, 2, 1, 735, 930, handles);
+    // spikeImage = handles[1];
+}
+
+void SpikeTrap::Initialize()
+{
+    this->x = this->location.x;
+    this->y = this->location.y;
+
+    this->detected = false;
+
+    // 画像読み込み
+    if (spikeImage == -1)
+    {
+        int handles[2];
+        LoadDivGraph("Resource/Images/Trap/SpikeTrap/SpikeTrap2.png", 2, 2, 1, 735, 930, handles);
+        spikeImage = handles[1];
+    }
 }
 
 void SpikeTrap::Update(const Player& player, float delta_second) {
@@ -45,4 +70,9 @@ void SpikeTrap::Draw() const {
     if (detected) {
         DrawFormatString((int)x - 20, (int)y - 50, GetColor(255, 255, 0), "HIT!");
     }
+}
+
+void SpikeTrap::SetRadius(float r)
+{
+    this->radius = r;
 }

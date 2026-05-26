@@ -11,6 +11,7 @@ private:
     float angle;          // 演出（上下浮遊、周囲回転）に使用する角度
 
 public:
+    Key();
     Key(float x, float y, Player* p);
     ~Key();
 
@@ -24,4 +25,7 @@ public:
 
     // 基底クラス(GameObject)の仕様に合わせるための通り抜けフラグ
     bool IsPassable() const override { return true; }
+
+    // プレイヤーをセットするための関数
+    void SetPlayer(Player* p);
 };

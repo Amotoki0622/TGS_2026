@@ -8,6 +8,12 @@ void Goal::SetPlayer(Player* p)
     player = p;
 }
 
+void Goal::SetSize(float w, float h)
+{
+    box_size.x = w;
+    box_size.y = h;
+}
+
 // 初期化
 void Goal::Initialize()
 {
@@ -15,8 +21,13 @@ void Goal::Initialize()
     y = 350;
     isGoal = false;
 
-    width = 70;
-    height = 70;
+    width = 70.0f;
+    height = 70.0f;
+
+    // this->x = this->location.x - (width / 2.0f);
+    // this->y = this->location.y - (height / 2.0f);
+
+    isGoal = false;
 }
 
 // 更新
@@ -33,16 +44,16 @@ void Goal::Update(float delta_second)
 // 描画
 void Goal::Draw() const
 {
-    DrawBox(
-        (int)x,
-        (int)y,
-        (int)(x + width),
-        (int)(y + height),
+   /* DrawBox(
+        (int)(location.x - box_size.x / 2),
+        (int)(location.y - box_size.y / 2),
+        (int)(location.x + box_size.x / 2),
+        (int)(location.y + box_size.y / 2),
         GetColor(255, 255, 255),
         TRUE
+    );*/
 
-        
-    );
+    DrawBox((int)x,(int)y,(int)(x + width),(int)(y + height), GetColor(255, 255, 255),TRUE);
 
     // プレイヤー座標表示
     if (player != nullptr)
@@ -92,6 +103,12 @@ bool Goal::CheckCollision() const
     float gRight = x + width;
     float gTop = y;
     float gBottom = y + height;
+
+    // ゴール側も中心座標（location）とサイズ（box_size）で判定
+    // float gLeft = location.x - box_size.x / 2;
+    // float gRight = location.x + box_size.x / 2;
+    // float gTop = location.y - box_size.y / 2;
+    // float gBottom = location.y + box_size.y / 2;
 
     // AABB判定
     return (

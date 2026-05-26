@@ -17,6 +17,8 @@ private:
 public:
 	void SetPlayer(Player* p); // ’Ç‰Á
 
+	void SetSize(float w, float h);
+
 	// ‰Šú‰»ˆ—
 	void Initialize() override;
 	//XVˆ—
