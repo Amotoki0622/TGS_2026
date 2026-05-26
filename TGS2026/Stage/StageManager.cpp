@@ -4,6 +4,7 @@
 // 追加した所
 #include "../Object/Block/Block.h"
 #include "../Object/Wall/Wall.h"
+#include "../Object/Goal/Goal.h"
 #include "../Object/Trap/Cam/Cam.h"
 #include <DxLib.h>
 
@@ -185,6 +186,19 @@ void StageManager::CreateStageObject()
 				}
 			}
 				break;
+			case 'G':
+			{
+				// ゴールのサイズの変数を定義(70.0f)に設定
+				const float GOAL_SIZE = 70.0f;
+
+				Goal* new_goal = CreateStageObjectInstance<Goal>(Vector2D(posX, posY));
+
+				if (new_goal != nullptr)
+				{
+					new_goal->SetSize(GOAL_SIZE, GOAL_SIZE);
+				}
+				break;
+			}
 
 			case 'L':
 				// ライトを生成する処理
