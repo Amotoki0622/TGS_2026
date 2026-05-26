@@ -174,7 +174,7 @@ eSceneType InGameScene::Update(const float& delta_second)
 		}
 
 		// スペースキーまたは決定ボタンが押されたときの処理
-		if (input->GetKeyInputState(KEY_INPUT_SPACE) == eInputState::ePress)
+		if (input->GetKeyInputState(KEY_INPUT_RETURN) == eInputState::ePress)
 		{
 			if (pauseSelectIndex == 0)
 			{
@@ -515,7 +515,9 @@ void InGameScene::Draw() const
 		unsigned int colorTitle = (pauseSelectIndex == 1) ? GetColor(255, 220, 0) : GetColor(200, 200, 200);
 
 		DrawFormatString(640 - 100, 320, colorResume, "%s ゲームに戻る", (pauseSelectIndex == 0) ? "▶" : " ");
-		DrawFormatString(640 - 100, 380, colorTitle, "%s タイトルに戻る", (pauseSelectIndex == 1) ? "▶" : " ");
+		DrawFormatString(640 - 100, 380, colorTitle, "%s リスタート", (pauseSelectIndex == 1) ? "▶" : " ");
+		DrawFormatString(640 - 100, 440, colorTitle, "%s ヘルプ", (pauseSelectIndex == 1) ? "▶" : " ");
+		DrawFormatString(640 - 100, 500, colorTitle, "%s タイトルに戻る", (pauseSelectIndex == 1) ? "▶" : " ");
 	}
 }
 
