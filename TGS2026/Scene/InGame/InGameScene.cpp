@@ -82,7 +82,7 @@ void InGameScene::Initialize()
   
 	// allObjects.push_back(new Key(250.0f, 250.0f, &player));
 
-	allObjects.push_back(new Warp(328.0f, 300.0f, 128.0f, 128.0f, 900.0f, 320.0f));
+	allObjects.push_back(new Warp(328.0f, 300.0f, 128.0f, 128.0f, 832.0f, 250.0f));
 
 	// 配列に入っているすべてのオブジェクトクラスの初期化処理
 	for (GameObject* obj : allObjects)
