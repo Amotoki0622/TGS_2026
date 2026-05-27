@@ -192,7 +192,7 @@ void StageManager::CreateStageObject()
 				case 'G':
 				{
 					// ゴールのサイズの変数を定義(70.0f)に設定
-					const float GOAL_SIZE = 70.0f;
+					const float GOAL_SIZE = 128.0f;
 
 					Goal* new_goal = CreateStageObjectInstance<Goal>(Vector2D(posX, posY));
 

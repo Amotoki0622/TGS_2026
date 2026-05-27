@@ -7,9 +7,8 @@
 class Goal :public GameObject
 {
 private:
-	float x, y;
-	float width, height;
-	bool isGoal;  // ゴールフラグ
+	/*float x, y;
+	float width, height;*/
 
 	Player* player; // プレイヤー参照
 
@@ -17,7 +16,10 @@ private:
 public:
 	void SetPlayer(Player* p); // 追加
 
-	void SetSize(float w, float h);
+	Goal();
+
+	Goal(float x, float y, float w, float h);
+	~Goal();
 
 	// 初期化処理
 	void Initialize() override;
@@ -28,8 +30,13 @@ public:
 	//終了処理
 	void Finalize() override;
 
-	bool CheckCollision() const;
+	// 当たり判定チェック
+	bool IsHit(int nextX, int nextY, int width, int height) const override;
 
-	bool IsGoal() const;
+	void SetSize(float w, float h)
+	{
+		this->box_size.x = w;
+		this->box_size.y = h;
+	}
 };
 

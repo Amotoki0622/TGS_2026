@@ -59,7 +59,7 @@ private:
 	float detectionTimer = 0.0f;   // 猶予タイマー
 	const float LIMIT_TIME = 2.5f; // 見つかってからの制限時間
 
-
+	int delay;
 
 
 

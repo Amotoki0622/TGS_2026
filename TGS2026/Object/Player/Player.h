@@ -86,6 +86,8 @@ private:
     int lastPx = -1;             // 1フレーム前のX座標
     int lastPy = -1;             // 1フレーム前のY座標
 
+    bool isHitGoal = false;
+
 public:
     void Initialize();
     void Update(const float& delta_second);
@@ -119,4 +121,7 @@ private:
     // アニメーション更新
     // =========================
     void UpdateAnimation(float delta_second);
+
+public:
+    bool IsHitGoal() const { return isHitGoal; }
 };
