@@ -1,5 +1,6 @@
 ﻿#include "Player.h"
 #include "../Block/Block.h"
+#include "../Goal/Goal.h"
 //#include "../Wall/Wall.h"
 #include "../../Utility/InputManager.h"
 #include "../../Utility/EffectManager/EffectManager.h"
@@ -10,8 +11,8 @@
 void Player::Initialize()
 {
     // 初期位置
-    x = 64;
-    y = 250;
+  /*  x = 64;
+    y = 250;*/
 
 
     radius = 64;
@@ -31,6 +32,8 @@ void Player::Initialize()
     tekazu = 18;
 
     revers = TRUE;
+
+    isHitGoal = false;
 
     // 音源読み込み・関連
     //moveSE = LoadSoundMem("Resource/Sounds/SE/object/player/");
@@ -225,6 +228,13 @@ void Player::Move(const std::vector<GameObject*>& objects) {
         // GameObjectクラスに追加したIsHitを呼び出す
         if (obj->IsHit(nextX, nextY, collisionWidth, collisionHeight))
         {
+            auto goalObj = dynamic_cast<Goal*>(obj);
+            if (goalObj != nullptr)
+            {
+                isHitGoal = true; 
+                continue;
+            }
+
             // 何かにぶつかったので、基本は移動不可
             canMove = false;
             break;
