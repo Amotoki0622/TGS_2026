@@ -38,6 +38,8 @@ void Key::Initialize()
     // 鍵のサイズを設定
     this->box_size.x = 64.0f;
     this->box_size.y = 64.0f;
+
+    key_image = LoadGraph("Resource/Images/Gimmick/Key.png");
 }
 
 void Key::Update(float delta_second)
@@ -128,7 +130,8 @@ void Key::Draw() const
         // --- 拾われる前 ---
         // ベースとなる位置（location.y）に、サイン波で上下の揺れ（±8.0f）を加える
         float bounceY = location.y + sinf(angle * 2.0f) * 8.0f;
-        DrawCircle((int)location.x, (int)bounceY, 15, color, FALSE, 3);
+
+        DrawRotaGraph((int)location.x, (int)bounceY, 1.0f, 0.0f, key_image, TRUE);
     }
     else
     {
@@ -141,16 +144,9 @@ void Key::Draw() const
         // その場で「フワフワ…ゆらゆら…」と上下に揺れ続けてくれます。
         float bounceY = location.y + sinf(angle * 2.0f) * 8.0f;
 
-        // 拾った後は小さめの塗りつぶし円にして「所持している」感を出します
-        DrawCircle((int)location.x, (int)bounceY, 12, color, TRUE);
-    }
+        DrawRotaGraph((int)location.x, (int)bounceY, 1.0f, 0.0f, key_image, TRUE);
 
-#if _DEBUG
-    // デバッグ枠の表示
-    Vector2D a = location - (box_size * 0.5f);
-    Vector2D b = a + box_size;
-    DrawBoxAA(a.x, a.y, b.x, b.y, GetColor(0, 255, 0), FALSE);
-#endif
+    }
 }
 
 bool Key::IsHit(int nextX, int nextY, int width, int height) const { return false; }

@@ -10,6 +10,8 @@ private:
     bool isPickedUp;      // 鍵を拾ったかどうかのフラグ
     float angle;          // 演出（上下浮遊、周囲回転）に使用する角度
 
+    int key_image;  // 鍵の画像
+
 public:
     Key();
     Key(float x, float y, Player* p);
