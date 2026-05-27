@@ -52,20 +52,20 @@ void Warp::Update(float delta_second)
 void Warp::Draw() const
 {
 	DrawBox(
-		(int)x,
-		(int)y,
-		(int)(x + width),
-		(int)(y + height),
+		(int)(x - width / 2),
+		(int)(y - height / 2),
+		(int)(x + width / 2),
+		(int)(y + height / 2),
 		GetColor(0, 255, 255),
 		FALSE
 	);
 
 	DrawBox(
-		(int)toX,
-		(int)toY,
-		(int)(toX + width),
-		(int)(toY + height),
-		GetColor(255,128,0),
+		(int)(toX - width / 2),
+		(int)(toY - height / 2),
+		(int)(toX + width / 2),
+		(int)(toY + height / 2),
+		GetColor(255, 128, 0),
 		FALSE
 	);
 }
@@ -81,10 +81,10 @@ bool Warp::IsHit(int nextX, int nextY, float pW, float pH) const
 	float pTop = nextY - pH / 2;
 	float pBottom = nextY + pH / 2;
 
-	float wLeft = x /*- width / 2*/;
-	float wRight = x + width /*/ 2*/;
-	float wTop = y /*- height / 2*/;
-	float wBottom = y + height /*/ 2*/;
+	float wLeft = x - width / 2;
+	float wRight = x + width / 2;
+	float wTop = y - height / 2;
+	float wBottom = y + height / 2;
 
 	return (
 		pLeft < wRight &&
