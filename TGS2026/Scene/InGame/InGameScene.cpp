@@ -42,7 +42,7 @@ void InGameScene::Initialize()
 	/*warp = new Warp(120, 320, 80, 80, 900, 320);*/
 
 	// StageManagerで読みこんだものを呼び出す
-	// m_stageManager.Initialize();
+	 m_stageManager.Initialize();
 
 	// StageManagerが生成したブロックをInGameSceneのリストに追加する
 	for (auto* obj : m_stageManager.GetGenerateObject())
@@ -60,10 +60,10 @@ void InGameScene::Initialize()
 	// プレイヤーを初期化
 	player.Initialize();
 	// StageManagerから、CSVに書かれたプレイヤーの初期座標をもらう
-	// Vector2D playerSpawnPos = m_stageManager.GetPlayerSpawnPosition();
+	 Vector2D playerSpawnPos = m_stageManager.GetPlayerSpawnPosition();
 
 	// プレイヤーにCSVから読み込んだ座標をセットする
-	// player.SetPosition(playerSpawnPos.x, playerSpawnPos.y);
+	 player.SetPosition(playerSpawnPos.x, playerSpawnPos.y);
 
 	goal.Initialize();
 	/*warp.Initialize();*/
@@ -71,18 +71,18 @@ void InGameScene::Initialize()
 	/*warp.SetPlayer(&player);*/
 
 	// オブジェクトの生成
-	 allObjects.push_back(new Wall(640.0f, 130.0f, 1280.0f, 128.0f));
-	 allObjects.push_back(new Wall(640.0f, 645.0f, 1280.0f, 128.0f));
+	// allObjects.push_back(new Wall(640.0f, 130.0f, 1280.0f, 128.0f));
+	// allObjects.push_back(new Wall(640.0f, 645.0f, 1280.0f, 128.0f));
 
-	// 一旦オブジェクトを削除
-	allObjects.push_back(new Block(448.0f, 258.0f, 128.0f, 128.0f));
-	allObjects.push_back(new Block(448.0f, 386.0f, 128.0f, 128.0f));
-	allObjects.push_back(new Block(448.0f, 514.0f, 128.0f, 128.0f));
+	//// 一旦オブジェクトを削除
+	//allObjects.push_back(new Block(448.0f, 258.0f, 128.0f, 128.0f));
+	//allObjects.push_back(new Block(448.0f, 386.0f, 128.0f, 128.0f));
+	//allObjects.push_back(new Block(448.0f, 514.0f, 128.0f, 128.0f));
 
   
 	// allObjects.push_back(new Key(250.0f, 250.0f, &player));
 
-	allObjects.push_back(new Warp(328.0f, 300.0f, 128.0f, 128.0f, 832.0f, 250.0f));
+	//allObjects.push_back(new Warp(328.0f, 300.0f, 128.0f, 128.0f, 832.0f, 250.0f));
 
 	// 配列に入っているすべてのオブジェクトクラスの初期化処理
 	for (GameObject* obj : allObjects)
@@ -145,6 +145,8 @@ void InGameScene::Initialize()
 	//出現位置設定↓
 	//player.x = 500;
 	//player.y = 200;
+
+	delay = 0;
 }
 
 // 更新処理
@@ -415,10 +417,14 @@ eSceneType InGameScene::Update(const float& delta_second)
 	}
 
 	// ゴール判定
-	if (goal.IsGoal())
+	if (player.IsHitGoal())
 	{
-		// シーンの遷移
-		return eSceneType::eTitle;
+		// 少し遅れさせて遷移する
+		delay++;
+		if (delay >= 3000) {
+			// シーンの遷移
+			return eSceneType::eTitle;
+		}
 	}
 
 
@@ -521,6 +527,8 @@ void InGameScene::Draw() const
 
 	// ��F�E��ɁuMOVE LIMIT : �v
 	DrawFormatString(20, 140, 0x00ff00, "MOVE LIMIT : %d", moves);
+
+	DrawFormatString(20, 320, 0xff0000, "%d", delay);
 
 	m_stageManager.DrawDebugInfo();		// �f�o�b�N
 
