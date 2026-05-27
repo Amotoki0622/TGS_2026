@@ -133,6 +133,7 @@
   <ItemGroup>
     <ClCompile Include="AppMain.cpp" />
     <ClCompile Include="Scene\GameOver\GameOverScene.cpp" />
+    <ClCompile Include="Object\SignBoard\SignBoard.cpp" />
     <ClCompile Include="Utility\EffectManager\EffectManager.cpp" />
     <ClCompile Include="Object\Block\Block.cpp" />
     <ClCompile Include="Object\Key\Key.cpp" />
@@ -166,6 +167,7 @@
   <ItemGroup>
     <ClInclude Include="Object\Trap\TrapObject\TrapObject.h" />
     <ClInclude Include="Scene\GameOver\GameOverScene.h" />
+    <ClInclude Include="Object\SignBoard\SignBoard.h" />
     <ClInclude Include="Utility\EffectManager\EffectManager.h" />
     <ClInclude Include="Object\Block\Block.h" />
     <ClInclude Include="Object\Key\Key.h" />
