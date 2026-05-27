@@ -182,13 +182,17 @@ eSceneType InGameScene::Update(const float& delta_second)
 		if (input->GetKeyInputState(KEY_INPUT_UP) == eInputState::ePress ||
 			input->GetKeyInputState(KEY_INPUT_W) == eInputState::ePress)
 		{
-			pauseSelectIndex = 0;
+			pauseSelectIndex--; // 一つ上の項目へ
+			if (pauseSelectIndex < 0) pauseSelectIndex = 3; // 0より小さくなったら一番下の「3」へループ
 		}
+
 		if (input->GetKeyInputState(KEY_INPUT_DOWN) == eInputState::ePress ||
 			input->GetKeyInputState(KEY_INPUT_S) == eInputState::ePress)
 		{
-			pauseSelectIndex = 1;
+			pauseSelectIndex++; // 一つ下の項目へ
+			if (pauseSelectIndex > 3) pauseSelectIndex = 0; // 3より大きくなったら一番上の「0」へループ
 		}
+
 
 		// スペースキーまたは決定ボタンが押されたときの処理
 		if (input->GetKeyInputState(KEY_INPUT_RETURN) == eInputState::ePress)
@@ -198,7 +202,24 @@ eSceneType InGameScene::Update(const float& delta_second)
 				// ゲームに戻る
 				isPaused = false;
 			}
-			else if (pauseSelectIndex == 1)
+			if (pauseSelectIndex == 1)
+			{
+				// 【1: ステージをやり直す（リトライ）】
+				// 例：今のステージをはじめからにする処理
+				StopSoundMem(beepSE);
+				Initialize();
+				// 1. 状態をリスタート中（暗転中）に変更する
+				state = SceneState::Restarting;
+				// 2. フェードアウトを開始（1秒かけてIrisOutで画面を閉じる）
+				fade->Start(FadeType::IrisOut, true, 1.5f);
+
+				isPaused = false;
+			}
+			if (pauseSelectIndex == 2)
+			{
+				// ヘルプ画面、操作やギミックの説明
+			}
+			if (pauseSelectIndex == 3)
 			{
 				// タイトルに戻る（BGMなどを止めて遷移）
 				StopSoundMem(mainBGM);
@@ -504,37 +525,40 @@ void InGameScene::Draw() const
 	m_stageManager.DrawDebugInfo();		// �f�o�b�N
 
 	// -------------------------------------------------------------
-	// ⭕ 【追加】ポーズ画面の描画処理（一番手前に重ねる）
+	// ポーズ画面の描画処理（一番手前に重ねる）
 	// -------------------------------------------------------------
 	if (isPaused)
 	{
 		// 1. キャプチャしたボカシ背景を描画
 		DrawGraph(0, 0, pauseBackgroundHandle, FALSE);
 
-		// 2. 画面中央（1280x720の真ん中）にメニュー用ボックスを半透明で描画
+		// 2. メニュー用ボックス（4項目用に縦幅を少し広げて y軸を 150 -> 180 に拡張）
 		int menuLeft = 640 - 200; // 440
-		int menuTop = 360 - 150; // 210
+		int menuTop = 360 - 180; // 180 (少し上に広げる)
+		int menuBottom = 360 + 180; // 540 (少し下に広げる)
 		int menuRight = 640 + 200; // 840
-		int menuBottom = 360 + 150; // 510
 
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200); // 少し濃いめの暗闇
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
 		DrawBox(menuLeft, menuTop, menuRight, menuBottom, GetColor(15, 15, 15), TRUE);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-		DrawBox(menuLeft, menuTop, menuRight, menuBottom, GetColor(255, 255, 255), FALSE); // 白枠
+		DrawBox(menuLeft, menuTop, menuRight, menuBottom, GetColor(255, 255, 255), FALSE);
 
 		// 3. メニューテキストの描画
-		SetFontSize(32); // 文字を少し大きめに
-		DrawString(640 - 80, 240, "- PAUSE -", GetColor(255, 255, 255));
+		SetFontSize(32);
+		DrawString(640 - 80, 200, "- PAUSE -", GetColor(255, 255, 255));
 
 		SetFontSize(24);
-		// 選択状態によって色と矢印（▶）の位置を変える
-		unsigned int colorResume = (pauseSelectIndex == 0) ? GetColor(255, 220, 0) : GetColor(200, 200, 200);
-		unsigned int colorTitle = (pauseSelectIndex == 1) ? GetColor(255, 220, 0) : GetColor(200, 200, 200);
+		// 💡 各項目の色を判定（選択中なら黄色、それ以外はグレー）
+		unsigned int c0 = (pauseSelectIndex == 0) ? GetColor(255, 220, 0) : GetColor(200, 200, 200);
+		unsigned int c1 = (pauseSelectIndex == 1) ? GetColor(255, 220, 0) : GetColor(200, 200, 200);
+		unsigned int c2 = (pauseSelectIndex == 2) ? GetColor(255, 220, 0) : GetColor(200, 200, 200);
+		unsigned int c3 = (pauseSelectIndex == 3) ? GetColor(255, 220, 0) : GetColor(200, 200, 200);
 
-		DrawFormatString(640 - 100, 320, colorResume, "%s ゲームに戻る", (pauseSelectIndex == 0) ? "▶" : " ");
-		DrawFormatString(640 - 100, 380, colorTitle, "%s リスタート", (pauseSelectIndex == 1) ? "▶" : " ");
-		DrawFormatString(640 - 100, 440, colorTitle, "%s ヘルプ", (pauseSelectIndex == 1) ? "▶" : " ");
-		DrawFormatString(640 - 100, 500, colorTitle, "%s タイトルに戻る", (pauseSelectIndex == 1) ? "▶" : " ");
+		// 💡 4つの項目を縦に綺麗にならべる（Y座標を 270, 320, 370, 420 と50px刻みに配置）
+		DrawFormatString(640 - 120, 270, c0, "%s ゲームに戻る", (pauseSelectIndex == 0) ? "▶" : "　");
+		DrawFormatString(640 - 120, 320, c1, "%s リスタート", (pauseSelectIndex == 1) ? "▶" : "　");
+		DrawFormatString(640 - 120, 370, c2, "%s ヘルプ", (pauseSelectIndex == 2) ? "▶" : "　");
+		DrawFormatString(640 - 120, 420, c3, "%s タイトルに戻る", (pauseSelectIndex == 3) ? "▶" : "　");
 	}
 }
 
