@@ -115,7 +115,7 @@ void StageManager::CreateStageObject()
 	}
 
 	// 古いデータが有れば一回リセットする
-	ClearObjects();
+	//ClearObjects();
 
 	// ★デバック用の1マスサイズ
 	const float CHIP_SIZE = 128.0f;

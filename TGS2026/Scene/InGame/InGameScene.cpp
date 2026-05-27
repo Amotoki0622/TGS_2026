@@ -20,7 +20,7 @@ InGameScene::InGameScene()
 	// 倍速にする場合
 	SetFrequencySoundMem((int)(freq * 0.6f), beepSE);
 
-
+	m_stageManager.Initialize();
 }
 
 // デストラクタ
@@ -42,7 +42,7 @@ void InGameScene::Initialize()
 	/*warp = new Warp(120, 320, 80, 80, 900, 320);*/
 
 	// StageManagerで読みこんだものを呼び出す
-	 m_stageManager.Initialize();
+	// m_stageManager.Initialize();
 
 	// StageManagerが生成したブロックをInGameSceneのリストに追加する
 	for (auto* obj : m_stageManager.GetGenerateObject())
@@ -420,11 +420,41 @@ eSceneType InGameScene::Update(const float& delta_second)
 	if (player.IsHitGoal())
 	{
 		// 少し遅れさせて遷移する
-		delay++;
-		if (delay >= 3000) {
+		// delay++;
+		// if (delay >= 3000) {
+		// 	// シーンの遷移
+		// 	return eSceneType::eTitle;
+		// }
+
+		StopSoundMem(beepSE);
+
+		// 次の階層を呼び出す
+		m_stageManager.NextLevel();
+
+		// 状態をリスタート中（暗転中）に変更する
+		state = SceneState::Restarting;
+		// フェードアウトを開始（1秒かけてIrisOutで画面を閉じる）
+		fade->Start(FadeType::IrisOut, true, 1.5f);
+
+		// プレイヤーの初期化
+		player.Initialize();
+
+		// ゴールの初期化(これが無かったら重くなる)
+		goal.Initialize();
+		goal.SetPlayer(&player);
+
+		// ステージが5階クリアしたらタイトルに戻る
+		if (m_stageManager.GetCurrentLevel() >= 5)
+		{
+			StopSoundMem(mainBGM);
 			// シーンの遷移
 			return eSceneType::eTitle;
 		}
+
+		// シーンの遷移
+		// return eSceneType::eTitle;
+
+		return GetNowSceneType();
 	}
 
 
