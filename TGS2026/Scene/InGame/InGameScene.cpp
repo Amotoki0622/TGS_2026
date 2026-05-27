@@ -42,7 +42,7 @@ void InGameScene::Initialize()
 	/*warp = new Warp(120, 320, 80, 80, 900, 320);*/
 
 	// StageManagerで読みこんだものを呼び出す
-	// m_stageManager.Initialize();
+	m_stageManager.LoadLevel(m_stageManager.GetCurrentLevel());
 
 	// StageManagerが生成したブロックをInGameSceneのリストに追加する
 	for (auto* obj : m_stageManager.GetGenerateObject())
@@ -65,9 +65,9 @@ void InGameScene::Initialize()
 	// プレイヤーにCSVから読み込んだ座標をセットする
 	 player.SetPosition(playerSpawnPos.x, playerSpawnPos.y);
 
-	goal.Initialize();
+	// goal.Initialize();
 	/*warp.Initialize();*/
-	goal.SetPlayer(&player);
+	// goal.SetPlayer(&player);
 	/*warp.SetPlayer(&player);*/
 
 	// オブジェクトの生成
