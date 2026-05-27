@@ -84,6 +84,13 @@ void InGameScene::Initialize()
 
 	//allObjects.push_back(new Warp(328.0f, 300.0f, 128.0f, 128.0f, 832.0f, 250.0f));
 
+	//追加
+	Warp* warp = new Warp(320.0f, 192.0f, 128.0f, 128.0f, 320.0f, 320.0f);
+
+	warp->SetPlayer(&player);
+
+	allObjects.push_back(warp);
+
 	// 配列に入っているすべてのオブジェクトクラスの初期化処理
 	for (GameObject* obj : allObjects)
 	{
@@ -259,7 +266,7 @@ eSceneType InGameScene::Update(const float& delta_second)
 	player.Move(allObjects);
 
 	//ワープ処理
-	int playerX, playerY;
+	/*int playerX, playerY;
 	player.GetLocation(playerX, playerY);
 
 	for (auto& obj : allObjects) {
@@ -274,7 +281,7 @@ eSceneType InGameScene::Update(const float& delta_second)
 				break;
 			}
 		}
-	}
+	}*/
 
 	goal.Update(delta_second);
 	/*warp->Update(delta_second);*/

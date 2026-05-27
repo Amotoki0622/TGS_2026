@@ -28,25 +28,44 @@ void Warp::Initialize()
 
 void Warp::Update(float delta_second)
 {
+	//’Ç‰Á
+	if (player == nullptr)return;
+
+	int playerX, playerY;
+	player->GetLocation(playerX, playerY);
+
+	bool hit = IsHit(playerX, playerY, player->GetCollisionWidth(), player->GetCollisionHeight());
+
+	if (hit && !isWarping)
+	{
+		player->SetPosition(toX, toY);
+
+		isWarping = true;
+	}
+
+	if (!hit)
+	{
+		isWarping = false;
+	}
 }
 
 void Warp::Draw() const
 {
 	DrawBox(
-		(int)x,
-		(int)y,
-		(int)(x + width),
-		(int)(y + height),
+		(int)(x - width / 2),
+		(int)(y - height / 2),
+		(int)(x + width / 2),
+		(int)(y + height / 2),
 		GetColor(0, 255, 255),
 		FALSE
 	);
 
 	DrawBox(
-		(int)toX,
-		(int)toY,
-		(int)(toX + width),
-		(int)(toY + height),
-		GetColor(255,128,0),
+		(int)(toX - width / 2),
+		(int)(toY - height / 2),
+		(int)(toX + width / 2),
+		(int)(toY + height / 2),
+		GetColor(255, 128, 0),
 		FALSE
 	);
 }
