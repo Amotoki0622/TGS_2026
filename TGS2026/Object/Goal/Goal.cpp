@@ -33,7 +33,7 @@ Goal::~Goal()
 // 初期化
 void Goal::Initialize()
 {
-
+    goal_image = LoadGraph("Resource/Images/Gimmick/goal.png");
 }
 
 // 更新
@@ -45,15 +45,26 @@ void Goal::Update(float delta_second)
 // 描画
 void Goal::Draw() const
 {
+    // 1. 画像のサイズ（横幅と縦幅）を取得する
+    int img_width, img_height;
+    GetGraphSize(goal_image, &img_width, &img_height);
 
-    DrawBox(
-        (int)(location.x - box_size.x / 2),
-        (int)(location.y - box_size.y / 2),
-        (int)(location.x + box_size.x / 2),
-        (int)(location.y + box_size.y / 2),
-        GetColor(255, 255, 255),
+    // 2. 中心(location)から画像のサイズ半分を引き、左上の座標を計算して描画
+    DrawGraph(
+        (int)(location.x - img_width / 2),
+        (int)(location.y - img_height / 2),
+        goal_image,
         TRUE
     );
+
+    //DrawBox(
+    //    (int)(location.x - box_size.x / 2),
+    //    (int)(location.y - box_size.y / 2),
+    //    (int)(location.x + box_size.x / 2),
+    //    (int)(location.y + box_size.y / 2),
+    //    GetColor(255, 255, 255),
+    //    FALSE
+    //);
 }
 
 // 終了
