@@ -99,11 +99,11 @@ void InGameScene::Initialize()
 	//allObjects.push_back(new Warp(328.0f, 300.0f, 128.0f, 128.0f, 832.0f, 250.0f));
 
 	//追加
-	Warp* warp = new Warp(320.0f, 192.0f, 128.0f, 128.0f, 320.0f, 320.0f);
+	//Warp* warp = new Warp(320.0f, 192.0f, 128.0f, 128.0f, 320.0f, 320.0f);
 
-	warp->SetPlayer(&player);
+	/*warp->SetPlayer(&player);
 
-	allObjects.push_back(warp);
+	allObjects.push_back(warp);*/
 
 	// 配列に入っているすべてのオブジェクトクラスの初期化処理
 	for (GameObject* obj : allObjects)
@@ -152,8 +152,8 @@ void InGameScene::Initialize()
 
 	// カメラ配置: (x, y, 角度, 距離, 視野角)
 	// 向き(角度)はラジアン: 0=右, PI/2=下, PI=左, PI*1.5=上
-	detectors.push_back(new Cam(400.0f, 150.0f, DX_PI_F / 2.0f, 350.0f, 0.8f));
-	detectors.push_back(new Cam(950.0f, 600.0f, DX_PI_F * 1.5f, 400.0f, 0.7f));
+	/*detectors.push_back(new Cam(400.0f, 150.0f, DX_PI_F / 2.0f, 350.0f, 0.8f));
+	detectors.push_back(new Cam(950.0f, 600.0f, DX_PI_F * 1.5f, 400.0f, 0.7f));*/
 
 	//// 照明配置: (x, y, 半径)
 	//detectors.push_back(new Light(640.0f, 360.0f, 120.0f));
