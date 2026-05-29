@@ -39,7 +39,7 @@ void Wall::SetSize(float w, float h)
 // 初期化
 void Wall::Initialize()
 {
-
+    wall_image = LoadGraph("Resource/Images/Gimmick/wall.png");
 }
 
 // 更新
@@ -51,14 +51,27 @@ void Wall::Update(float delta_second)
 // 描画
 void Wall::Draw() const
 {
-    DrawBox(
-        (int)(location.x - box_size.x / 2),
-        (int)(location.y - box_size.y / 2),
-        (int)(location.x + box_size.x / 2),
-        (int)(location.y + box_size.y / 2),
-        GetColor(0, 0, 255),
-        FALSE
+    // 1. 画像のサイズ（横幅と縦幅）を取得する
+    int img_width, img_height;
+    GetGraphSize(wall_image, &img_width, &img_height);
+
+    // 2. 中心(location)から画像のサイズ半分を引き、左上の座標を計算して描画
+    DrawGraph(
+        (int)(location.x - img_width / 2),
+        (int)(location.y - img_height / 2),
+        wall_image,
+        TRUE
     );
+
+
+    //DrawBox(
+    //    (int)(location.x - box_size.x / 2),
+    //    (int)(location.y - box_size.y / 2),
+    //    (int)(location.x + box_size.x / 2),
+    //    (int)(location.y + box_size.y / 2),
+    //    GetColor(0, 0, 255),
+    //    FALSE
+    //);
 
 }
 

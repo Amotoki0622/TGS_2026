@@ -64,14 +64,14 @@ void Block::Draw() const
         TRUE
     );
 
-    DrawBox(
-        (int)(location.x - box_size.x / 2),
-        (int)(location.y - box_size.y / 2),
-        (int)(location.x + box_size.x / 2),
-        (int)(location.y + box_size.y / 2),
-        GetColor(255, 0, 0),
-        FALSE
-    );
+    //DrawBox(
+    //    (int)(location.x - box_size.x / 2),
+    //    (int)(location.y - box_size.y / 2),
+    //    (int)(location.x + box_size.x / 2),
+    //    (int)(location.y + box_size.y / 2),
+    //    GetColor(255, 0, 0),
+    //    FALSE
+    //);
 }
 
 // 終了

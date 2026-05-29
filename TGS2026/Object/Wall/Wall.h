@@ -11,6 +11,8 @@ private:
 
 	Player* player; // プレイヤー参照
 
+	int wall_image;
+
 
 public:
 	void SetPlayer(Player* p); // 追加
