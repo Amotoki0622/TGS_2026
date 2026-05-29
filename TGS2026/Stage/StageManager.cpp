@@ -118,8 +118,15 @@ void StageManager::CreateStageObject()
 	ClearObjects();
 
 	// ★デバック用の1マスサイズ
-	const float CHIP_SIZE = 128.0f;
+	//const float CHIP_SIZE = 128.0f;
 
+	// ステージごとに1マスを変更する処理(32.0f)が限界値
+	float CHIP_SIZE = 128.0f - (m_currentLevel * 32.0f);
+
+	if (CHIP_SIZE < 32.0f)
+	{
+		CHIP_SIZE = 32.0f;
+	}
 
 	for (int y = 0; y < m_pCurrentData->height; ++y) 
 	{

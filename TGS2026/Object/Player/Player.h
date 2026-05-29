@@ -111,7 +111,10 @@ public:
     // 座標取得
     void GetLocation(int& outX, int& outY) const;
     void SetPosition(float x, float y);  //プレイヤーの座標設定
+
+    // 手数関連の処理
     float GetTekazu();
+    void SetTekazu(int maxLimit);
 
     void Move(const std::vector<GameObject*>& objects);
 
@@ -127,4 +130,12 @@ public:
     bool IsHitGoal() const { return isHitGoal; }
 
     void SetHasKey(bool flag) { hasKey = flag; }
+
+    private:
+        float chipSize = 128.0f;
+        float drawScale = 128.0f;
+
+    public:
+        void SetChipSize(float size);
+
 };

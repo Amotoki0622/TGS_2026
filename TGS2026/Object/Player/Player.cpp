@@ -5,6 +5,7 @@
 //#include "../Wall/Wall.h"
 #include "../../Utility/InputManager.h"
 #include "../../Utility/EffectManager/EffectManager.h"
+#include "../../Stage/StageData.h"
 
 #include <typeinfo>
 
@@ -18,8 +19,8 @@ void Player::Initialize()
     y = 250;*/
 
 
-    radius = 64;
-    speed = 128; 
+    /*radius = 64;
+    speed = 128; */
 
     state = State::Normal;
     currentImage = 0; // 最初は通常ポーズ
@@ -29,10 +30,10 @@ void Player::Initialize()
     /*collisionWidth = radius * 1.5f;
     collisionHeight = radius * 1.5f;*/
 
-    collisionWidth = radius;
-    collisionHeight = radius;
+    /*collisionWidth = radius;
+    collisionHeight = radius;*/
 
-    tekazu = 18;
+    //tekazu = 18;
 
     revers = TRUE;
 
@@ -133,41 +134,61 @@ void Player::Move(const std::vector<GameObject*>& objects) {
         // 十字キーまたはキーボードの入力をチェック
         if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_LEFT) == eInputState::eHold ||
             input->GetKeyInputState(KEY_INPUT_LEFT) == eInputState::eHold) {
-            kickX = -128.0f;
+            //kickX = -128.0f;
+            kickX = -chipSize;
         }
         else if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_RIGHT) == eInputState::eHold ||
             input->GetKeyInputState(KEY_INPUT_RIGHT) == eInputState::eHold) {
-            kickX = 128.0f;
+            //kickX = 128.0f;
+            kickX = chipSize;
         }
         else if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_UP) == eInputState::eHold ||
             input->GetKeyInputState(KEY_INPUT_UP) == eInputState::eHold) {
-            kickY = -128.0f;
+            //kickY = -128.0f;
+            kickY = -chipSize;
         }
         else if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_DOWN) == eInputState::eHold ||
             input->GetKeyInputState(KEY_INPUT_DOWN) == eInputState::eHold) {
-            kickY = 128.0f;
+            //kickY = 128.0f;
+            kickY = chipSize;
         }
         else {
             // 何も方向が押されていない場合は、今のプレイヤーの向き(revers)に蹴る
-            kickX = (revers == TRUE) ? 128.0f : -128.0f;
+            kickX = (revers == TRUE) ? chipSize : -chipSize;
         }
 
         // --- 2. 判定を出す位置（check座標）を計算 ---
         // 実際に蹴りだす量(128)ではなく、目の前(64)にブロックがあるか調べる
-        float checkX = (float)x + (kickX != 0 ? (kickX > 0 ? 64.0f : -64.0f) : 0.0f);
-        float checkY = (float)y + (kickY != 0 ? (kickY > 0 ? 64.0f : -64.0f) : 0.0f);
+        // float checkX = (float)x + (kickX != 0 ? (kickX > 0 ? 64.0f : -64.0f) : 0.0f);
+        // float checkY = (float)y + (kickY != 0 ? (kickY > 0 ? 64.0f : -64.0f) : 0.0f);
+
+        float halfSize = chipSize / 2.0f;
+        float checkX = (float)x + (kickX != 0 ? (kickX > 0 ? halfSize : -halfSize) : 0.0f);
+        float checkY = (float)y + (kickY != 0 ? (kickY > 0 ? halfSize : -halfSize) : 0.0f);
+
 
         // --- 3. 衝突判定とPushの実行 ---
         for (auto& obj : objects) {
             if (obj == this) continue;
 
-            if (obj->IsHit((int)checkX, (int)checkY, 60, 60)) { // 少し遊び(60)を持たせる
+            float hitSize = chipSize * 0.9f;
+            if (obj->IsHit((int)checkX, (int)checkY, hitSize, hitSize))
+            {
                 Block* targetBlock = dynamic_cast<Block*>(obj);
-                if (targetBlock != nullptr) {
+                if (targetBlock != nullptr)
+                {
                     targetBlock->Push(kickX, kickY, objects);
-                    return; // 成功したら終了
+                    return;     // 成功したら終了
                 }
             }
+
+            //if (obj->IsHit((int)checkX, (int)checkY, 60, 60)) { // 少し遊び(60)を持たせる
+            //    Block* targetBlock = dynamic_cast<Block*>(obj);
+            //    if (targetBlock != nullptr) {
+            //        targetBlock->Push(kickX, kickY, objects);
+            //        return; // 成功したら終了
+            //    }
+            //}
         }
     }
 
@@ -395,6 +416,19 @@ void Player::UpdateAnimation(float delta_second)
     }
 }
 
+void Player::SetChipSize(float size)
+{
+    chipSize = size;
+    speed = (int)size;                  // 移動速度をマスと同じする
+    collisionWidth = size * 0.9f;       // あたり判定のマス(幅)を合わせる
+    collisionHeight = size * 0.9f;      // あたり判定のマス(高さ)を合わせる
+    radius = (int)(size / 2.0f);        // 当たり判定ようの半径
+
+    // マスの大きさに合わせて描画のスケールを自動計算する
+    // 128pxの時0.2倍なら、サイズが半分になったら0.1倍にする計算
+    drawScale = 0.2f * (size / 128.0f);
+}
+
 void Player::Draw() const
 {
     if (state == State::Normal)
@@ -403,7 +437,10 @@ void Player::Draw() const
         if (images[currentImage] != -1)
         {
                                //↓移動の画像の追加時はここを0.3
-            DrawRotaGraph(x, y, 0.2, 0.0, images[currentImage], TRUE, revers);
+            // DrawRotaGraph(x, y, 0.2, 0.0, images[currentImage], TRUE, revers);
+
+            // drawScaleに変更
+            DrawRotaGraph(x, y, drawScale, 0.0, images[currentImage], TRUE, revers);
         }
     }
     else // Shadow状態時
@@ -416,7 +453,10 @@ void Player::Draw() const
         if (images2[currentImage] != -1)
         {
                               //↓移動の画像の追加時はここを0.3
-            DrawRotaGraph(x, y, 0.2, 0.0, images2[currentImage], TRUE, revers);
+            // DrawRotaGraph(x, y, 0.2, 0.0, images2[currentImage], TRUE, revers);
+
+            //drawScaleに変更
+            DrawRotaGraph(x, y, drawScale, 0.0, images2[currentImage], TRUE, revers);
         }
         // 他の描画に影響が出ないよう、最後に描画モードをリセットする
     SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
@@ -472,4 +512,9 @@ void Player::SetPosition(float newX, float newY)
 float Player::GetTekazu()
 {
     return tekazu;
+}
+
+void Player::SetTekazu(int maxLimit)
+{
+    tekazu = maxLimit;
 }
