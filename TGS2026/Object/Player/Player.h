@@ -86,7 +86,8 @@ private:
     int lastPx = -1;             // 1フレーム前のX座標
     int lastPy = -1;             // 1フレーム前のY座標
 
-    bool isHitGoal = false;
+    bool isHitGoal;  // ゴールフラグ
+    bool hasKey;  //鍵フラグ
 
 public:
     void Initialize();
@@ -124,4 +125,6 @@ private:
 
 public:
     bool IsHitGoal() const { return isHitGoal; }
+
+    void SetHasKey(bool flag) { hasKey = flag; }
 };

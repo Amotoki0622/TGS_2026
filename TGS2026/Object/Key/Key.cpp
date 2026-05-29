@@ -83,6 +83,7 @@ void Key::Update(float delta_second)
         // -------------------------------------------------------------
         int px, py;
         targetPlayer->GetLocation(px, py);
+        targetPlayer->SetHasKey(true);  // 鍵の取得通知処理
 
         // 1. 💡 角度は拾う前と全く同じテンポ（2.0f）で更新し続ける！
         // これで、拾う前後でフワフワのリズムがシームレスに繋がります

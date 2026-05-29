@@ -164,8 +164,8 @@ eSceneType InGameScene::Update(const float& delta_second)
 	// -------------------------------------------------------------
 	InputManager* input = InputManager::GetInstance();
 
-	// Escキーが押されたらポーズ状態を切り替える
-	if (input->GetKeyInputState(KEY_INPUT_ESCAPE) == eInputState::ePress)
+	// EscキーかSTARTボタンが押されたらポーズ状態を切り替える
+	if (input->GetKeyInputState(KEY_INPUT_ESCAPE) == eInputState::ePress || input->GetButtonInputState(XINPUT_BUTTON_START) == eInputState::ePress)
 	{
 		isPaused = !isPaused;
 
@@ -189,22 +189,22 @@ eSceneType InGameScene::Update(const float& delta_second)
 	{
 		// ポーズメニューの操作（上下キーで選択変更）
 		if (input->GetKeyInputState(KEY_INPUT_UP) == eInputState::ePress ||
-			input->GetKeyInputState(KEY_INPUT_W) == eInputState::ePress)
+			input->GetButtonInputState(XINPUT_BUTTON_DPAD_UP) == eInputState::ePress)
 		{
 			pauseSelectIndex--; // 一つ上の項目へ
 			if (pauseSelectIndex < 0) pauseSelectIndex = 3; // 0より小さくなったら一番下の「3」へループ
 		}
 
 		if (input->GetKeyInputState(KEY_INPUT_DOWN) == eInputState::ePress ||
-			input->GetKeyInputState(KEY_INPUT_S) == eInputState::ePress)
+			input->GetButtonInputState(XINPUT_BUTTON_DPAD_DOWN) == eInputState::ePress)
 		{
 			pauseSelectIndex++; // 一つ下の項目へ
 			if (pauseSelectIndex > 3) pauseSelectIndex = 0; // 3より大きくなったら一番上の「0」へループ
 		}
 
 
-		// スペースキーまたは決定ボタンが押されたときの処理
-		if (input->GetKeyInputState(KEY_INPUT_RETURN) == eInputState::ePress)
+		// スペースキーまたは決定ボタン、Bボタンが押されたときの処理
+		if (input->GetKeyInputState(KEY_INPUT_RETURN) == eInputState::ePress || input->GetButtonInputState(XINPUT_BUTTON_B) == eInputState::ePress)
 		{
 			if (pauseSelectIndex == 0)
 			{
@@ -564,8 +564,6 @@ void InGameScene::Draw() const
 
 	// ��F�E��ɁuMOVE LIMIT : �v
 	DrawFormatString(20, 140, 0x00ff00, "MOVE LIMIT : %d", moves);
-
-	DrawFormatString(20, 320, 0xff0000, "%d", delay);
 
 	m_stageManager.DrawDebugInfo();		// �f�o�b�N
 

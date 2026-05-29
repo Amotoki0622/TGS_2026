@@ -30,4 +30,11 @@ public:
 
     // プレイヤーをセットするための関数
     void SetPlayer(Player* p);
+
+    void SetSize(float w, float h)
+    {
+        this->box_size.x = w;
+        this->box_size.y = h;
+    }
+
 };

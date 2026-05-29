@@ -1,9 +1,12 @@
 ﻿#include "Player.h"
 #include "../Block/Block.h"
 #include "../Goal/Goal.h"
+#include "../Key/Key.h"
 //#include "../Wall/Wall.h"
 #include "../../Utility/InputManager.h"
 #include "../../Utility/EffectManager/EffectManager.h"
+
+#include <typeinfo>
 
 // =========================
 // 初期化処理
@@ -34,6 +37,7 @@ void Player::Initialize()
     revers = TRUE;
 
     isHitGoal = false;
+    hasKey = false;
 
     // 音源読み込み・関連
     //moveSE = LoadSoundMem("Resource/Sounds/SE/object/player/");
@@ -220,6 +224,7 @@ void Player::Move(const std::vector<GameObject*>& objects) {
     // =========================
     bool canMove = true;
 
+
     for (const auto& obj : objects)
     {
         // 自分自身（プレイヤー）との判定はスキップ
@@ -228,14 +233,36 @@ void Player::Move(const std::vector<GameObject*>& objects) {
         // GameObjectクラスに追加したIsHitを呼び出す
         if (obj->IsHit(nextX, nextY, collisionWidth, collisionHeight))
         {
-            auto goalObj = dynamic_cast<Goal*>(obj);
-            if (goalObj != nullptr)
+            auto keyObj = dynamic_cast<Key*>(obj);
+            if (keyObj != nullptr)
             {
-                isHitGoal = true; 
+                if (hasKey)
+                {
+                    continue;
+                }
+
+                hasKey = true;
+
+                // 鍵のマスは通り抜けられるので、そのまま次のオブジェクトの判定へ進む
                 continue;
             }
 
-            // 何かにぶつかったので、基本は移動不可
+            auto goalObj = dynamic_cast<Goal*>(obj);
+            if (goalObj != nullptr)
+            {
+                if (hasKey)
+                {
+                    isHitGoal = true;
+                    continue;
+                }
+                else
+                {
+                    canMove = false;
+                    break;
+                }
+                continue;
+            }
+
             canMove = false;
             break;
             // --- 発展：オブジェクトごとの特殊処理 ---
