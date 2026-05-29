@@ -99,11 +99,11 @@ void InGameScene::Initialize()
 	//allObjects.push_back(new Warp(328.0f, 300.0f, 128.0f, 128.0f, 832.0f, 250.0f));
 
 	//追加
-	Warp* warp = new Warp(320.0f, 192.0f, 128.0f, 128.0f, 320.0f, 320.0f);
+	// Warp* warp = new Warp(320.0f, 192.0f, 128.0f, 128.0f, 320.0f, 320.0f);
 
-	warp->SetPlayer(&player);
+	// warp->SetPlayer(&player);
 
-	allObjects.push_back(warp);
+	// allObjects.push_back(warp);
 
 	// 配列に入っているすべてのオブジェクトクラスの初期化処理
 	for (GameObject* obj : allObjects)
@@ -121,6 +121,17 @@ void InGameScene::Initialize()
 	if (!fade) fade = new Fade(); // 生成
 	state = SceneState::Playing;
 	detectionTimer = 0.0f;
+
+	for (GameObject* obj : allObjects)
+	{
+		if (obj == nullptr) continue;
+
+		Warp* warpObj = dynamic_cast<Warp*>(obj);
+		if (warpObj != nullptr)
+		{
+			warpObj->SetPlayer(&player); // 位置に配置された状態でプレイヤーを登録！
+		}
+	}
 
 		// プレイヤーをセット
 	//for (auto& wall : walls)

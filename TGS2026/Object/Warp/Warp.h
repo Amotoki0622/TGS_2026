@@ -19,11 +19,17 @@ private:
 public:
 	void SetPlayer(Player* p);
 
+	Warp();
+
 	Warp(float x, float y, float w, float h, float toX, float toY);
 	~Warp();
 
 	float GetToX() const { return toX; }
 	float GetToY() const { return toY; }
+
+	void SetPosition(float px, float py);
+	void SetSize(float w, float h);
+	void SetTargetPosition(float to_x, float to_y);
 
 	//‰Šú‰»ˆ—
 	void Initialize() override;

@@ -4,6 +4,7 @@
 #include "StageLoader.h"
 #include "../Object/GameObject.h"
 #include "../Object/Trap/TrapObject/TrapObject.h"
+#include "../Object/Warp/Warp.h"
 
 #include <vector>
 class StageManager
@@ -101,5 +102,14 @@ public:
 
 	// デバック
 	void DrawDebugInfo() const;
+
+	// ワープ関連
+private:
+
+	Vector2D m_warpSrcPos;		// 入口
+	Vector2D m_warpDstPos;		// 出口
+
+	bool m_hasWarpSrc = false;
+	bool m_hasWarpDst = false;
 };
 

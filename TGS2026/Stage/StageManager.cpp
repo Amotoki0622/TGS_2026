@@ -8,6 +8,7 @@
 #include "../Object/Trap/Cam/Cam.h"
 #include "../Object/Trap/SpikeTrap/SpikeTrap.h"
 #include "../Object/Key/Key.h"
+#include "../Object/Warp/Warp.h"
 #include <DxLib.h>
 
 // インストラクタ
@@ -116,6 +117,12 @@ void StageManager::CreateStageObject()
 
 	// 古いデータが有れば一回リセットする
 	ClearObjects();
+
+	// ワープフラグリセット
+	m_hasWarpSrc = false;
+	m_hasWarpDst = false;
+	
+	Warp* temporaryWarpInstance = nullptr;	// 一時保存用
 
 	// ★デバック用の1マスサイズ
 	//const float CHIP_SIZE = 128.0f;
@@ -241,10 +248,27 @@ void StageManager::CreateStageObject()
 
 				case 'w':
 				{
+					// ワープ入口の生成
+					temporaryWarpInstance = CreateStageObjectInstance<Warp>(Vector2D(posX, posY));
+					if (temporaryWarpInstance != nullptr)
+					{
+			
+						temporaryWarpInstance->SetPosition(posX, posY);
+						temporaryWarpInstance->SetSize(CHIP_SIZE, CHIP_SIZE);
 
-					// ワープを生成する処理
+						m_warpSrcPos = Vector2D(posX, posY);
+						m_hasWarpSrc = true;
+					}
 				}
 					break;
+
+				case 'v':
+				{
+					m_warpDstPos = Vector2D(posX, posY);
+					m_hasWarpDst = true;
+				}
+					break;
+
 				case 'K':
 				{
 					// 鍵を生成する処理
@@ -256,6 +280,11 @@ void StageManager::CreateStageObject()
 					break;
 			}
 		}
+	}
+
+	if (m_hasWarpSrc && m_hasWarpDst && temporaryWarpInstance != nullptr)
+	{
+		temporaryWarpInstance->SetTargetPosition(m_warpDstPos.x, m_warpDstPos.y);
 	}
 }
 
