@@ -97,14 +97,14 @@ void Warp::Draw() const
 		FALSE
 	);*/
 	// 水色のワープ入口
-	DrawExtendGraph(
-		(int)(x - width / 2),
-		(int)(y - height / 2),
-		(int)(x + width / 2),
-		(int)(y + height / 2),
-		warpImage,
-		TRUE
-	);
+	//DrawExtendGraph(
+	//	(int)(x - width / 2),
+	//	(int)(y - height / 2),
+	//	(int)(x + width / 2),
+	//	(int)(y + height / 2),
+	//	warpImage,
+	//	TRUE
+	//);
 	/*DrawBox(
 		(int)(location.x - box_size.x / 2),
 		(int)(location.y - box_size.y / 2),
@@ -124,14 +124,14 @@ void Warp::Draw() const
 	);*/
 
 	// オレンジのワープ出口
-	DrawExtendGraph(
-		(int)(toX - width / 2),
-		(int)(toY - height / 2),
-		(int)(toX + width / 2),
-		(int)(toY + height / 2),
-		warpImage,
-		TRUE
-	);
+	//DrawExtendGraph(
+	//	(int)(toX - width / 2),
+	//	(int)(toY - height / 2),
+	//	(int)(toX + width / 2),
+	//	(int)(toY + height / 2),
+	//	warpImage,
+	//	TRUE
+	//);
 	//DrawBox(
 	//	(int)(toX - box_size.x / 2),
 	//	(int)(toY - box_size.y / 2),
