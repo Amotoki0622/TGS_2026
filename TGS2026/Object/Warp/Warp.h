@@ -16,6 +16,8 @@ private:
 	//’Ç‰Á
 	bool isWarping = false;
 
+	int warpImage;
+
 public:
 	void SetPlayer(Player* p);
 

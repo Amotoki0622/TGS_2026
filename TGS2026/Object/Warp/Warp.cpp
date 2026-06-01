@@ -60,7 +60,7 @@ void Warp::SetTargetPosition(float to_x, float to_y)
 
 void Warp::Initialize()
 {
-
+	warpImage = LoadGraph("Resource/Images/Gimmick/warp.png");
 }
 
 void Warp::Update(float delta_second)
@@ -97,14 +97,22 @@ void Warp::Draw() const
 		FALSE
 	);*/
 	// 水色のワープ入口
-	DrawBox(
+	DrawExtendGraph(
+		(int)(x - width / 2),
+		(int)(y - height / 2),
+		(int)(x + width / 2),
+		(int)(y + height / 2),
+		warpImage,
+		TRUE
+	);
+	/*DrawBox(
 		(int)(location.x - box_size.x / 2),
 		(int)(location.y - box_size.y / 2),
 		(int)(location.x + box_size.x / 2),
 		(int)(location.y + box_size.y / 2),
 		GetColor(0, 255, 255),
 		FALSE
-	);
+	);*/
 
 	/*DrawBox(
 		(int)(toX - width / 2),
@@ -116,18 +124,31 @@ void Warp::Draw() const
 	);*/
 
 	// オレンジのワープ出口
-	DrawBox(
-		(int)(toX - box_size.x / 2),
-		(int)(toY - box_size.y / 2),
-		(int)(toX + box_size.x / 2),
-		(int)(toY + box_size.y / 2),
-		GetColor(255, 128, 0),
-		FALSE
+	DrawExtendGraph(
+		(int)(toX - width / 2),
+		(int)(toY - height / 2),
+		(int)(toX + width / 2),
+		(int)(toY + height / 2),
+		warpImage,
+		TRUE
 	);
+	//DrawBox(
+	//	(int)(toX - box_size.x / 2),
+	//	(int)(toY - box_size.y / 2),
+	//	(int)(toX + box_size.x / 2),
+	//	(int)(toY + box_size.y / 2),
+	//	GetColor(255, 128, 0),
+	//	FALSE
+	//);
 }
 
 void Warp::Finalize()
 {
+	if (warpImage != -1)
+	{
+		DeleteGraph(warpImage);
+		warpImage = -1;
+	}
 }
 
 bool Warp::IsHit(int nextX, int nextY, float pW, float pH) const
