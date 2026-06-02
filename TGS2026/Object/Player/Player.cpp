@@ -509,11 +509,6 @@ void Player::SetPosition(float newX, float newY)
     y = newY;
 }
 
-float Player::GetTekazu()
-{
-    return tekazu;
-}
-
 void Player::SetTekazu(int maxLimit)
 {
     tekazu = maxLimit;

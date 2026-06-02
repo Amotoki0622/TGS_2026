@@ -145,7 +145,7 @@ void InGameScene::Initialize()
 	//}
 
 
-	background = LoadGraph("Resource/Images/GameMain/background2.png");   // 背景画像
+	background = LoadGraph("Resource/Images/GameMain/background4.png");   // 背景画像
 
 	// 音源関連・読み込み
 	dieSE = LoadSoundMem("Resource/Sounds/SE/object/player/light_die01.mp3");
