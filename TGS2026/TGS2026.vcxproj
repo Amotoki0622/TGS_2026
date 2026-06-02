@@ -132,6 +132,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AppMain.cpp" />
+    <ClCompile Include="Utility\DrawNumber.cpp" />
     <ClCompile Include="Scene\GameOver\GameOverScene.cpp" />
     <ClCompile Include="Object\SignBoard\SignBoard.cpp" />
     <ClCompile Include="Utility\EffectManager\EffectManager.cpp" />
@@ -165,6 +166,7 @@
     <ClCompile Include="Object\Wall\Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Utility\DrawNumber.h" />
     <ClInclude Include="Object\Trap\TrapObject\TrapObject.h" />
     <ClInclude Include="Scene\GameOver\GameOverScene.h" />
     <ClInclude Include="Object\SignBoard\SignBoard.h" />
