@@ -179,11 +179,20 @@ void InGameScene::Initialize()
 	//player.y = 200;
 
 	delay = 0;
+
+	tekazu = 0;
+
+	DrawNumber::SetImage(
+		ResourceManager::GetInstance()->GetImages("Resource/Images/Number/number.png")
+	);
 }
 
 // 更新処理
 eSceneType InGameScene::Update(const float& delta_second)
 {
+	
+	tekazu = player.GetTekazu();
+
 	// -------------------------------------------------------------
 	// ⭕ 【追加】一時停止（ポーズ）の入力・制御フェーズ
 	// -------------------------------------------------------------
@@ -510,6 +519,10 @@ void InGameScene::Draw() const
 		}
 	}
 
+	// スコアの描画
+	DrawNumber::Draw(230, 550, tekazu, 1.0f);
+
+	DrawFormatString(0, 100, GetColor(255, 255, 255), "手数は %d です", tekazu);
 	/*for (auto& wall : walls)
 	{
 		wall.Draw();

@@ -39,8 +39,6 @@ private:
 	std::vector<Key> key;
 	std::vector<GameObject*> allObjects;
 
-	Player* m_pPlayer;
-
 	// リソースマネージャー
 	ResourceManager* resource;      
 
