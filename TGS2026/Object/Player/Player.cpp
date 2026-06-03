@@ -19,8 +19,8 @@ void Player::Initialize()
     y = 250;*/
 
 
-    /*radius = 64;
-    speed = 128; */
+    radius = 64;
+    speed = 128; 
 
     state = State::Normal;
     currentImage = 0; // 最初は通常ポーズ
@@ -30,8 +30,8 @@ void Player::Initialize()
     /*collisionWidth = radius * 1.5f;
     collisionHeight = radius * 1.5f;*/
 
-    /*collisionWidth = radius;
-    collisionHeight = radius;*/
+    collisionWidth = radius;
+    collisionHeight = radius;
 
     //tekazu = 18;
 
@@ -437,10 +437,10 @@ void Player::Draw() const
         if (images[currentImage] != -1)
         {
                                //↓移動の画像の追加時はここを0.3
-            // DrawRotaGraph(x, y, 0.2, 0.0, images[currentImage], TRUE, revers);
+            DrawRotaGraph(x, y, 0.2, 0.0, images[currentImage], TRUE, revers);
 
             // drawScaleに変更
-            DrawRotaGraph(x, y, drawScale, 0.0, images[currentImage], TRUE, revers);
+            // DrawRotaGraph(x, y, drawScale, 0.0, images[currentImage], TRUE, revers);
         }
     }
     else // Shadow状態時
@@ -453,10 +453,10 @@ void Player::Draw() const
         if (images2[currentImage] != -1)
         {
                               //↓移動の画像の追加時はここを0.3
-            // DrawRotaGraph(x, y, 0.2, 0.0, images2[currentImage], TRUE, revers);
+            DrawRotaGraph(x, y, 0.2, 0.0, images2[currentImage], TRUE, revers);
 
             //drawScaleに変更
-            DrawRotaGraph(x, y, drawScale, 0.0, images2[currentImage], TRUE, revers);
+            // DrawRotaGraph(x, y, drawScale, 0.0, images2[currentImage], TRUE, revers);
         }
         // 他の描画に影響が出ないよう、最後に描画モードをリセットする
     SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
