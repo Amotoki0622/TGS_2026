@@ -3,6 +3,8 @@
 #include "../Goal/Goal.h"
 #include "../Key/Key.h"
 //#include "../Wall/Wall.h"
+#include "../Warp/Warp.h"
+#include "../Trap/SpikeTrap/SpikeTrap.h"
 #include "../../Utility/InputManager.h"
 #include "../../Utility/EffectManager/EffectManager.h"
 #include "../../Stage/StageData.h"
@@ -281,6 +283,18 @@ void Player::Move(const std::vector<GameObject*>& objects) {
                     canMove = false;
                     break;
                 }
+                continue;
+            }
+
+            auto WarpObj = dynamic_cast<Warp*>(obj);
+            if (WarpObj != nullptr)
+            {
+                continue;
+            }
+
+            auto spikeObj = dynamic_cast<SpikeTrap*>(obj);
+            if (spikeObj != nullptr)
+            {
                 continue;
             }
 

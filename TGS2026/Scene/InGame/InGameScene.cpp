@@ -71,10 +71,22 @@ void InGameScene::Initialize()
 		{
 			keyObj->SetPlayer(&player); // これで鍵がプレイヤーを追いかけられるようになります！
 		}
+
+		Cam* camObj = dynamic_cast<Cam*>(obj);
+		if (camObj != nullptr)
+		{
+			detectors.push_back(camObj);
+		}
+
+		SpikeTrap* spikeObj = dynamic_cast<SpikeTrap*>(obj);
+		if (spikeObj != nullptr)
+		{
+			detectors.push_back(spikeObj);
+		}
 	}
 
 	// プレイヤーを初期化
-	player.Initialize();
+	 player.Initialize();
 	// StageManagerから、CSVに書かれたプレイヤーの初期座標をもらう
 	 Vector2D playerSpawnPos = m_stageManager.GetPlayerSpawnPosition();
 
@@ -160,8 +172,8 @@ void InGameScene::Initialize()
 	
 	// --- 検知オブジェクトの配置 ---
 	// 一旦リストを掃除（リセット時用）
-	for (auto d : detectors) delete d;
-	detectors.clear();
+	//for (auto d : detectors) delete d;
+	//detectors.clear();
 
 	// カメラ配置: (x, y, 角度, 距離, 視野角)
 	// 向き(角度)はラジアン: 0=右, PI/2=下, PI=左, PI*1.5=上
@@ -668,14 +680,14 @@ void InGameScene::Finalize()
 		background = -1;
 	}
 
-	for (auto& obj : allObjects)
-	{
-		if (obj != nullptr)
-		{
-			delete obj;
-			obj = nullptr;
-		}
-	}
+	//for (auto& obj : allObjects)
+	//{
+	//	if (obj != nullptr)
+	//	{
+	//		delete obj;
+	//		obj = nullptr;
+	//	}
+	//}
 	allObjects.clear();
 }
 

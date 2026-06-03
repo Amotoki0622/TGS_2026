@@ -105,14 +105,14 @@ void Warp::Draw() const
 	//	warpImage,
 	//	TRUE
 	//);
-	/*DrawBox(
+	DrawBox(
 		(int)(location.x - box_size.x / 2),
 		(int)(location.y - box_size.y / 2),
 		(int)(location.x + box_size.x / 2),
 		(int)(location.y + box_size.y / 2),
 		GetColor(0, 255, 255),
 		FALSE
-	);*/
+	);
 
 	/*DrawBox(
 		(int)(toX - width / 2),
@@ -132,14 +132,14 @@ void Warp::Draw() const
 	//	warpImage,
 	//	TRUE
 	//);
-	//DrawBox(
-	//	(int)(toX - box_size.x / 2),
-	//	(int)(toY - box_size.y / 2),
-	//	(int)(toX + box_size.x / 2),
-	//	(int)(toY + box_size.y / 2),
-	//	GetColor(255, 128, 0),
-	//	FALSE
-	//);
+	DrawBox(
+		(int)(toX - box_size.x / 2),
+		(int)(toY - box_size.y / 2),
+		(int)(toX + box_size.x / 2),
+		(int)(toY + box_size.y / 2),
+		GetColor(255, 128, 0),
+		FALSE
+	);
 }
 
 void Warp::Finalize()
