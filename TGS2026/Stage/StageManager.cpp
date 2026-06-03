@@ -128,9 +128,9 @@ void StageManager::CreateStageObject()
 	const float CHIP_SIZE = 128.0f;
 
 	// ステージごとに1マスを変更する処理(32.0f)が限界値
-	/*float CHIP_SIZE = 128.0f - (m_currentLevel * 32.0f);
+	//float CHIP_SIZE = 128.0f - (m_currentLevel * 32.0f);
 
-	if (CHIP_SIZE < 32.0f)
+	/*if (CHIP_SIZE < 32.0f)
 	{
 		CHIP_SIZE = 32.0f;
 	}*/
