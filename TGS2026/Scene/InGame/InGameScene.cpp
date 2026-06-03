@@ -46,13 +46,15 @@ void InGameScene::Initialize()
 
 	// 現在の階層に応じたCHIP_SIZEを計算して、プレイヤーに教える処理
 	// StageManager側のCHIP_SIZE計算式と同じ値をここで計算して渡す
-	float currentChipSize = 128.0f - (m_stageManager.GetCurrentLevel() * 32.0f);
-	if (currentChipSize < 32.0f)
-	{
-		currentChipSize = 32.0f;
-	}
-
-	player.SetChipSize(currentChipSize);	// プレイヤーのサイズ・移動量を自動計算
+	/*一旦128にします*/
+	// float currentChipSize = 128.0f - (m_stageManager.GetCurrentLevel() * 32.0f);
+	// if (currentChipSize < 32.0f)
+	// {
+	// 	currentChipSize = 32.0f;
+	// }
+	
+	// player.SetChipSize(currentChipSize);	// プレイヤーのサイズ・移動量を自動計算
+	/*128*/
 
 	// 確定したレベルをプレイヤーに渡す
 	int currentLimit = m_stageManager.GetCurrentMoveLimit();
