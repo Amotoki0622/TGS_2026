@@ -520,9 +520,8 @@ void InGameScene::Draw() const
 	}
 
 	// スコアの描画
-	DrawNumber::Draw(230, 550, tekazu, 1.0f);
+	DrawNumber::Draw(230, 550, tekazu, 0.8f);
 
-	DrawFormatString(0, 100, GetColor(255, 255, 255), "手数は %d です", tekazu);
 	/*for (auto& wall : walls)
 	{
 		wall.Draw();

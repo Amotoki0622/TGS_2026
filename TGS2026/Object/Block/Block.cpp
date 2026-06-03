@@ -36,7 +36,7 @@ Block::~Block()
 // 初期化
 void Block::Initialize()
 {
-    block_image = LoadGraph("Resource/Images/Gimmick/barrel.png");
+    block_image = LoadGraph("Resource/Images/Gimmick/barrel2.png");
 }
 
 // 更新
