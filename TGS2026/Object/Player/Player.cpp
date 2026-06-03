@@ -466,7 +466,7 @@ void Player::Draw() const
     effectManager.Draw();
 
     // (x座標, y座標, 色, "書式文字列", 変数);
-    DrawFormatString(0, 100, GetColor(255, 255, 255), "手数は %d です", tekazu);
+    //DrawFormatString(0, 100, GetColor(255, 255, 255), "手数は %d です", tekazu);
 
     // 緑の当たり判定枠もそのまま表示しておくと、中心が合っているか確認しやすいです
     int left = (int)(x - collisionWidth / 2);
@@ -509,12 +509,12 @@ void Player::SetPosition(float newX, float newY)
     y = newY;
 }
 
-float Player::GetTekazu()
-{
-    return tekazu;
-}
-
 void Player::SetTekazu(int maxLimit)
 {
     tekazu = maxLimit;
+}
+
+int Player::GetTekazu() const
+{
+    return tekazu;
 }

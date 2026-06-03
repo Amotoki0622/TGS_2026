@@ -113,7 +113,7 @@ public:
     void SetPosition(float x, float y);  //プレイヤーの座標設定
 
     // 手数関連の処理
-    float GetTekazu();
+    int GetTekazu() const;
     void SetTekazu(int maxLimit);
 
     void Move(const std::vector<GameObject*>& objects);

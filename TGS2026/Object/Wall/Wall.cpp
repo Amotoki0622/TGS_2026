@@ -39,7 +39,7 @@ void Wall::SetSize(float w, float h)
 // ‰Šú‰»
 void Wall::Initialize()
 {
-    wall_image = LoadGraph("Resource/Images/Gimmick/wall.png");
+    wall_image = LoadGraph("Resource/Images/Gimmick/wall_image_130x125.png");
 }
 
 // XV
