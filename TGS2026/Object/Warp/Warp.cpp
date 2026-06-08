@@ -63,7 +63,7 @@ void Warp::SetTargetPosition(float to_x, float to_y)
 
 void Warp::Initialize()
 {
-	LoadDivGraph("Resource/Images/Gimmick/warp.png",3,3,1,512,512,warpImage);
+	LoadDivGraph("Resource/Images/Gimmick/warp.png",3,3,1,256,256,warpImage);
 }
 
 void Warp::Update(float delta_second)
