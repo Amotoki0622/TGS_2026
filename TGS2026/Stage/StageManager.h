@@ -109,7 +109,12 @@ private:
 	Vector2D m_warpSrcPos;		// “üŒû
 	Vector2D m_warpDstPos;		// oŒû
 
+	Player* m_pPlayer = nullptr;
+
 	bool m_hasWarpSrc = false;
 	bool m_hasWarpDst = false;
+
+	public:
+		void SetPlayer(Player* player) { m_pPlayer = player; }
 };
 

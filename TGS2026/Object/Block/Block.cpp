@@ -36,13 +36,21 @@ Block::~Block()
 // 初期化
 void Block::Initialize()
 {
-    block_image = LoadGraph("Resource/Images/Gimmick/barrel2.png");
+    block_image = LoadGraph("Resource/Images/Gimmick/wall.png");
 }
 
 // 更新
 void Block::Update(float delta_second)
 {
     effectManager.Update(delta_second);
+}
+
+void Block::SetChipSize(float size)
+{
+    // ★重要：128pxの画像を基準として倍率を求める
+    // sizeが128.0fなら 128/128 = 1.0倍（そのまま）
+    // sizeが100.0fなら 100/128 = 0.78125倍（自動で一回り小さくなる）
+    drawScale = size / 128.0f;
 }
 
 // 描画
@@ -52,17 +60,17 @@ void Block::Draw() const
     // ブロックから発生した煙エフェクトをここで描画する！
     effectManager.Draw();
 
-    // 1. 画像のサイズ（横幅と縦幅）を取得する
-    int img_width, img_height;
-    GetGraphSize(block_image, &img_width, &img_height);
-
-    // 2. 中心(location)から画像のサイズ半分を引き、左上の座標を計算して描画
-    DrawGraph(
-        (int)(location.x - img_width / 2),
-        (int)(location.y - img_height / 2),
-        block_image,
-        TRUE
-    );
+    if (block_image != -1)
+    {
+        DrawRotaGraph(
+            (int)location.x,
+            (int)location.y,
+            drawScale,
+            0.0,
+            block_image,
+            TRUE
+        );
+    }
 
     //DrawBox(
     //    (int)(location.x - box_size.x / 2),
