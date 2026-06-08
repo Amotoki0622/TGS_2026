@@ -113,7 +113,10 @@ void InGameScene::Initialize()
 
 	for (GameObject* obj : allObjects)
 	{
-		if (obj == nullptr) continue;
+		if (obj == nullptr)
+		{
+			continue;
+		}
 
 		Warp* warpObj = dynamic_cast<Warp*>(obj);
 		if (warpObj != nullptr)
@@ -137,7 +140,7 @@ void InGameScene::Initialize()
 	// --- 検知オブジェクトの配置 ---
 	// 一旦リストを掃除（リセット時用）
 	//for (auto d : detectors) delete d;
-	//detectors.clear();
+	// detectors.clear();
 
 	// カメラ配置: (x, y, 角度, 距離, 視野角)
 	// 向き(角度)はラジアン: 0=右, PI/2=下, PI=左, PI*1.5=上
@@ -510,7 +513,7 @@ void InGameScene::Draw() const
 		block.Draw();
 	}*/
 	
-	goal.Draw();
+	//goal.Draw();			// これはいらない
 	player.Draw();
 	/*warp->Draw();*/
 
@@ -531,17 +534,21 @@ void InGameScene::Draw() const
 	//	}
 	//}
 
+	/*二重構造になっている*/
+	// ここから
 	//// カメラのみ
-	for (auto d : detectors)
-	{
-		// 自分のタイプが Light の時だけ Camera を呼ぶ
-		if (d->GetType() == TrapType::Camera)
-		{
-			d->Draw();
-		}
-	}
+	// for (auto d : detectors)
+	// {
+	// 	// 自分のタイプが Light の時だけ Camera を呼ぶ
+	// 	if (d->GetType() == TrapType::Camera)
+	// 	{
+	// 		d->Draw();
+	// 	}
+	// }
 
-	for (auto d : detectors) d->Draw();
+	//for (auto d : detectors) d->Draw();
+
+	/*ここまで(何なら三重構造)*/
 
 	// 猶予期間中の演出
 	if (state == SceneState::Detected) {

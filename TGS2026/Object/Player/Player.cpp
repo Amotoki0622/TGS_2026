@@ -4,6 +4,7 @@
 #include "../Key/Key.h"
 //#include "../Wall/Wall.h"
 #include "../Warp/Warp.h"
+#include "../Trap/Cam/Cam.h"
 #include "../Trap/SpikeTrap/SpikeTrap.h"
 #include "../../Utility/InputManager.h"
 #include "../../Utility/EffectManager/EffectManager.h"
@@ -289,11 +290,28 @@ void Player::Move(const std::vector<GameObject*>& objects) {
             auto WarpObj = dynamic_cast<Warp*>(obj);
             if (WarpObj != nullptr)
             {
-                continue;
+                //continue;
+                // 影状態なら、ワープ発動可能にする、じゃなかったら壁と同じように止まる
+                if (this->state == State::Shadow)
+                {
+                    continue;
+                }
+                else
+                {
+                    canMove = false;
+                    break;
+                }
+
             }
 
             auto spikeObj = dynamic_cast<SpikeTrap*>(obj);
             if (spikeObj != nullptr)
+            {
+                continue;
+            }
+
+            auto camObj = dynamic_cast<Cam*>(obj);
+            if (camObj != nullptr)
             {
                 continue;
             }

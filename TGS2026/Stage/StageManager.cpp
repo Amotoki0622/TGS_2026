@@ -202,7 +202,7 @@ void StageManager::CreateStageObject()
 
 					break;
 
-				case 'C':
+				case 'D':
 				{
 					// カメラを生成する処理
 					Cam* new_cam = CreateStageObjectInstance<Cam>(Vector2D(posX, posY));
@@ -212,6 +212,22 @@ void StageManager::CreateStageObject()
 						// 2. カメラの初期パラメータをセット
 						// 例：下向き（DX_PI_F / 2.0f）、距離350.0f、視野角0.8f
 						new_cam->SetUpCamera(DX_PI_F / 2.0f, 350.0f, 0.8f);
+					}
+				}
+					break;
+
+				case 'U':
+				{
+					// 上向き
+					// カメラを生成する処理
+					Cam* new_cam = CreateStageObjectInstance<Cam>(Vector2D(posX, posY));
+
+					if (new_cam != nullptr)
+					{
+						// 2. カメラの初期パラメータをセット
+						// 例：下向き（DX_PI_F / 2.0f）、距離350.0f、視野角0.8f
+						//new_cam->SetUpCamera(DX_PI_F / 1.5f, 350.0f, 0.8f);
+						new_cam->SetUpCamera(DX_PI_F * 1.5f, 350.0f, 0.8f);
 					}
 				}
 					break;
