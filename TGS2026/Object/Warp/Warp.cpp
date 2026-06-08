@@ -63,7 +63,9 @@ void Warp::SetTargetPosition(float to_x, float to_y)
 
 void Warp::Initialize()
 {
-	LoadDivGraph("Resource/Images/Gimmick/warp.png",3,3,1,256,256,warpImage);
+	LoadDivGraph("Resource/Images/Gimmick/warp.png",3,3,1,512,512,warpImage);
+
+	//printf("LoadDivGraph = %d\n", result);
 }
 
 void Warp::Update(float delta_second)
@@ -71,19 +73,22 @@ void Warp::Update(float delta_second)
 	//アニメーション
 	animTimer++;
 
-	if (animTimer >= 6)
+	if (animTimer >= 30)
 	{
 		animTimer = 0;
-		animFrame++;
+		animFrame = (animFrame + 1) % 3;
 
-		if (animFrame >= 3)
-		{
-			animFrame = 0;
-		}
+		//if (animFrame >= 3)
+		//{
+		//	animFrame = 0;
+		//}
 	}
 
+	animFrame = 0;
 	//回転
-	angle += 0.05f;
+	angle += 0.003;
+
+	double scale = 0.25 + sin(GetNowCount() * 0.001) * 0.02;
 
 	if (player == nullptr)return;
 
@@ -107,58 +112,15 @@ void Warp::Update(float delta_second)
 
 void Warp::Draw() const
 {
-	/*DrawBox(
-		(int)(x - width / 2),
-		(int)(y - height / 2),
-		(int)(x + width / 2),
-		(int)(y + height / 2),
-		GetColor(0, 255, 255),
-		FALSE
-	);*/
-	// 水色のワープ入口
-	//DrawExtendGraph(
-	//	(int)(x - width / 2),
-	//	(int)(y - height / 2),
-	//	(int)(x + width / 2),
-	//	(int)(y + height / 2),
-	//	warpImage,
-	//	TRUE
-	//);
-	//DrawBox(
-	//	(int)(location.x - box_size.x / 2),
-	//	(int)(location.y - box_size.y / 2),
-	//	(int)(location.x + box_size.x / 2),
-	//	(int)(location.y + box_size.y / 2),
-	//	GetColor(0, 255, 255),
-	//	FALSE
-	//);
-
 	DrawRotaGraph(
 		(int)location.x,
 		(int)location.y,
-		0.5,
+		0.25,
 		angle,
 		warpImage[animFrame],
 		TRUE
 	);
-	/*DrawBox(
-		(int)(toX - width / 2),
-		(int)(toY - height / 2),
-		(int)(toX + width / 2),
-		(int)(toY + height / 2),
-		GetColor(255, 128, 0),
-		FALSE
-	);*/
 
-	// オレンジのワープ出口
-	//DrawExtendGraph(
-	//	(int)(toX - width / 2),
-	//	(int)(toY - height / 2),
-	//	(int)(toX + width / 2),
-	//	(int)(toY + height / 2),
-	//	warpImage,
-	//	TRUE
-	//);
 	DrawBox(
 		(int)(toX - box_size.x / 2),
 		(int)(toY - box_size.y / 2),
