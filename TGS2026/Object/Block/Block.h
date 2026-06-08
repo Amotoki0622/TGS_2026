@@ -21,6 +21,8 @@ private:
     int lastPx = -1;             // 1フレーム前のX座標
     int lastPy = -1;             // 1フレーム前のY座標
 	
+	float drawScale = 1.0f; // 描画用の倍率を保存する変数
+
 	int block_image;  // ブロックの画像
 
 public:
@@ -37,6 +39,8 @@ public:
 	void Update(float delta_second) override;
 	//描画処理
 	void Draw() const override;
+	// 画像のサイズ変更処理
+	void SetChipSize(float size) override;
 	//終了処理
 	void Finalize() override;
 	// 当たり判定チェック

@@ -11,6 +11,8 @@ private:
 
 	Player* player; // プレイヤー参照
 
+	float drawScale = 1.0f; // 描画用の倍率を保存する変数
+
 	int wall_image;
 
 
@@ -28,6 +30,8 @@ public:
 	void Update(float delta_second) override;
 	//描画処理
 	void Draw() const override;
+	// 画像のサイズ変更処理
+	void SetChipSize(float size) override;
 	//終了処理
 	void Finalize() override;
 

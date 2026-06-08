@@ -125,10 +125,15 @@ void StageManager::CreateStageObject()
 	Warp* temporaryWarpInstance = nullptr;	// 一時保存用
 
 	// ★デバック用の1マスサイズ
-	const float CHIP_SIZE = 128.0f;
+	float CHIP_SIZE = 128.0f;
 
 	// ステージごとに1マスを変更する処理(32.0f)が限界値
 	//float CHIP_SIZE = 128.0f - (m_currentLevel * 32.0f);
+
+	if (m_currentLevel >= 2)
+	{
+		CHIP_SIZE = 100.0f;
+	}
 
 	/*if (CHIP_SIZE < 32.0f)
 	{
@@ -169,6 +174,7 @@ void StageManager::CreateStageObject()
 					if (new_block != nullptr)
 					{
 						new_block->SetSize(CHIP_SIZE, CHIP_SIZE);
+						new_block->SetChipSize(CHIP_SIZE);
 					}
 				}	
 					break;
@@ -180,6 +186,7 @@ void StageManager::CreateStageObject()
 					if (new_wall != nullptr)
 					{
 						new_wall->SetSize(CHIP_SIZE, CHIP_SIZE);
+						new_wall->SetChipSize(CHIP_SIZE);
 					}
 				}
 					break;
@@ -187,6 +194,12 @@ void StageManager::CreateStageObject()
 				case 'P':
 					// プレイヤーを生成する処理
 					m_playerSpawnPos = Vector2D(posX, posY);
+
+				/*	if (m_pPlayer != nullptr)
+					{
+						m_pPlayer->SetChipSize(CHIP_SIZE);
+					}*/
+
 					break;
 
 				case 'C':
@@ -206,7 +219,7 @@ void StageManager::CreateStageObject()
 				case 'G':
 				{
 					// ゴールのサイズの変数を定義(70.0f)に設定
-					const float GOAL_SIZE = 128.0f;
+					float GOAL_SIZE = CHIP_SIZE;
 
 					Goal* new_goal = CreateStageObjectInstance<Goal>(Vector2D(posX, posY));
 

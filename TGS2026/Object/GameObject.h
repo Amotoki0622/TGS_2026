@@ -71,4 +71,7 @@ public:
 	virtual bool IsMovable() const { return false; }
 
 	virtual bool IsPassable() const { return false; }
+
+	// ChipSize‚ðƒZƒbƒg‚·‚é
+	virtual void SetChipSize(float size) {}
 };
