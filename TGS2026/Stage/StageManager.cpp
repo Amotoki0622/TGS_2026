@@ -222,11 +222,8 @@ void StageManager::CreateStageObject()
 					float GOAL_SIZE = CHIP_SIZE;
 
 					Goal* new_goal = CreateStageObjectInstance<Goal>(Vector2D(posX, posY));
+					new_goal->SetChipSize(CHIP_SIZE);
 
-					if (new_goal != nullptr)
-					{
-						new_goal->SetSize(GOAL_SIZE, GOAL_SIZE);
-					}
 				}
 					break;
 
@@ -286,6 +283,7 @@ void StageManager::CreateStageObject()
 				{
 					// Œ®‚ğ¶¬‚·‚éˆ—
 					Key* new_key = CreateStageObjectInstance<Key>(Vector2D(posX, posY));
+					new_key->SetChipSize(CHIP_SIZE);
 				}
 					break;
 

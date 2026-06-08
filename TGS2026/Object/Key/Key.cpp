@@ -90,15 +90,15 @@ void Key::Update(float delta_second)
         angle += 2.0f * delta_second;
 
         // 2. 💡 向きに合わせて目標地点を左右に切り替える（被り防止）
-        float offsetX = -40.0f; // 基本はプレイヤーの左（後ろ）
+        float offsetX = -40.0f * drawScale; // 基本はプレイヤーの左（後ろ）
         if (location.x > (float)px)
         {
             // プレイヤーより右にいる（＝左に移動中）なら目標を「右（+50px）」に
-            offsetX = 40.0f;
+            offsetX = 40.0f * drawScale;
         }
 
         float targetX = (float)px + offsetX;
-        float targetY = (float)py + 10.0f; // 💡 プレイヤーの背中あたりの高さにする
+        float targetY = (float)py + (10.0f * drawScale); // 💡 プレイヤーの背中あたりの高さにする
 
         // 3. 鍵と目標点の現在の距離を計算
         float dx = targetX - location.x;
@@ -107,7 +107,7 @@ void Key::Update(float delta_second)
 
         // 💡 近づかない最低距離を思い切って「80ピクセル」まで拡大！
         // これでキャラクターとの間にしっかりとした「後ろの距離」が生まれます
-        float keepDistance = 80.0f;
+        float keepDistance = 80.0f * drawScale;
 
         if (distance > keepDistance)
         {
@@ -117,6 +117,16 @@ void Key::Update(float delta_second)
             location.y += dy * 0.06f;
         }
     }
+}
+
+void Key::SetChipSize(float size)
+{
+    // 128.0fの時を1.0（基準）として、現在のマスサイズに合わせる倍率を計算
+    drawScale = size / 128.0f;
+
+    // 当たり判定のサイズもマスの大きさに連動（128pxのとき64pxなら、常にマスの半分のサイズにする）
+    this->box_size.x = size * 0.5f;
+    this->box_size.y = size * 0.5f;
 }
 
 // -----------------------------------------------------------------
@@ -130,9 +140,9 @@ void Key::Draw() const
     {
         // --- 拾われる前 ---
         // ベースとなる位置（location.y）に、サイン波で上下の揺れ（±8.0f）を加える
-        float bounceY = location.y + sinf(angle * 2.0f) * 8.0f;
+        float bounceY = location.y + sinf(angle * 2.0f) * (8.0f * drawScale);
 
-        DrawRotaGraph((int)location.x, (int)bounceY, 1.0f, 0.0f, key_image, TRUE);
+        DrawRotaGraph((int)location.x, (int)bounceY, drawScale, 0.0f, key_image, TRUE);
     }
     else
     {
@@ -143,9 +153,9 @@ void Key::Draw() const
         //
         // これにより、しっかり離れた位置に追従しつつ、立ち止まったときも
         // その場で「フワフワ…ゆらゆら…」と上下に揺れ続けてくれます。
-        float bounceY = location.y + sinf(angle * 2.0f) * 8.0f;
+        float bounceY = location.y + sinf(angle * 2.0f) * (8.0f * drawScale);
 
-        DrawRotaGraph((int)location.x, (int)bounceY, 1.0f, 0.0f, key_image, TRUE);
+        DrawRotaGraph((int)location.x, (int)bounceY, drawScale, 0.0f, key_image, TRUE);
 
     }
 }
