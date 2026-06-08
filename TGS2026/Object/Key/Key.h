@@ -10,6 +10,8 @@ private:
     bool isPickedUp;      // 鍵を拾ったかどうかのフラグ
     float angle;          // 演出（上下浮遊、周囲回転）に使用する角度
 
+    float drawScale = 1.0f; // 描画用の倍率を保存する変数
+
     int key_image;  // 鍵の画像
 
 public:
@@ -27,6 +29,8 @@ public:
 
     // 基底クラス(GameObject)の仕様に合わせるための通り抜けフラグ
     bool IsPassable() const override { return true; }
+
+    void SetChipSize(float size) override;
 
     // プレイヤーをセットするための関数
     void SetPlayer(Player* p);
