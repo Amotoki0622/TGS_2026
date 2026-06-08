@@ -12,6 +12,9 @@ Warp::Warp()
 	, toY(0.0f)
 	, isWarping(false)
 	, player(nullptr)
+	,animFrame(0)
+	,animTimer(0)
+	,angle(0.0f)
 {
 	/*this->x = 0.0f;
 	this->y = 0.0f;
@@ -60,12 +63,28 @@ void Warp::SetTargetPosition(float to_x, float to_y)
 
 void Warp::Initialize()
 {
-	warpImage = LoadGraph("Resource/Images/Gimmick/warp.png");
+	LoadDivGraph("Resource/Images/Gimmick/warp.png",3,3,1,512,512,warpImage);
 }
 
 void Warp::Update(float delta_second)
 {
-	//追加
+	//アニメーション
+	animTimer++;
+
+	if (animTimer >= 6)
+	{
+		animTimer = 0;
+		animFrame++;
+
+		if (animFrame >= 3)
+		{
+			animFrame = 0;
+		}
+	}
+
+	//回転
+	angle += 0.05f;
+
 	if (player == nullptr)return;
 
 	int playerX, playerY;
@@ -105,15 +124,23 @@ void Warp::Draw() const
 	//	warpImage,
 	//	TRUE
 	//);
-	DrawBox(
-		(int)(location.x - box_size.x / 2),
-		(int)(location.y - box_size.y / 2),
-		(int)(location.x + box_size.x / 2),
-		(int)(location.y + box_size.y / 2),
-		GetColor(0, 255, 255),
-		FALSE
-	);
+	//DrawBox(
+	//	(int)(location.x - box_size.x / 2),
+	//	(int)(location.y - box_size.y / 2),
+	//	(int)(location.x + box_size.x / 2),
+	//	(int)(location.y + box_size.y / 2),
+	//	GetColor(0, 255, 255),
+	//	FALSE
+	//);
 
+	DrawRotaGraph(
+		(int)location.x,
+		(int)location.y,
+		0.5,
+		angle,
+		warpImage[animFrame],
+		TRUE
+	);
 	/*DrawBox(
 		(int)(toX - width / 2),
 		(int)(toY - height / 2),
@@ -144,10 +171,13 @@ void Warp::Draw() const
 
 void Warp::Finalize()
 {
-	if (warpImage != -1)
+	for (int i = 0; i < 3; i++)
 	{
-		DeleteGraph(warpImage);
-		warpImage = -1;
+		if (warpImage[i] != -1)
+		{
+			DeleteGraph(warpImage[i]);
+			warpImage[i] = -1;
+		}
 	}
 }
 

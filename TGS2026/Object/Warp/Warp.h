@@ -16,7 +16,12 @@ private:
 	//’Ç‰Á
 	bool isWarping = false;
 
-	int warpImage;
+	int warpImage[3];
+
+	int animFrame;
+	int animTimer;
+
+	float angle;
 
 public:
 	void SetPlayer(Player* p);
