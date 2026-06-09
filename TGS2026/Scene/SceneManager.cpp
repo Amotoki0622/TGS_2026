@@ -105,12 +105,12 @@ void SceneManager::Update()
 		Draw();
 
 		//// ゲームを終了するか確認する
-		//if ((next_scene_type == eSceneType::eEnd) ||
-		//	(input->GetButtonInputState(XINPUT_BUTTON_BACK)) ||
-		//	(input->GetButtonInputState(KEY_INPUT_ESCAPE) == ePadInputState::ePress))
-		//{
-		//	break;
-		//}
+		if ((next_scene_type == eSceneType::eEnd) ||
+			(input->GetButtonInputState(XINPUT_BUTTON_BACK) == eInputState::ePress) ||
+			(input->GetKeyInputState(KEY_INPUT_ESCAPE) == eInputState::ePress))
+		{
+			break;
+		}
 
 		// 現在のシーンタイプが次のシーンタイプと違っているか？
 		if (current_scene->GetNowSceneType() != next_scene_type)
@@ -119,6 +119,7 @@ void SceneManager::Update()
 			ChangeScene(next_scene_type);
 		}
 	}
+
 
 
 #endif // DEBUG

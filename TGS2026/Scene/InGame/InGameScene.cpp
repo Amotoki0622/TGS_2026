@@ -180,7 +180,7 @@ eSceneType InGameScene::Update(const float& delta_second)
 	InputManager* input = InputManager::GetInstance();
 
 	// EscキーかSTARTボタンが押されたらポーズ状態を切り替える
-	if (input->GetKeyInputState(KEY_INPUT_ESCAPE) == eInputState::ePress || input->GetButtonInputState(XINPUT_BUTTON_START) == eInputState::ePress)
+	if (input->GetKeyInputState(KEY_INPUT_P) == eInputState::ePress || input->GetButtonInputState(XINPUT_BUTTON_START) == eInputState::ePress)
 	{
 		isPaused = !isPaused;
 
