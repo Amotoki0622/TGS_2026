@@ -121,8 +121,12 @@ void StageManager::CreateStageObject()
 	// ワープフラグリセット
 	m_hasWarpSrc = false;
 	m_hasWarpDst = false;
+
+	//追加
+	m_warpA = nullptr;
+	m_warpB = nullptr;
 	
-	Warp* temporaryWarpInstance = nullptr;	// 一時保存用
+	/*Warp* temporaryWarpInstance = nullptr;*/	// 一時保存用
 
 	// ★デバック用の1マスサイズ
 	float CHIP_SIZE = 128.0f;
@@ -274,24 +278,48 @@ void StageManager::CreateStageObject()
 
 				case 'w':
 				{
-					// ワープ入口の生成
-					temporaryWarpInstance = CreateStageObjectInstance<Warp>(Vector2D(posX, posY));
-					if (temporaryWarpInstance != nullptr)
+					//// ワープ入口の生成
+					m_warpA =
+						CreateStageObjectInstance<Warp>(
+							Vector2D(posX, posY));
+
+					if (m_warpA != nullptr)
 					{
-			
-						temporaryWarpInstance->SetPosition(posX, posY);
-						temporaryWarpInstance->SetSize(CHIP_SIZE, CHIP_SIZE);
+						m_warpA->SetPosition(posX, posY);
+						m_warpA->SetSize(CHIP_SIZE, CHIP_SIZE);
 
 						m_warpSrcPos = Vector2D(posX, posY);
 						m_hasWarpSrc = true;
 					}
+					//temporaryWarpInstance = CreateStageObjectInstance<Warp>(Vector2D(posX, posY));
+					//if (temporaryWarpInstance != nullptr)
+					//{
+			
+					//	temporaryWarpInstance->SetPosition(posX, posY);
+					//	temporaryWarpInstance->SetSize(CHIP_SIZE, CHIP_SIZE);
+
+					//	m_warpSrcPos = Vector2D(posX, posY);
+					//	m_hasWarpSrc = true;
+					//}
 				}
 					break;
 
 				case 'v':
 				{
-					m_warpDstPos = Vector2D(posX, posY);
-					m_hasWarpDst = true;
+					m_warpB =
+						CreateStageObjectInstance<Warp>(
+							Vector2D(posX, posY));
+
+					if (m_warpB != nullptr)
+					{
+						m_warpB->SetPosition(posX, posY);
+						m_warpB->SetSize(CHIP_SIZE, CHIP_SIZE);
+
+						m_warpDstPos = Vector2D(posX, posY);
+						m_hasWarpDst = true;
+					}
+					//m_warpDstPos = Vector2D(posX, posY);
+					//m_hasWarpDst = true;
 				}
 					break;
 
@@ -309,10 +337,24 @@ void StageManager::CreateStageObject()
 		}
 	}
 
-	if (m_hasWarpSrc && m_hasWarpDst && temporaryWarpInstance != nullptr)
+	if (m_warpA != nullptr &&
+		m_warpB != nullptr)
+	{
+		// A → B
+		m_warpA->SetTargetPosition(
+			m_warpDstPos.x,
+			m_warpDstPos.y);
+
+		// B → A
+		m_warpB->SetTargetPosition(
+			m_warpSrcPos.x,
+			m_warpSrcPos.y);
+	}
+
+	/*if (m_hasWarpSrc && m_hasWarpDst && temporaryWarpInstance != nullptr)
 	{
 		temporaryWarpInstance->SetTargetPosition(m_warpDstPos.x, m_warpDstPos.y);
-	}
+	}*/
 }
 
 Vector2D StageManager::GetPlayerSpawnPosition() const
