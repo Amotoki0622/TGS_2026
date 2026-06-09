@@ -482,7 +482,7 @@ void Player::Draw() const
         // シャドウ状態（shadow.png は小さいので、もっと大きくする）
         if (images2[currentImage] != -1)
         {
-            float shadowScale = drawScale * 1.75f;
+            float shadowScale = drawScale * 0.85f;
             //↓移動の画像の追加時はここを0.3
             DrawRotaGraph(x, y, shadowScale, 0.0, images2[currentImage], TRUE, revers);
 
