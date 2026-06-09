@@ -274,7 +274,7 @@ void Player::Move(const std::vector<GameObject*>& objects) {
             auto goalObj = dynamic_cast<Goal*>(obj);
             if (goalObj != nullptr)
             {
-                if (hasKey)
+                if (hasKey && state == State::Normal)
                 {
                     isHitGoal = true;
                     continue;
