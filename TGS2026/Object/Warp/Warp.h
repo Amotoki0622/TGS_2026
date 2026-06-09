@@ -1,4 +1,5 @@
 #pragma once
+
 #include "../../Utility/Vector2D.h"
 #include "../GameObject.h"
 
@@ -7,45 +8,41 @@ class Player;
 class Warp : public GameObject
 {
 private:
-	float x, y;
-	float width, height;
-	float toX, toY;
+    float toX;
+    float toY;
 
-	Player* player;
+    Player* player;
 
-	//’Ç‰Á
-	bool isWarping = false;
+    int warpImage[3];
 
-	int warpImage[3];
+    int animFrame;
+    int animTimer;
 
-	int animFrame;
-	int animTimer;
+    float angle;
 
-	float angle;
+    static bool playerInWarp;
 
 public:
-	void SetPlayer(Player* p);
 
-	Warp();
+    Warp();
+    ~Warp();
 
-	Warp(float x, float y, float w, float h, float toX, float toY);
-	~Warp();
+    void SetPlayer(Player* p);
 
-	float GetToX() const { return toX; }
-	float GetToY() const { return toY; }
+    void SetPosition(float px, float py);
+    void SetSize(float w, float h);
 
-	void SetPosition(float px, float py);
-	void SetSize(float w, float h);
-	void SetTargetPosition(float to_x, float to_y);
+    void SetTargetPosition(float x, float y);
 
-	//‰Šú‰»ˆ—
-	void Initialize() override;
-	//XVˆ—
-	void Update(float delta_second) override;
-	//•`‰æˆ—
-	void Draw() const override;
-	//I—¹ˆ—
-	void Finalize() override;
+    void Initialize() override;
+    void Update(float delta_second) override;
+    void Draw() const override;
+    void Finalize() override;
 
-	bool IsHit(int nextX, int nextY, float pW, float pH) const;
+    bool IsHit(
+        int nextX,
+        int nextY,
+        float pW,
+        float pH
+    ) const;
 };

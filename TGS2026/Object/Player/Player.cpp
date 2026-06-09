@@ -390,6 +390,9 @@ void Player::Move(const std::vector<GameObject*>& objects) {
         // 座標更新と手数減算（既存の処理）
         x = nextX;
         y = nextY;
+
+        canWarp = true;
+
         tekazu--;
 
         // 最後の引数に、上で切り替えた「effectImagePath」をそのまま渡す！
