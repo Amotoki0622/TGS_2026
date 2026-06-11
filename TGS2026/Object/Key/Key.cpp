@@ -68,7 +68,7 @@ void Key::Update(float delta_second)
         float pTop = (float)py - ph * 0.5f;
         float pBottom = (float)py + ph * 0.5f;
 
-        if (left < pRight && right > pLeft && top < pBottom && bottom > pTop)
+        if (left < pRight && right > pLeft && top < pBottom && bottom > pTop && targetPlayer->GetState() == Player::State::Normal)
         {
             isPickedUp = true; // 重なったら取得！
         }
