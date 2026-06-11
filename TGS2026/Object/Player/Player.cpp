@@ -126,75 +126,77 @@ void Player::Update(const float& delta_second)
 void Player::Move(const std::vector<GameObject*>& objects) {
     InputManager* input = InputManager::GetInstance();
 
-    // Bボタン（蹴る）でブロックを動かす
-    if (input->GetButtonInputState(XINPUT_BUTTON_B) == eInputState::ePress ||
-        input->GetKeyInputState(KEY_INPUT_SPACE) == eInputState::ePress)
+    if (state == State::Normal)
     {
-        // --- 1. 蹴る方向（ベクトル）を決定する ---
-        float kickX = 0.0f;
-        float kickY = 0.0f;
+        // Bボタン（蹴る）でブロックを動かす
+        if (input->GetButtonInputState(XINPUT_BUTTON_B) == eInputState::ePress ||
+            input->GetKeyInputState(KEY_INPUT_SPACE) == eInputState::ePress)
+        {
+            // --- 1. 蹴る方向（ベクトル）を決定する ---
+            float kickX = 0.0f;
+            float kickY = 0.0f;
 
-        // 十字キーまたはキーボードの入力をチェック
-        if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_LEFT) == eInputState::eHold ||
-            input->GetKeyInputState(KEY_INPUT_LEFT) == eInputState::eHold) {
-            //kickX = -128.0f;
-            kickX = -chipSize;
-        }
-        else if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_RIGHT) == eInputState::eHold ||
-            input->GetKeyInputState(KEY_INPUT_RIGHT) == eInputState::eHold) {
-            //kickX = 128.0f;
-            kickX = chipSize;
-        }
-        else if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_UP) == eInputState::eHold ||
-            input->GetKeyInputState(KEY_INPUT_UP) == eInputState::eHold) {
-            //kickY = -128.0f;
-            kickY = -chipSize;
-        }
-        else if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_DOWN) == eInputState::eHold ||
-            input->GetKeyInputState(KEY_INPUT_DOWN) == eInputState::eHold) {
-            //kickY = 128.0f;
-            kickY = chipSize;
-        }
-        else {
-            // 何も方向が押されていない場合は、今のプレイヤーの向き(revers)に蹴る
-            kickX = (revers == TRUE) ? chipSize : -chipSize;
-        }
-
-        // --- 2. 判定を出す位置（check座標）を計算 ---
-        // 実際に蹴りだす量(128)ではなく、目の前(64)にブロックがあるか調べる
-        // float checkX = (float)x + (kickX != 0 ? (kickX > 0 ? 64.0f : -64.0f) : 0.0f);
-        // float checkY = (float)y + (kickY != 0 ? (kickY > 0 ? 64.0f : -64.0f) : 0.0f);
-
-        float halfSize = chipSize / 2.0f;
-        float checkX = (float)x + (kickX != 0 ? (kickX > 0 ? halfSize : -halfSize) : 0.0f);
-        float checkY = (float)y + (kickY != 0 ? (kickY > 0 ? halfSize : -halfSize) : 0.0f);
-
-
-        // --- 3. 衝突判定とPushの実行 ---
-        for (auto& obj : objects) {
-            if (obj == this) continue;
-
-            float hitSize = chipSize * 0.9f;
-            if (obj->IsHit((int)checkX, (int)checkY, hitSize, hitSize))
-            {
-                Block* targetBlock = dynamic_cast<Block*>(obj);
-                if (targetBlock != nullptr)
-                {
-                    targetBlock->Push(kickX, kickY, objects);
-                    return;     // 成功したら終了
-                }
+            // 十字キーまたはキーボードの入力をチェック
+            if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_LEFT) == eInputState::eHold ||
+                input->GetKeyInputState(KEY_INPUT_LEFT) == eInputState::eHold) {
+                //kickX = -128.0f;
+                kickX = -chipSize;
+            }
+            else if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_RIGHT) == eInputState::eHold ||
+                input->GetKeyInputState(KEY_INPUT_RIGHT) == eInputState::eHold) {
+                //kickX = 128.0f;
+                kickX = chipSize;
+            }
+            else if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_UP) == eInputState::eHold ||
+                input->GetKeyInputState(KEY_INPUT_UP) == eInputState::eHold) {
+                //kickY = -128.0f;
+                kickY = -chipSize;
+            }
+            else if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_DOWN) == eInputState::eHold ||
+                input->GetKeyInputState(KEY_INPUT_DOWN) == eInputState::eHold) {
+                //kickY = 128.0f;
+                kickY = chipSize;
+            }
+            else {
+                // 何も方向が押されていない場合は、今のプレイヤーの向き(revers)に蹴る
+                kickX = (revers == TRUE) ? chipSize : -chipSize;
             }
 
-            //if (obj->IsHit((int)checkX, (int)checkY, 60, 60)) { // 少し遊び(60)を持たせる
-            //    Block* targetBlock = dynamic_cast<Block*>(obj);
-            //    if (targetBlock != nullptr) {
-            //        targetBlock->Push(kickX, kickY, objects);
-            //        return; // 成功したら終了
-            //    }
-            //}
+            // --- 2. 判定を出す位置（check座標）を計算 ---
+            // 実際に蹴りだす量(128)ではなく、目の前(64)にブロックがあるか調べる
+            // float checkX = (float)x + (kickX != 0 ? (kickX > 0 ? 64.0f : -64.0f) : 0.0f);
+            // float checkY = (float)y + (kickY != 0 ? (kickY > 0 ? 64.0f : -64.0f) : 0.0f);
+
+            float halfSize = chipSize / 2.0f;
+            float checkX = (float)x + (kickX != 0 ? (kickX > 0 ? halfSize : -halfSize) : 0.0f);
+            float checkY = (float)y + (kickY != 0 ? (kickY > 0 ? halfSize : -halfSize) : 0.0f);
+
+
+            // --- 3. 衝突判定とPushの実行 ---
+            for (auto& obj : objects) {
+                if (obj == this) continue;
+
+                float hitSize = chipSize * 0.9f;
+                if (obj->IsHit((int)checkX, (int)checkY, hitSize, hitSize))
+                {
+                    Block* targetBlock = dynamic_cast<Block*>(obj);
+                    if (targetBlock != nullptr)
+                    {
+                        targetBlock->Push(kickX, kickY, objects);
+                        return;     // 成功したら終了
+                    }
+                }
+
+                //if (obj->IsHit((int)checkX, (int)checkY, 60, 60)) { // 少し遊び(60)を持たせる
+                //    Block* targetBlock = dynamic_cast<Block*>(obj);
+                //    if (targetBlock != nullptr) {
+                //        targetBlock->Push(kickX, kickY, objects);
+                //        return; // 成功したら終了
+                //    }
+                //}
+            }
         }
     }
-
 
     int moveX = 0;
     int moveY = 0;
@@ -260,15 +262,16 @@ void Player::Move(const std::vector<GameObject*>& objects) {
             auto keyObj = dynamic_cast<Key*>(obj);
             if (keyObj != nullptr)
             {
-                if (hasKey)
+                if (state == State::Normal)
                 {
+                    if (hasKey)
+                    {
+                        continue;
+                    }
+
+                    // 鍵のマスは通り抜けられるので、そのまま次のオブジェクトの判定へ進む
                     continue;
                 }
-
-                hasKey = true;
-
-                // 鍵のマスは通り抜けられるので、そのまま次のオブジェクトの判定へ進む
-                continue;
             }
 
             auto goalObj = dynamic_cast<Goal*>(obj);
@@ -286,6 +289,7 @@ void Player::Move(const std::vector<GameObject*>& objects) {
                 }
                 continue;
             }
+
 
             auto WarpObj = dynamic_cast<Warp*>(obj);
             if (WarpObj != nullptr)
@@ -427,27 +431,30 @@ void Player::UpdateAnimation(float delta_second)
 {
     InputManager* input = InputManager::GetInstance();
 
-    // 1. ボタンが押された瞬間を検知
-    bool isPressed = (input->GetButtonInputState(XINPUT_BUTTON_B) == eInputState::ePress ||
-        input->GetKeyInputState(KEY_INPUT_SPACE) == eInputState::ePress);
+    if (state == State::Normal)
+    {
+        // 1. ボタンが押された瞬間を検知
+        bool isPressed = (input->GetButtonInputState(XINPUT_BUTTON_B) == eInputState::ePress ||
+            input->GetKeyInputState(KEY_INPUT_SPACE) == eInputState::ePress);
 
-    // ボタンが押されていて、かつ「今は硬直中でない（タイマーが0）」ときだけ実行する
-    if (isPressed && actionTimer <= 0.0f)
-    {
-        actionTimer = 0.25f; // 蹴り発動！0.25秒の硬直スタート
-        tekazu--;            // 手数を1減らす
-    }
+        // ボタンが押されていて、かつ「今は硬直中でない（タイマーが0）」ときだけ実行する
+        if (isPressed && actionTimer <= 0.0f)
+        {
+            actionTimer = 0.25f; // 蹴り発動！0.25秒の硬直スタート
+            tekazu--;            // 手数を1減らす
+        }
 
-    // タイマーのカウントダウンと画像の制御（変更なし）
-    if (actionTimer > 0.0f)
-    {
-        currentImage = 1;           // 硬直中はアクション画像
-        actionTimer -= delta_second; // タイマーを減らしていく
-    }
-    else
-    {
-        currentImage = 0;           // 通常画像に戻る
-        actionTimer = 0.0f;
+        // タイマーのカウントダウンと画像の制御（変更なし）
+        if (actionTimer > 0.0f)
+        {
+            currentImage = 1;           // 硬直中はアクション画像
+            actionTimer -= delta_second; // タイマーを減らしていく
+        }
+        else
+        {
+            currentImage = 0;           // 通常画像に戻る
+            actionTimer = 0.0f;
+        }
     }
 }
 
