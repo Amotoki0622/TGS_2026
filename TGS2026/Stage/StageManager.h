@@ -14,6 +14,8 @@ private:
 	int m_currentLevel;                 // 現在のステージ番号
 	int m_currentMoveLimit;             // 現在の残り手数
 
+	int m_floorImageHandle;// 背景の画像ハンドル
+
 	std::vector<GameObject*> m_Object;
 
 public:
@@ -102,6 +104,8 @@ public:
 
 	// デバック
 	void DrawDebugInfo() const;
+
+	void DrawFloorBackground() const;
 
 	// ワープ関連
 private:

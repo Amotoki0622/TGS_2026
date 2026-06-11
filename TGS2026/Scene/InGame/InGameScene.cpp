@@ -488,11 +488,17 @@ eSceneType InGameScene::Update(const float& delta_second)
 // 描画処理
 void InGameScene::Draw() const
 {
+	// ベースの黒背景
+	DrawBox(0, 0, 1280, 720, GetColor(0, 0, 0), TRUE);
+
+	// ステージ全ての下にタイルを自動で敷き詰める
+	m_stageManager.DrawFloorBackground();
+
 	SetFontSize(20);
 	DrawString(10, 10, "INGAME", 0xffffff);
 	
 	// タイトル画像の描画
-	DrawExtendGraph(0, 0, 1280, 720, background, TRUE);
+	//DrawExtendGraph(0, 0, 1280, 720, background, TRUE);
 
 	// 追加したオブジェクト（壁やブロック）を全て描画
 	for (const auto& obj : allObjects) {
@@ -503,6 +509,8 @@ void InGameScene::Draw() const
 
 	// スコアの描画
 	DrawNumber::Draw(230, 550, tekazu, 0.8f);
+
+	//DrawStringToHandle(40, 450, "これはステージ1です。", GetColor(255, 255, 255), font[0]);
 
 	/*for (auto& wall : walls)
 	{

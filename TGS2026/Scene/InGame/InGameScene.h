@@ -39,6 +39,9 @@ private:
 	std::vector<Key> key;
 	std::vector<GameObject*> allObjects;
 
+	// フォント
+	int font[2];
+
 	// リソースマネージャー
 	ResourceManager* resource;      
 

@@ -32,6 +32,8 @@ void StageManager::Initialize()
 	// 1. リストを読み込む
 	m_allStages = StageLoader::LoadMapList("Resource/Map/StageData.csv");
 
+	m_floorImageHandle = LoadGraph("Resource/Images/GameMain/tile.png");
+
 	// 2. リストが空っぽならここで処理を止める（アクセス違反を防ぐ）
 	if (m_allStages.empty())
 	{
@@ -372,5 +374,45 @@ void StageManager::DrawDebugInfo() const
 	else
 	{
 		DrawFormatString(20, 20, GetColor(255, 0, 0), "【DEBUG】CSV 'B' NOT FOUND...");
+	}
+}
+
+void StageManager::DrawFloorBackground() const
+{
+	if (m_floorImageHandle == -1 || m_pCurrentData == nullptr)
+	{
+		return;
+	}
+
+	if (m_pCurrentData->map.empty())
+	{
+		return;
+	}
+
+	// 現在のレベルに応じたCHIP_SIZEを計算
+	float CHIP_SIZE = 128.0f;
+	if (m_currentLevel >= 2)
+	{
+		CHIP_SIZE = 100.0f;
+	}
+
+	const float start_x = CHIP_SIZE / 2.0f;
+	const float start_y = CHIP_SIZE / 2.0f;
+
+	// 特定の文字関係なく、ステージの縦横のサイズ分計算
+	for (int y = 0; y < m_pCurrentData->height; y++)
+	{
+		// 各行の文字数を取得
+		int rowWidth = (int)m_pCurrentData->map[y].size();
+
+		for (int x = 0; x < rowWidth; x++)
+		{
+			// 1マスずつ中心座標を計算
+			float posX = start_x + (x * CHIP_SIZE);
+			float posY = start_y + (y * CHIP_SIZE);
+
+			// 全てのマスの最背景に1マスサイズのタイルを描画
+			DrawExtendGraph((int)(posX - CHIP_SIZE / 2.0f), (int)(posY - CHIP_SIZE / 2.0f), (int)(posX + CHIP_SIZE / 2.0f), (int)(posY + CHIP_SIZE / 2.0f), m_floorImageHandle, TRUE);
+		}
 	}
 }
