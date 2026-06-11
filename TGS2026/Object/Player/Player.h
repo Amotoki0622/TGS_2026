@@ -88,6 +88,7 @@ private:
 
     bool isHitGoal;  // ゴールフラグ
     bool hasKey;  //鍵フラグ
+    bool canWarp = true;//ワープフラグ
 
 public:
     void Initialize();
@@ -131,6 +132,9 @@ public:
 
     void SetHasKey(bool flag) { hasKey = flag; }
 
+    bool CanWarp() const { return canWarp; }
+    void SetCanWarp(bool flag) { canWarp = flag; }
+ 
     private:
         float chipSize = 128.0f;
         float drawScale = 128.0f;

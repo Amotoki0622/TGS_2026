@@ -12,6 +12,8 @@ private:
 
 	Player* player; // プレイヤー参照
 
+	float drawScale = 1.0f; // 描画用の倍率を保存する変数
+
 	int goal_image;
 
 public:
@@ -30,6 +32,8 @@ public:
 	void Draw() const override;
 	//終了処理
 	void Finalize() override;
+
+	void SetChipSize(float size) override;
 
 	// 当たり判定チェック
 	bool IsHit(int nextX, int nextY, int width, int height) const override;

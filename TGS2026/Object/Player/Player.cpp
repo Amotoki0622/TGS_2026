@@ -4,6 +4,7 @@
 #include "../Key/Key.h"
 //#include "../Wall/Wall.h"
 #include "../Warp/Warp.h"
+#include "../Trap/Cam/Cam.h"
 #include "../Trap/SpikeTrap/SpikeTrap.h"
 #include "../../Utility/InputManager.h"
 #include "../../Utility/EffectManager/EffectManager.h"
@@ -273,7 +274,7 @@ void Player::Move(const std::vector<GameObject*>& objects) {
             auto goalObj = dynamic_cast<Goal*>(obj);
             if (goalObj != nullptr)
             {
-                if (hasKey)
+                if (hasKey && state == State::Normal)
                 {
                     isHitGoal = true;
                     continue;
@@ -289,11 +290,28 @@ void Player::Move(const std::vector<GameObject*>& objects) {
             auto WarpObj = dynamic_cast<Warp*>(obj);
             if (WarpObj != nullptr)
             {
-                continue;
+                //continue;
+                // 影状態なら、ワープ発動可能にする、じゃなかったら壁と同じように止まる
+                if (this->state == State::Shadow)
+                {
+                    continue;
+                }
+                else
+                {
+                    canMove = false;
+                    break;
+                }
+
             }
 
             auto spikeObj = dynamic_cast<SpikeTrap*>(obj);
             if (spikeObj != nullptr)
+            {
+                continue;
+            }
+
+            auto camObj = dynamic_cast<Cam*>(obj);
+            if (camObj != nullptr)
             {
                 continue;
             }
@@ -372,6 +390,9 @@ void Player::Move(const std::vector<GameObject*>& objects) {
         // 座標更新と手数減算（既存の処理）
         x = nextX;
         y = nextY;
+
+        canWarp = true;
+
         tekazu--;
 
         // 最後の引数に、上で切り替えた「effectImagePath」をそのまま渡す！
@@ -438,8 +459,6 @@ void Player::SetChipSize(float size)
     collisionHeight = size * 0.9f;      // あたり判定のマス(高さ)を合わせる
     radius = (int)(size / 2.0f);        // 当たり判定ようの半径
 
-    // マスの大きさに合わせて描画のスケールを自動計算する
-    // 128pxの時0.2倍なら、サイズが半分になったら0.1倍にする計算
     drawScale = 0.2f * (size / 128.0f);
 }
 
@@ -450,8 +469,8 @@ void Player::Draw() const
         // 通常状態（player_01.png は大きいので 0.17倍）
         if (images[currentImage] != -1)
         {
-                               //↓移動の画像の追加時はここを0.3
-            DrawRotaGraph(x, y, 0.2, 0.0, images[currentImage], TRUE, revers);
+            //↓移動の画像の追加時はここを0.3
+            DrawRotaGraph(x, y, drawScale, 0.0, images[currentImage], TRUE, revers);
 
             // drawScaleに変更
             // DrawRotaGraph(x, y, drawScale, 0.0, images[currentImage], TRUE, revers);
@@ -466,8 +485,9 @@ void Player::Draw() const
         // シャドウ状態（shadow.png は小さいので、もっと大きくする）
         if (images2[currentImage] != -1)
         {
-                              //↓移動の画像の追加時はここを0.3
-            DrawRotaGraph(x, y, 0.2, 0.0, images2[currentImage], TRUE, revers);
+            float shadowScale = drawScale * 0.85f;
+            //↓移動の画像の追加時はここを0.3
+            DrawRotaGraph(x, y, shadowScale, 0.0, images2[currentImage], TRUE, revers);
 
             //drawScaleに変更
             // DrawRotaGraph(x, y, drawScale, 0.0, images2[currentImage], TRUE, revers);
@@ -480,7 +500,7 @@ void Player::Draw() const
     effectManager.Draw();
 
     // (x座標, y座標, 色, "書式文字列", 変数);
-    //DrawFormatString(0, 100, GetColor(255, 255, 255), "手数は %d です", tekazu);
+    DrawFormatString(0, 100, GetColor(255, 255, 255), "x座標 %d / y座標 %d", x,y);
 
     // 緑の当たり判定枠もそのまま表示しておくと、中心が合っているか確認しやすいです
     int left = (int)(x - collisionWidth / 2);

@@ -121,14 +121,23 @@ void StageManager::CreateStageObject()
 	// ワープフラグリセット
 	m_hasWarpSrc = false;
 	m_hasWarpDst = false;
+
+	//追加
+	m_warpA = nullptr;
+	m_warpB = nullptr;
 	
-	Warp* temporaryWarpInstance = nullptr;	// 一時保存用
+	/*Warp* temporaryWarpInstance = nullptr;*/	// 一時保存用
 
 	// ★デバック用の1マスサイズ
-	const float CHIP_SIZE = 128.0f;
+	float CHIP_SIZE = 128.0f;
 
 	// ステージごとに1マスを変更する処理(32.0f)が限界値
 	//float CHIP_SIZE = 128.0f - (m_currentLevel * 32.0f);
+
+	if (m_currentLevel >= 2)
+	{
+		CHIP_SIZE = 100.0f;
+	}
 
 	/*if (CHIP_SIZE < 32.0f)
 	{
@@ -169,6 +178,7 @@ void StageManager::CreateStageObject()
 					if (new_block != nullptr)
 					{
 						new_block->SetSize(CHIP_SIZE, CHIP_SIZE);
+						new_block->SetChipSize(CHIP_SIZE);
 					}
 				}	
 					break;
@@ -180,6 +190,7 @@ void StageManager::CreateStageObject()
 					if (new_wall != nullptr)
 					{
 						new_wall->SetSize(CHIP_SIZE, CHIP_SIZE);
+						new_wall->SetChipSize(CHIP_SIZE);
 					}
 				}
 					break;
@@ -187,9 +198,15 @@ void StageManager::CreateStageObject()
 				case 'P':
 					// プレイヤーを生成する処理
 					m_playerSpawnPos = Vector2D(posX, posY);
+
+				/*	if (m_pPlayer != nullptr)
+					{
+						m_pPlayer->SetChipSize(CHIP_SIZE);
+					}*/
+
 					break;
 
-				case 'C':
+				case 'D':
 				{
 					// カメラを生成する処理
 					Cam* new_cam = CreateStageObjectInstance<Cam>(Vector2D(posX, posY));
@@ -203,17 +220,30 @@ void StageManager::CreateStageObject()
 				}
 					break;
 
+				case 'U':
+				{
+					// 上向き
+					// カメラを生成する処理
+					Cam* new_cam = CreateStageObjectInstance<Cam>(Vector2D(posX, posY));
+
+					if (new_cam != nullptr)
+					{
+						// 2. カメラの初期パラメータをセット
+						// 例：下向き（DX_PI_F / 2.0f）、距離350.0f、視野角0.8f
+						//new_cam->SetUpCamera(DX_PI_F / 1.5f, 350.0f, 0.8f);
+						new_cam->SetUpCamera(DX_PI_F * 1.5f, 350.0f, 0.8f);
+					}
+				}
+					break;
+
 				case 'G':
 				{
 					// ゴールのサイズの変数を定義(70.0f)に設定
-					const float GOAL_SIZE = 128.0f;
+					float GOAL_SIZE = CHIP_SIZE;
 
 					Goal* new_goal = CreateStageObjectInstance<Goal>(Vector2D(posX, posY));
+					new_goal->SetChipSize(CHIP_SIZE);
 
-					if (new_goal != nullptr)
-					{
-						new_goal->SetSize(GOAL_SIZE, GOAL_SIZE);
-					}
 				}
 					break;
 
@@ -248,24 +278,48 @@ void StageManager::CreateStageObject()
 
 				case 'w':
 				{
-					// ワープ入口の生成
-					temporaryWarpInstance = CreateStageObjectInstance<Warp>(Vector2D(posX, posY));
-					if (temporaryWarpInstance != nullptr)
+					//// ワープ入口の生成
+					m_warpA =
+						CreateStageObjectInstance<Warp>(
+							Vector2D(posX, posY));
+
+					if (m_warpA != nullptr)
 					{
-			
-						temporaryWarpInstance->SetPosition(posX, posY);
-						temporaryWarpInstance->SetSize(CHIP_SIZE, CHIP_SIZE);
+						m_warpA->SetPosition(posX, posY);
+						m_warpA->SetSize(CHIP_SIZE, CHIP_SIZE);
 
 						m_warpSrcPos = Vector2D(posX, posY);
 						m_hasWarpSrc = true;
 					}
+					//temporaryWarpInstance = CreateStageObjectInstance<Warp>(Vector2D(posX, posY));
+					//if (temporaryWarpInstance != nullptr)
+					//{
+			
+					//	temporaryWarpInstance->SetPosition(posX, posY);
+					//	temporaryWarpInstance->SetSize(CHIP_SIZE, CHIP_SIZE);
+
+					//	m_warpSrcPos = Vector2D(posX, posY);
+					//	m_hasWarpSrc = true;
+					//}
 				}
 					break;
 
 				case 'v':
 				{
-					m_warpDstPos = Vector2D(posX, posY);
-					m_hasWarpDst = true;
+					m_warpB =
+						CreateStageObjectInstance<Warp>(
+							Vector2D(posX, posY));
+
+					if (m_warpB != nullptr)
+					{
+						m_warpB->SetPosition(posX, posY);
+						m_warpB->SetSize(CHIP_SIZE, CHIP_SIZE);
+
+						m_warpDstPos = Vector2D(posX, posY);
+						m_hasWarpDst = true;
+					}
+					//m_warpDstPos = Vector2D(posX, posY);
+					//m_hasWarpDst = true;
 				}
 					break;
 
@@ -273,6 +327,7 @@ void StageManager::CreateStageObject()
 				{
 					// 鍵を生成する処理
 					Key* new_key = CreateStageObjectInstance<Key>(Vector2D(posX, posY));
+					new_key->SetChipSize(CHIP_SIZE);
 				}
 					break;
 
@@ -282,10 +337,24 @@ void StageManager::CreateStageObject()
 		}
 	}
 
-	if (m_hasWarpSrc && m_hasWarpDst && temporaryWarpInstance != nullptr)
+	if (m_warpA != nullptr &&
+		m_warpB != nullptr)
+	{
+		// A → B
+		m_warpA->SetTargetPosition(
+			m_warpDstPos.x,
+			m_warpDstPos.y);
+
+		// B → A
+		m_warpB->SetTargetPosition(
+			m_warpSrcPos.x,
+			m_warpSrcPos.y);
+	}
+
+	/*if (m_hasWarpSrc && m_hasWarpDst && temporaryWarpInstance != nullptr)
 	{
 		temporaryWarpInstance->SetTargetPosition(m_warpDstPos.x, m_warpDstPos.y);
-	}
+	}*/
 }
 
 Vector2D StageManager::GetPlayerSpawnPosition() const

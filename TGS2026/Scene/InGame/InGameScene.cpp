@@ -44,17 +44,33 @@ void InGameScene::Initialize()
 	// StageManagerで読みこんだものを呼び出す
 	m_stageManager.LoadLevel(m_stageManager.GetCurrentLevel());
 
-	// 現在の階層に応じたCHIP_SIZEを計算して、プレイヤーに教える処理
-	// StageManager側のCHIP_SIZE計算式と同じ値をここで計算して渡す
-	/*一旦128にします*/
-	// float currentChipSize = 128.0f - (m_stageManager.GetCurrentLevel() * 32.0f);
-	// if (currentChipSize < 32.0f)
-	// {
-	// 	currentChipSize = 32.0f;
-	// }
-	
-	// player.SetChipSize(currentChipSize);	// プレイヤーのサイズ・移動量を自動計算
-	/*128*/
+	// プレイヤーを初期化
+	player.Initialize();
+
+	// 配列に入っているすべてのオブジェクトクラスの初期化処理
+	for (GameObject* obj : allObjects)
+	{
+		if (obj != nullptr)
+		{
+			obj->Initialize();
+		}
+	}
+
+	// 現在の階層（インデックス）を取得
+	int currentLevel = m_stageManager.GetCurrentLevel();
+
+	// デフォルトは 128.0f
+	float currentChipSize = 128.0f;
+
+	// ★StageManagerの条件と完全に一致させる
+	// ステージ3（インデックス2）以降はずっと 64.0f にする
+	if (currentLevel >= 2)
+	{
+		currentChipSize = 100.0f;
+	}
+
+	// プレイヤーのサイズ・移動量を自動計算してセット
+	player.SetChipSize(currentChipSize);
 
 	// 確定したレベルをプレイヤーに渡す
 	int currentLimit = m_stageManager.GetCurrentMoveLimit();
@@ -85,52 +101,11 @@ void InGameScene::Initialize()
 		}
 	}
 
-	// プレイヤーを初期化
-	 player.Initialize();
 	// StageManagerから、CSVに書かれたプレイヤーの初期座標をもらう
 	 Vector2D playerSpawnPos = m_stageManager.GetPlayerSpawnPosition();
 
 	// プレイヤーにCSVから読み込んだ座標をセットする
 	 player.SetPosition(playerSpawnPos.x, playerSpawnPos.y);
-
-	// goal.Initialize();
-	/*warp.Initialize();*/
-	// goal.SetPlayer(&player);
-	/*warp.SetPlayer(&player);*/
-
-	// オブジェクトの生成
-	// allObjects.push_back(new Wall(640.0f, 130.0f, 1280.0f, 128.0f));
-	// allObjects.push_back(new Wall(640.0f, 645.0f, 1280.0f, 128.0f));
-
-	//// 一旦オブジェクトを削除
-	//allObjects.push_back(new Block(448.0f, 258.0f, 128.0f, 128.0f));
-	//allObjects.push_back(new Block(448.0f, 386.0f, 128.0f, 128.0f));
-	//allObjects.push_back(new Block(448.0f, 514.0f, 128.0f, 128.0f));
-
-  
-	// allObjects.push_back(new Key(250.0f, 250.0f, &player));
-
-	//allObjects.push_back(new Warp(328.0f, 300.0f, 128.0f, 128.0f, 832.0f, 250.0f));
-
-	//追加
-	//Warp* warp = new Warp(320.0f, 192.0f, 128.0f, 128.0f, 320.0f, 320.0f);
-
-	/*warp->SetPlayer(&player);
-
-	allObjects.push_back(warp);*/
-
-	// 配列に入っているすべてのオブジェクトクラスの初期化処理
-	for (GameObject* obj : allObjects)
-	{
-		if (obj != nullptr)
-		{
-			obj->Initialize();
-		}
-	}
-	
-
-	// 3. プレイヤーの初期化
-	player.Initialize();
 
 	if (!fade) fade = new Fade(); // 生成
 	state = SceneState::Playing;
@@ -138,7 +113,10 @@ void InGameScene::Initialize()
 
 	for (GameObject* obj : allObjects)
 	{
-		if (obj == nullptr) continue;
+		if (obj == nullptr)
+		{
+			continue;
+		}
 
 		Warp* warpObj = dynamic_cast<Warp*>(obj);
 		if (warpObj != nullptr)
@@ -146,17 +124,6 @@ void InGameScene::Initialize()
 			warpObj->SetPlayer(&player); // 位置に配置された状態でプレイヤーを登録！
 		}
 	}
-
-		// プレイヤーをセット
-	//for (auto& wall : walls)
-	//{
-	//	wall.SetPlayer(&player);
-	//}
-
-	//for (auto& block : blocks)
-	//{
-	//	block.SetPlayer(&player);
-	//}
 
 
 	background = LoadGraph("Resource/Images/GameMain/background4.png");   // 背景画像
@@ -173,7 +140,7 @@ void InGameScene::Initialize()
 	// --- 検知オブジェクトの配置 ---
 	// 一旦リストを掃除（リセット時用）
 	//for (auto d : detectors) delete d;
-	//detectors.clear();
+	// detectors.clear();
 
 	// カメラ配置: (x, y, 角度, 距離, 視野角)
 	// 向き(角度)はラジアン: 0=右, PI/2=下, PI=左, PI*1.5=上
@@ -213,7 +180,7 @@ eSceneType InGameScene::Update(const float& delta_second)
 	InputManager* input = InputManager::GetInstance();
 
 	// EscキーかSTARTボタンが押されたらポーズ状態を切り替える
-	if (input->GetKeyInputState(KEY_INPUT_ESCAPE) == eInputState::ePress || input->GetButtonInputState(XINPUT_BUTTON_START) == eInputState::ePress)
+	if (input->GetKeyInputState(KEY_INPUT_P) == eInputState::ePress || input->GetButtonInputState(XINPUT_BUTTON_START) == eInputState::ePress)
 	{
 		isPaused = !isPaused;
 
@@ -492,7 +459,7 @@ eSceneType InGameScene::Update(const float& delta_second)
 		fade->Start(FadeType::IrisOut, true, 1.5f);
 
 		// プレイヤーの初期化
-		player.Initialize();
+		//player.Initialize();
 
 		// ゴールの初期化(これが無かったら重くなる)
 		goal.Initialize();
@@ -546,7 +513,7 @@ void InGameScene::Draw() const
 		block.Draw();
 	}*/
 	
-	goal.Draw();
+	//goal.Draw();			// これはいらない
 	player.Draw();
 	/*warp->Draw();*/
 
@@ -567,17 +534,21 @@ void InGameScene::Draw() const
 	//	}
 	//}
 
+	/*二重構造になっている*/
+	// ここから
 	//// カメラのみ
-	for (auto d : detectors)
-	{
-		// 自分のタイプが Light の時だけ Camera を呼ぶ
-		if (d->GetType() == TrapType::Camera)
-		{
-			d->Draw();
-		}
-	}
+	// for (auto d : detectors)
+	// {
+	// 	// 自分のタイプが Light の時だけ Camera を呼ぶ
+	// 	if (d->GetType() == TrapType::Camera)
+	// 	{
+	// 		d->Draw();
+	// 	}
+	// }
 
-	for (auto d : detectors) d->Draw();
+	//for (auto d : detectors) d->Draw();
+
+	/*ここまで(何なら三重構造)*/
 
 	// 猶予期間中の演出
 	if (state == SceneState::Detected) {

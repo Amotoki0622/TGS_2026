@@ -48,30 +48,40 @@ void Wall::Update(float delta_second)
     
 }
 
+void Wall::SetChipSize(float size)
+{
+    // ★重要：128pxの画像を基準として倍率を求める
+    // sizeが128.0fなら 128/128 = 1.0倍（そのまま）
+    // sizeが100.0fなら 100/128 = 0.78125倍（自動で一回り小さくなる）
+    drawScale = size / 128.0f;
+}
+
 // 描画
 void Wall::Draw() const
 {
-    // 1. 画像のサイズ（横幅と縦幅）を取得する
-    int img_width, img_height;
-    GetGraphSize(wall_image, &img_width, &img_height);
+    if (wall_image != -1)
+    {
+        // 引数: (中心X, 中心Y, 拡大率, 回転角度, グラフィックハンドル, 透けフラグ)
+        // location.x と location.y（マスの中心座標）をそのまま渡すだけでピッタリ真ん中に描画されます。
+        DrawRotaGraph(
+            (int)location.x,
+            (int)location.y,
+            drawScale,
+            0.0,
+            wall_image,
+            TRUE
+        );
+    }
 
-    // 2. 中心(location)から画像のサイズ半分を引き、左上の座標を計算して描画
-    DrawGraph(
-        (int)(location.x - img_width / 2),
-        (int)(location.y - img_height / 2),
-        wall_image,
-        TRUE
+
+    DrawBox(
+        (int)(location.x - box_size.x / 2),
+        (int)(location.y - box_size.y / 2),
+        (int)(location.x + box_size.x / 2),
+        (int)(location.y + box_size.y / 2),
+        GetColor(0, 0, 255),
+        FALSE
     );
-
-
-    //DrawBox(
-    //    (int)(location.x - box_size.x / 2),
-    //    (int)(location.y - box_size.y / 2),
-    //    (int)(location.x + box_size.x / 2),
-    //    (int)(location.y + box_size.y / 2),
-    //    GetColor(0, 0, 255),
-    //    FALSE
-    //);
 
 }
 

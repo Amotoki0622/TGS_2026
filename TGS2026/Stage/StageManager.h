@@ -106,10 +106,18 @@ public:
 	// ワープ関連
 private:
 
+	Warp* m_warpA = nullptr;
+	Warp* m_warpB = nullptr;
+
 	Vector2D m_warpSrcPos;		// 入口
 	Vector2D m_warpDstPos;		// 出口
 
+	/*Player* m_pPlayer = nullptr;*/
+
 	bool m_hasWarpSrc = false;
 	bool m_hasWarpDst = false;
+
+	public:
+		/*void SetPlayer(Player* player) { m_pPlayer = player; }*/
 };
 
