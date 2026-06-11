@@ -4,6 +4,8 @@
 #include "Scene/SceneManager.h"
 #include "Utility/ProjectConfig.h"
 
+#include <Windows.h>
+
 //#define DEBUG
 
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
@@ -69,6 +71,10 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 
 	return 0;
 #else
+
+	// フォントの一時登録
+	AddFontResourceExW(L"Resource/Font/Kaisotai-Next-UP-B.ttf", FR_PRIVATE, 0);
+
 	try
 	{
 		// シーンマネージャーを生成する
@@ -82,6 +88,10 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 
 		// 終了時処理
 		manager.Finalize();
+
+		// フォント解放（使い終わった後）
+		RemoveFontResourceExW(L"Resource/Font/Hangyaku-0vRGR.ttf", FR_PRIVATE, 0);
+
 	}
 	catch (std::string error_log)
 	{
@@ -89,5 +99,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 		return ErrorThrow(error_log);
 	}
 #endif // DEBUG
+
+	return D_SUCCESS;
 }
 

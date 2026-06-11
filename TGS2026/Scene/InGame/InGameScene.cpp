@@ -136,6 +136,7 @@ void InGameScene::Initialize()
 	// 倍速にする場合
 	SetFrequencySoundMem((int)(freq * 1.0f), dieSE);
 
+	font[0] = CreateFontToHandle("廻想体 ネクスト UP B", 100, 6);
 	
 	// --- 検知オブジェクトの配置 ---
 	// 一旦リストを掃除（リセット時用）
