@@ -25,7 +25,8 @@ class InGameScene : public SceneBase
 	enum class SceneState {
 		Playing,    // 通常時
 		Detected,   // 検知猶予中
-		Restarting  // フェード中・リセット待ち
+		Restarting,  // フェード中・リセット待ち
+		StageNotifier
 	};
 
 private:
@@ -41,6 +42,8 @@ private:
 
 	// フォント
 	int font[2];
+
+	float m_notifierTimer;			// ステージ表示の残り時間を削るタイマー
 
 	// リソースマネージャー
 	ResourceManager* resource;      
