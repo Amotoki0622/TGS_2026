@@ -6,7 +6,10 @@ class TitleScene : public SceneBase
 {
 private:
     int menu_cursor;
-    eSceneType next_scene;      
+    eSceneType next_scene;   
+
+    //’Ç‰Á
+    int background;
 
 public:
     TitleScene();
