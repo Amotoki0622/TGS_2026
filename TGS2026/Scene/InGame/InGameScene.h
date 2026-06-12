@@ -45,6 +45,10 @@ private:
 
 	float m_notifierTimer;			// ステージ表示の残り時間を削るタイマー
 
+	int fontPosX;					// 計算済みのX座標
+	int fontPosY;					// 計算済みのY座標
+	char fontText[32];				// 作成済みの文字列
+
 	// リソースマネージャー
 	ResourceManager* resource;      
 

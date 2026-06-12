@@ -33,6 +33,9 @@ InGameScene::~InGameScene()
 // 初期化処理
 void InGameScene::Initialize()
 {
+	// フォントの設定
+	font[0] = CreateFontToHandle("廻想体 ネクスト UP B", 100, 6);
+
 	// 一旦処理をコメント文
 	//for (auto obj : allObjects) {
 	//	delete obj; // メモリから消去
@@ -114,6 +117,16 @@ void InGameScene::Initialize()
 	state = SceneState::StageNotifier;
 	m_notifierTimer = 1.8f;
 
+	// 文字列の保存
+	int level = m_stageManager.GetCurrentLevel() + 1;
+	sprintf_s(fontText, "STAGE %d", level);
+
+	// 文字の描画座標
+	int textWidth = GetDrawStringWidthToHandle(fontText, (int)strlen(fontText), font[0]);
+	fontPosX = (1280 - textWidth) / 2;
+	fontPosY = (720 - 100) / 2;
+
+
 	for (GameObject* obj : allObjects)
 	{
 		if (obj == nullptr)
@@ -139,7 +152,6 @@ void InGameScene::Initialize()
 	// 倍速にする場合
 	SetFrequencySoundMem((int)(freq * 1.0f), dieSE);
 
-	font[0] = CreateFontToHandle("廻想体 ネクスト UP B", 100, 6);
 	
 	// --- 検知オブジェクトの配置 ---
 	// 一旦リストを掃除（リセット時用）
@@ -278,6 +290,15 @@ eSceneType InGameScene::Update(const float& delta_second)
 
 			state = SceneState::StageNotifier;
 			m_notifierTimer = 1.8f;
+
+			// 文字列の保存
+			int level = m_stageManager.GetCurrentLevel() + 1;
+			sprintf_s(fontText, "STAGE %d", level);
+
+			// 文字の描画座標
+			int textWidth = GetDrawStringWidthToHandle(fontText, (int)strlen(fontText), font[0]);
+			fontPosX = (1280 - textWidth) / 2;
+			fontPosY = (720 - 100) / 2;
 
 			// fade->Start(FadeType::IrisOut, false, 1.0f);  // フェードイン開始
 			// state = SceneState::Playing;
@@ -612,24 +633,27 @@ void InGameScene::Draw() const
 	if (fade) fade->Draw();
 
 	// �X�e�[�W���`�悳��Ă��Ȃ����m�F���鏈��
-	int level = m_stageManager.GetCurrentLevel() + 1;
-	int moves = m_stageManager.GetCurrentMoveLimit();
-	int total = m_stageManager.GetTotalStages();
+	// int level = m_stageManager.GetCurrentLevel() + 1;
+	// int moves = m_stageManager.GetCurrentMoveLimit();
+	// int total = m_stageManager.GetTotalStages();
 
 	if (state == SceneState::StageNotifier)
 	{
 		DrawBox(0, 0, 1280, 720, GetColor(0, 0, 0), TRUE);
 
-		char stageText[32];
-		sprintf_s(stageText, "STAGE %d", level);
+		// char stageText[32];
+		//sprintf_s(stageText, "STAGE %d", level);
 
-		int textWidth = GetDrawStringWidthToHandle(stageText, (int)strlen(stageText), font[0]);
-		int posX = (1280 - textWidth) / 2;
-		int posY = (720 - 100) / 2; // フォントサイズが100なので、縦幅100として中央計算
+		// int textWidth = GetDrawStringWidthToHandle(stageText, (int)strlen(stageText), font[0]);
+		// int posX = (1280 - textWidth) / 2;
+		// int posY = (720 - 100) / 2; // フォントサイズが100なので、縦幅100として中央計算
 
 		// 5. 文字の描画（影をつけて見やすくする）
-		DrawStringToHandle(posX + 4, posY + 4, stageText, GetColor(20, 20, 20), font[0]); // 影（黒）
-		DrawStringToHandle(posX, posY, stageText, GetColor(255, 255, 255), font[0]);     // 本尊（白）
+		// DrawStringToHandle(posX + 4, posY + 4, stageText, GetColor(20, 20, 20), font[0]); // 影（黒）
+		// DrawStringToHandle(posX, posY, stageText, GetColor(255, 255, 255), font[0]);     // 本尊（白）
+
+		DrawStringToHandle(fontPosX + 4, fontPosY + 4, fontText, GetColor(30, 30, 30), font[0]); // 影
+		DrawStringToHandle(fontPosX, fontPosY, fontText, GetColor(255, 255, 255), font[0]);     // 本尊
 	}
 
 	// ��F����ɁuSTAGE 1 / 8�v
