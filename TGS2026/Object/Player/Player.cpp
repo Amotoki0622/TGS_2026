@@ -505,16 +505,6 @@ void Player::Draw() const
 
     // プレイヤーの背後に発生したエフェクトを描画
     effectManager.Draw();
-
-    // (x座標, y座標, 色, "書式文字列", 変数);
-    DrawFormatString(0, 100, GetColor(255, 255, 255), "x座標 %d / y座標 %d", x,y);
-
-    // 緑の当たり判定枠もそのまま表示しておくと、中心が合っているか確認しやすいです
-    int left = (int)(x - collisionWidth / 2);
-    int right = (int)(x + collisionWidth / 2);
-    int top = (int)(y - collisionHeight / 2);
-    int bottom = (int)(y + collisionHeight / 2);
-    DrawBox(left, top, right, bottom, GetColor(0, 255, 0), FALSE);
 }
 
 // =========================

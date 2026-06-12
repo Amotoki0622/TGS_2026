@@ -16,6 +16,9 @@ TitleScene::~TitleScene()
 void TitleScene::Initialize()
 {
 	menu_cursor = 0;
+
+    //追加
+    background = LoadGraph("Resource/Images/Title.png");
 }
 
 // 更新処理
@@ -83,25 +86,30 @@ eSceneType TitleScene::Update(const float& delta_second)
 // 描画処理
 void TitleScene::Draw() const
 {
+    //追加
+    DrawGraph(0, 0, background, TRUE);
+
 	SetFontSize(20);
-	DrawString(10, 10, "TITLE", 0xffffff);
+	DrawString(625, 180, "TITLE", 0xffffff);
     
     // メニュー
-    DrawString(500, 250, "START", 0xffffff);
-    DrawString(500, 300, "END", 0xffffff);
+    DrawString(625, 250, "START", 0xffffff);
+    DrawString(630, 300, "END", 0xffffff);
 
     // =========================
     // カーソル表示（→）
     // =========================
     int cursorY = 250 + (menu_cursor * 50);
 
-    DrawString(450, cursorY, ">", 0xffff00); // 黄色カーソル
-    DrawString(595, cursorY, "<", 0xffff00); // 黄色カーソル
+    DrawString(575, cursorY, ">", 0xffff00); // 黄色カーソル
+    DrawString(725, cursorY, "<", 0xffff00); // 黄色カーソル
 }
 
 // 終了時処理
 void TitleScene::Finalize()
 {
+    //追加
+    DeleteGraph(background);
 }
 
 // 現在のシーン情報を返す
