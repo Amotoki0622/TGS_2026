@@ -111,6 +111,9 @@ void InGameScene::Initialize()
 	state = SceneState::Playing;
 	detectionTimer = 0.0f;
 
+	state = SceneState::StageNotifier;
+	m_notifierTimer = 1.8f;
+
 	for (GameObject* obj : allObjects)
 	{
 		if (obj == nullptr)
@@ -272,14 +275,37 @@ eSceneType InGameScene::Update(const float& delta_second)
 	{
 		if (fade->IsFinished()) {
 			Initialize(); // 暗転しきったら初期化
-			fade->Start(FadeType::IrisOut, false, 1.0f);  // フェードイン開始
-			state = SceneState::Playing;
+
+			state = SceneState::StageNotifier;
+			m_notifierTimer = 1.8f;
+
+			// fade->Start(FadeType::IrisOut, false, 1.0f);  // フェードイン開始
+			// state = SceneState::Playing;
 		}
 		return GetNowSceneType(); // リスタート中は以下の処理をスキップ
 	}
 
-	player.Update(delta_second);  
+
+	if (state == SceneState::StageNotifier)
+	{
+		// カウントダウン開始
+		m_notifierTimer -= delta_second;
+
+		// 時間が来たら、文字を消してフェードイン(徐々に明るくして)
+		if (m_notifierTimer <= 0.0f)
+		{
+			// IrisOutの引数をfalse
+			fade->Start(FadeType::IrisOut, false, 1.2f);
+
+			state = SceneState::Playing;		// 通常プレイにする
+		}
+
+		return GetNowSceneType();
+	}
+
+	player.Update(delta_second);
 	player.Move(allObjects);
+
 
 	//ワープ処理
 	/*int playerX, playerY;
@@ -590,13 +616,29 @@ void InGameScene::Draw() const
 	int moves = m_stageManager.GetCurrentMoveLimit();
 	int total = m_stageManager.GetTotalStages();
 
+	if (state == SceneState::StageNotifier)
+	{
+		DrawBox(0, 0, 1280, 720, GetColor(0, 0, 0), TRUE);
+
+		char stageText[32];
+		sprintf_s(stageText, "STAGE %d", level);
+
+		int textWidth = GetDrawStringWidthToHandle(stageText, (int)strlen(stageText), font[0]);
+		int posX = (1280 - textWidth) / 2;
+		int posY = (720 - 100) / 2; // フォントサイズが100なので、縦幅100として中央計算
+
+		// 5. 文字の描画（影をつけて見やすくする）
+		DrawStringToHandle(posX + 4, posY + 4, stageText, GetColor(20, 20, 20), font[0]); // 影（黒）
+		DrawStringToHandle(posX, posY, stageText, GetColor(255, 255, 255), font[0]);     // 本尊（白）
+	}
+
 	// ��F����ɁuSTAGE 1 / 8�v
-	DrawFormatString(20, 120, 0xff0000, "STAGE %d / %d", level, total);
+	// DrawFormatString(20, 120, 0xff0000, "STAGE %d / %d", level, total);
 
 	// ��F�E��ɁuMOVE LIMIT : �v
-	DrawFormatString(20, 140, 0x00ff00, "MOVE LIMIT : %d", moves);
+	// DrawFormatString(20, 140, 0x00ff00, "MOVE LIMIT : %d", moves);
 
-	m_stageManager.DrawDebugInfo();		// �f�o�b�N
+	// m_stageManager.DrawDebugInfo();		// �f�o�b�N
 
 	// -------------------------------------------------------------
 	// ポーズ画面の描画処理（一番手前に重ねる）
