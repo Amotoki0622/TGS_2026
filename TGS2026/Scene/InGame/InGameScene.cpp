@@ -91,6 +91,12 @@ void InGameScene::Initialize()
 			keyObj->SetPlayer(&player); // これで鍵がプレイヤーを追いかけられるようになります！
 		}
 
+		Goal* goalObj = dynamic_cast<Goal*>(obj);
+		if (goalObj != nullptr)
+		{
+			goalObj->SetPlayer(&player);
+		}
+
 		Cam* camObj = dynamic_cast<Cam*>(obj);
 		if (camObj != nullptr)
 		{
@@ -489,42 +495,45 @@ eSceneType InGameScene::Update(const float& delta_second)
 	// ゴール判定
 	if (player.IsHitGoal())
 	{
-		// 少し遅れさせて遷移する
-		// delay++;
-		// if (delay >= 3000) {
-		// 	// シーンの遷移
-		// 	return eSceneType::eTitle;
-		// }
+		goal.Update(delta_second);
+		 //少し遅れさせて遷移する
+		 delay++;
+		 if (delay >= 3000)
+		 {
+			 // 次の階層を呼び出す
+			 m_stageManager.NextLevel();
 
-		StopSoundMem(beepSE);
 
-		// 次の階層を呼び出す
-		m_stageManager.NextLevel();
+			 StopSoundMem(beepSE);
 
-		// 状態をリスタート中（暗転中）に変更する
-		state = SceneState::Restarting;
-		// フェードアウトを開始（1秒かけてIrisOutで画面を閉じる）
-		fade->Start(FadeType::IrisOut, true, 1.5f);
+			 // 次の階層を呼び出す
+		 /*	m_stageManager.NextLevel();*/
 
-		// プレイヤーの初期化
-		//player.Initialize();
+			 // 状態をリスタート中（暗転中）に変更する
+			 state = SceneState::Restarting;
+			 // フェードアウトを開始（1秒かけてIrisOutで画面を閉じる）
+			 fade->Start(FadeType::IrisOut, true, 1.5f);
 
-		// ゴールの初期化(これが無かったら重くなる)
-		goal.Initialize();
-		goal.SetPlayer(&player);
+			 // プレイヤーの初期化
+			 //player.Initialize();
 
-		// ステージが5階クリアしたらタイトルに戻る
-		if (m_stageManager.GetCurrentLevel() >= 5)
-		{
-			StopSoundMem(mainBGM);
-			// シーンの遷移
-			return eSceneType::eTitle;
-		}
+			 // ゴールの初期化(これが無かったら重くなる)
+			 goal.Initialize();
+			 goal.SetPlayer(&player);
 
-		// シーンの遷移
-		// return eSceneType::eTitle;
+			 // ステージが5階クリアしたらタイトルに戻る
+			 if (m_stageManager.GetCurrentLevel() >= 5)
+			 {
+				 StopSoundMem(mainBGM);
+				 // シーンの遷移
+				 return eSceneType::eTitle;
+			 }
 
-		return GetNowSceneType();
+			 // シーンの遷移
+			 // return eSceneType::eTitle;
+
+			 return GetNowSceneType();
+		 }
 	}
 
 

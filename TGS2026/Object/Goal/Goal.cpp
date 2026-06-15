@@ -33,13 +33,23 @@ Goal::~Goal()
 // 初期化
 void Goal::Initialize()
 {
-    goal_image = LoadGraph("Resource/Images/Gimmick/goal.png");
+    image_count = 0;
+    LoadDivGraph("Resource/Images/Gimmick/goal_image.png",2,2,1,128,128,goal_image);
 }
 
 // 更新
 void Goal::Update(float delta_second)
 {
-
+    // ★デバッグ表示4：このUpdate関数自体が毎フレーム呼ばれているかチェック
+    DrawString(10, 60, "Debug: Goal::Update() is Running!", GetColor(0, 255, 255));
+    if (image_count == 1)
+    {
+        return;
+    }
+    if (player != nullptr && player->IsHitGoal())
+    {
+        image_count = 1;
+    }
 }
 
 void Goal::SetChipSize(float size)
@@ -53,12 +63,14 @@ void Goal::SetChipSize(float size)
 // 描画
 void Goal::Draw() const
 {
+    DrawFormatString(700, 20, GetColor(0, 255, 255), "%d", image_count);
+
     DrawRotaGraph(
         (int)location.x,
         (int)location.y,
         drawScale,
         0.0,
-        goal_image,
+        goal_image[image_count],
         TRUE
     );
 
