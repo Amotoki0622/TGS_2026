@@ -21,6 +21,10 @@ InGameScene::InGameScene()
 	SetFrequencySoundMem((int)(freq * 0.6f), beepSE);
 
 	m_stageManager.Initialize();
+
+	// フォントの設定
+	font[0] = CreateFontToHandle("廻想体 ネクスト UP B", 100, 6);
+
 }
 
 // デストラクタ
@@ -33,8 +37,6 @@ InGameScene::~InGameScene()
 // 初期化処理
 void InGameScene::Initialize()
 {
-	// フォントの設定
-	font[0] = CreateFontToHandle("廻想体 ネクスト UP B", 100, 6);
 
 	// 一旦処理をコメント文
 	//for (auto obj : allObjects) {
@@ -300,6 +302,7 @@ eSceneType InGameScene::Update(const float& delta_second)
 			// 文字列の保存
 			int level = m_stageManager.GetCurrentLevel() + 1;
 			sprintf_s(fontText, "STAGE %d", level);
+			//sprintf_s(fontText, "これはステージ%dです。", level);
 
 			// 文字の描画座標
 			int textWidth = GetDrawStringWidthToHandle(fontText, (int)strlen(fontText), font[0]);
@@ -566,7 +569,7 @@ void InGameScene::Draw() const
 	// スコアの描画
 	DrawNumber::Draw(230, 550, tekazu, 0.8f);
 
-	//DrawStringToHandle(40, 450, "これはステージ1です。", GetColor(255, 255, 255), font[0]);
+	//DrawStringToHandle(40, 450, "STAGE1", GetColor(255, 255, 255), font[0]);
 
 	/*for (auto& wall : walls)
 	{

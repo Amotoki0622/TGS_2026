@@ -90,13 +90,19 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 		manager.Finalize();
 
 		// フォント解放（使い終わった後）
-		RemoveFontResourceExW(L"Resource/Font/Hangyaku-0vRGR.ttf", FR_PRIVATE, 0);
+		//RemoveFontResourceExW(L"Resource/Font/Hangyaku-0vRGR.ttf", FR_PRIVATE, 0);
+		RemoveFontResourceExW(L"Resource/Font/Kaisotai-Next-UP-B.ttf", FR_PRIVATE, 0);
 
 	}
 	catch (std::string error_log)
 	{
 		// エラー内容を出力する
 		return ErrorThrow(error_log);
+
+		// フォント解放
+		//RemoveFontResourceExW(L"Resource/Font/Hangyaku-0vRGR.ttf", FR_PRIVATE, 0);
+		RemoveFontResourceExW(L"Resource/Font/Kaisotai-Next-UP-B.ttf", FR_PRIVATE, 0);
+
 	}
 #endif // DEBUG
 
