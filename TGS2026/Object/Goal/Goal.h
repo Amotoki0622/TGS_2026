@@ -14,7 +14,11 @@ private:
 
 	float drawScale = 1.0f; // •`‰æ—p‚Ì”{—¦‚ğ•Û‘¶‚·‚é•Ï”
 
-	int goal_image;
+	/*int goal_image;*/
+	int goal_image[2];
+	int image_count;
+
+
 
 public:
 	void SetPlayer(Player* p); // ’Ç‰Á
