@@ -5,7 +5,8 @@
 // コンストラクタ
 TitleScene::TitleScene()
 {
-    font[0] = CreateFontToHandle("廻想体 ネクスト UP B", 100, 6);
+    font[0] = CreateFontToHandle("廻想体 ネクスト UP B", 125, 6);
+    font[1] = CreateFontToHandle("廻想体 ネクスト UP B", 75, 6);
 }
 
 // デストラクタ
@@ -91,11 +92,11 @@ void TitleScene::Draw() const
     DrawGraph(0, 0, background, TRUE);
 
 	/*SetFontSize(20);*/
-    DrawStringToHandle(565,250,"TITLE", 0xffffff, font[0]);
+    DrawStringToHandle(545,250,"TITLE", 0xffffff, font[0]);
 	/*DrawString(625, 180, "TITLE", 0xffffff);*/
     
     // メニュー
-    DrawStringToHandle(545, 550, "START", 0xffffff, font[0]);
+    DrawStringToHandle(575, 550, "START", 0xffffff, font[1]);
     /*DrawString(625, 250, "START", 0xffffff);*/
     /*DrawString(630, 300, "END", 0xffffff);*/
 
@@ -104,8 +105,8 @@ void TitleScene::Draw() const
     // =========================
     int cursorY = 250 + (menu_cursor * 50);
 
-    DrawStringToHandle(485, 550, ">", 0xffff00, font[0]);
-    DrawStringToHandle(775, 550, "<", 0xffff00, font[0]);
+    DrawStringToHandle(535, 550, ">", 0xff0000, font[1]);
+    DrawStringToHandle(745, 550, "<", 0xff0000, font[1]);
     //DrawString(575, cursorY, ">", 0xffff00); // 黄色カーソル
     //DrawString(725, cursorY, "<", 0xffff00); // 黄色カーソル
 }
