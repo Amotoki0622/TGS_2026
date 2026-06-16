@@ -18,6 +18,8 @@ private:
 	int goal_image[2];
 	int image_count;
 
+	bool isOpen;
+
 
 
 public:
@@ -47,5 +49,11 @@ public:
 		this->box_size.x = w;
 		this->box_size.y = h;
 	}
+
+	// GoalƒNƒ‰ƒX‚É‚±‚ñ‚ÈŠÖ”‚Æ•Ï”‚ª‚ ‚é‚Æ‘z’è‚µ‚Ü‚·
+	void Open();
+	bool IsOpen() const;
+
+	void GetLocation(int& outX, int& outY) const;
 };
 
