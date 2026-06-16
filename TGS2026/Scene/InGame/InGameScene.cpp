@@ -9,16 +9,13 @@ InGameScene::InGameScene()
 
 	// メインBGM
 	mainBGM = LoadSoundMem("Resource/Sounds/BGM/main/main01.mp3");
-	// 音量を設定（例：半分の 128 や、かなり控えめな 80 など）
 	ChangeVolumeSoundMem(85, mainBGM);
 
 	// 警報音
 	beepSE = LoadSoundMem("Resource/Sounds/SE/object/cam/cam3.mp3");
-	freq = GetFrequencySoundMem(beepSE); // 元の周波数を取得
-	// 音量を設定（例：半分の 128 や、かなり控えめな 80 など）
+	freq = GetFrequencySoundMem(beepSE);
 	ChangeVolumeSoundMem(70, beepSE);
-	// 倍速にする場合
-	SetFrequencySoundMem((int)(freq * 0.6f), beepSE);
+	SetFrequencySoundMem((int)(freq * 0.6f), beepSE); // 減速
 
 	m_stageManager.Initialize();
 
@@ -30,7 +27,6 @@ InGameScene::InGameScene()
 // デストラクタ
 InGameScene::~InGameScene()
 {
-	// メモリ解放
 	Finalize();
 }
 
@@ -38,13 +34,8 @@ InGameScene::~InGameScene()
 void InGameScene::Initialize()
 {
 
-	// 一旦処理をコメント文
-	//for (auto obj : allObjects) {
-	//	delete obj; // メモリから消去
-	//}
 	allObjects.clear(); // 配列を空っぽにする
 	detectors.clear();
-	/*warp = new Warp(120, 320, 80, 80, 900, 320);*/
 
 	// StageManagerで読みこんだものを呼び出す
 	m_stageManager.LoadLevel(m_stageManager.GetCurrentLevel());
@@ -64,11 +55,8 @@ void InGameScene::Initialize()
 	// 現在の階層（インデックス）を取得
 	int currentLevel = m_stageManager.GetCurrentLevel();
 
-	// デフォルトは 128.0f
+	// デフォルトは 128.0f / ステージ3以降は一回り小さく
 	float currentChipSize = 128.0f;
-
-	// ★StageManagerの条件と完全に一致させる
-	// ステージ3（インデックス2）以降はずっと 64.0f にする
 	if (currentLevel >= 2)
 	{
 		currentChipSize = 100.0f;
@@ -77,7 +65,7 @@ void InGameScene::Initialize()
 	// プレイヤーのサイズ・移動量を自動計算してセット
 	player.SetChipSize(currentChipSize);
 
-	// 確定したレベルをプレイヤーに渡す
+	// 確定したレベルの手数をプレイヤーに渡す
 	int currentLimit = m_stageManager.GetCurrentMoveLimit();
 	player.SetTekazu(currentLimit);
 
@@ -90,7 +78,7 @@ void InGameScene::Initialize()
 		Key* keyObj = dynamic_cast<Key*>(obj);
 		if (keyObj != nullptr)
 		{
-			keyObj->SetPlayer(&player); // これで鍵がプレイヤーを追いかけられるようになります！
+			keyObj->SetPlayer(&player);
 		}
 
 		Goal* goalObj = dynamic_cast<Goal*>(obj);
@@ -113,16 +101,14 @@ void InGameScene::Initialize()
 	}
 
 	// StageManagerから、CSVに書かれたプレイヤーの初期座標をもらう
-	 Vector2D playerSpawnPos = m_stageManager.GetPlayerSpawnPosition();
+	Vector2D playerSpawnPos = m_stageManager.GetPlayerSpawnPosition();
 
 	// プレイヤーにCSVから読み込んだ座標をセットする
-	 player.SetPosition(playerSpawnPos.x, playerSpawnPos.y);
+	player.SetPosition(playerSpawnPos.x, playerSpawnPos.y);
 
 	if (!fade) fade = new Fade(); // 生成
-	state = SceneState::Playing;
-	detectionTimer = 0.0f;
-
 	state = SceneState::StageNotifier;
+	detectionTimer = 0.0f;
 	m_notifierTimer = 1.8f;
 	m_notifierAlpha = 0;		// 透明
 	m_isRestartNotifier = false;
@@ -141,57 +127,26 @@ void InGameScene::Initialize()
 	//fontPosX = (1280 - textWidth) / 2;
 	//fontPosY = (720 - 100) / 2;
 
-
 	for (GameObject* obj : allObjects)
 	{
-		if (obj == nullptr)
-		{
-			continue;
-		}
+		if (obj == nullptr) continue;
 
 		Warp* warpObj = dynamic_cast<Warp*>(obj);
 		if (warpObj != nullptr)
 		{
-			warpObj->SetPlayer(&player); // 位置に配置された状態でプレイヤーを登録！
+			warpObj->SetPlayer(&player); // ワープオブジェクトにプレイヤーを登録
 		}
 	}
-
 
 	background = LoadGraph("Resource/Images/GameMain/background4.png");   // 背景画像
 
 	// 音源関連・読み込み
 	dieSE = LoadSoundMem("Resource/Sounds/SE/object/player/light_die01.mp3");
-	freq = GetFrequencySoundMem(dieSE); // 元の周波数を取得
-	// 音量を設定（例：半分の 128 や、かなり控えめな 80 など）
+	freq = GetFrequencySoundMem(dieSE);
 	ChangeVolumeSoundMem(70, dieSE);
-	// 倍速にする場合
 	SetFrequencySoundMem((int)(freq * 1.0f), dieSE);
 
-	
-	// --- 検知オブジェクトの配置 ---
-	// 一旦リストを掃除（リセット時用）
-	//for (auto d : detectors) delete d;
-	// detectors.clear();
-
-	// カメラ配置: (x, y, 角度, 距離, 視野角)
-	// 向き(角度)はラジアン: 0=右, PI/2=下, PI=左, PI*1.5=上
-	/*detectors.push_back(new Cam(400.0f, 150.0f, DX_PI_F / 2.0f, 350.0f, 0.8f));
-	detectors.push_back(new Cam(950.0f, 600.0f, DX_PI_F * 1.5f, 400.0f, 0.7f));*/
-
-	//// 照明配置: (x, y, 半径)
-	//detectors.push_back(new Light(640.0f, 360.0f, 120.0f));
-	//detectors.push_back(new Light(200.0f, 500.0f, 80.0f));
-
-
-	// 画面中央付近に、半径80pxの判定を持つトトゲを配置
-	// detectors.push_back(new SpikeTrap(640.0f, 400.0f, 80.0f));
-
-	//出現位置設定↓
-	//player.x = 500;
-	//player.y = 200;
-
 	delay = 0;
-
 	tekazu = 0;
 
 	DrawNumber::SetImage(
@@ -202,81 +157,52 @@ void InGameScene::Initialize()
 // 更新処理
 eSceneType InGameScene::Update(const float& delta_second)
 {
-	
 	tekazu = player.GetTekazu();
-
-	// -------------------------------------------------------------
-	// ⭕ 【追加】一時停止（ポーズ）の入力・制御フェーズ
-	// -------------------------------------------------------------
 	InputManager* input = InputManager::GetInstance();
 
-	// EscキーかSTARTボタンが押されたらポーズ状態を切り替える
+	// -------------------------------------------------------------
+	// ① 一時停止（ポーズ）の入力・制御フェーズ（最優先）
+	// -------------------------------------------------------------
 	if (input->GetKeyInputState(KEY_INPUT_P) == eInputState::ePress || input->GetButtonInputState(XINPUT_BUTTON_START) == eInputState::ePress)
 	{
 		isPaused = !isPaused;
-
 		if (isPaused)
 		{
-			// ポーズした瞬間のゲーム画面をキャプチャしてボカす
 			if (pauseBackgroundHandle != -1) DeleteGraph(pauseBackgroundHandle);
-
-			pauseBackgroundHandle = MakeScreen(1280, 720, FALSE); // 画面サイズに合わせる
+			pauseBackgroundHandle = MakeScreen(1280, 720, FALSE);
 			GetDrawScreenGraph(0, 0, 1280, 720, pauseBackgroundHandle);
-
-			// ガウスぼかしをかける（1280x720なので、ボカシ範囲「16」くらいが綺麗です）
 			GraphFilter(pauseBackgroundHandle, DX_GRAPH_FILTER_GAUSS, 16, 800);
-
-			pauseSelectIndex = 0; // メニュー選択を「ゲームに戻る」にリセット
+			pauseSelectIndex = 0;
 		}
 	}
 
-	// 💡 もしポーズ中なら、裏のオブジェクト（プレイヤー等）の更新をすべてストップ！
 	if (isPaused)
 	{
-		// ポーズメニューの操作（上下キーで選択変更）
-		if (input->GetKeyInputState(KEY_INPUT_UP) == eInputState::ePress ||
-			input->GetButtonInputState(XINPUT_BUTTON_DPAD_UP) == eInputState::ePress)
+		if (input->GetKeyInputState(KEY_INPUT_UP) == eInputState::ePress || input->GetButtonInputState(XINPUT_BUTTON_DPAD_UP) == eInputState::ePress)
 		{
-			pauseSelectIndex--; // 一つ上の項目へ
-			if (pauseSelectIndex < 0) pauseSelectIndex = 3; // 0より小さくなったら一番下の「3」へループ
+			pauseSelectIndex--;
+			if (pauseSelectIndex < 0) pauseSelectIndex = 3;
+		}
+		if (input->GetKeyInputState(KEY_INPUT_DOWN) == eInputState::ePress || input->GetButtonInputState(XINPUT_BUTTON_DPAD_DOWN) == eInputState::ePress)
+		{
+			pauseSelectIndex++;
+			if (pauseSelectIndex > 3) pauseSelectIndex = 0;
 		}
 
-		if (input->GetKeyInputState(KEY_INPUT_DOWN) == eInputState::ePress ||
-			input->GetButtonInputState(XINPUT_BUTTON_DPAD_DOWN) == eInputState::ePress)
-		{
-			pauseSelectIndex++; // 一つ下の項目へ
-			if (pauseSelectIndex > 3) pauseSelectIndex = 0; // 3より大きくなったら一番上の「0」へループ
-		}
-
-
-		// スペースキーまたは決定ボタン、Bボタンが押されたときの処理
 		if (input->GetKeyInputState(KEY_INPUT_RETURN) == eInputState::ePress || input->GetButtonInputState(XINPUT_BUTTON_B) == eInputState::ePress)
 		{
-			if (pauseSelectIndex == 0)
-			{
-				// ゲームに戻る
-				isPaused = false;
-			}
+			if (pauseSelectIndex == 0) isPaused = false;
 			if (pauseSelectIndex == 1)
 			{
-				// 【1: ステージをやり直す（リトライ）】
-				// 例：今のステージをはじめからにする処理
 				StopSoundMem(beepSE);
 				Initialize();
-				// 1. 状態をリスタート中（暗転中）に変更する
 				state = SceneState::Restarting;
-				// 2. フェードアウトを開始（1秒かけてIrisOutで画面を閉じる）
 				fade->Start(FadeType::IrisOut, true, 1.5f);
-
 				isPaused = false;
 			}
-			if (pauseSelectIndex == 2)
-			{
-				// ヘルプ画面、操作やギミックの説明
-			}
+			if (pauseSelectIndex == 2) { /* ヘルプ */ }
 			if (pauseSelectIndex == 3)
 			{
-				// タイトルに戻る（BGMなどを止めて遷移）
 				StopSoundMem(mainBGM);
 				StopSoundMem(beepSE);
 				isPaused = false;
@@ -357,30 +283,50 @@ eSceneType InGameScene::Update(const float& delta_second)
 		return GetNowSceneType();
 	}
 
+	// -------------------------------------------------------------
+	// ② シーン基盤・基礎演出の更新フェーズ
+	// -------------------------------------------------------------
+	fade->Update(delta_second);
+
+	if (CheckSoundMem(mainBGM) == 0) {
+		PlaySoundMem(mainBGM, DX_PLAYTYPE_LOOP);
+	}
+
+	// -------------------------------------------------------------
+	// ③ 特殊ステート制御（リスタート中・ステージ開始演出中）
+	// -------------------------------------------------------------
+	if (state == SceneState::Restarting)
+	{
+		if (fade->IsFinished()) {
+			Initialize();
+			state = SceneState::StageNotifier;
+			m_notifierTimer = 1.8f;
+
+			int level = m_stageManager.GetCurrentLevel() + 1;
+			sprintf_s(fontText, "STAGE %d", level);
+			int textWidth = GetDrawStringWidthToHandle(fontText, (int)strlen(fontText), font[0]);
+			fontPosX = (1280 - textWidth) / 2;
+			fontPosY = (720 - 100) / 2;
+		}
+		return GetNowSceneType();
+	}
+
+	if (state == SceneState::StageNotifier)
+	{
+		m_notifierTimer -= delta_second;
+		if (m_notifierTimer <= 0.0f)
+		{
+			fade->Start(FadeType::IrisOut, false, 1.2f);
+			state = SceneState::Playing;
+		}
+		return GetNowSceneType();
+	}
+
+	// -------------------------------------------------------------
+	// ④ 通常ゲームプレイ（オブジェクト・プレイヤー更新）フェーズ
+	// -------------------------------------------------------------
 	player.Update(delta_second);
 	player.Move(allObjects);
-
-
-	//ワープ処理
-	/*int playerX, playerY;
-	player.GetLocation(playerX, playerY);
-
-	for (auto& obj : allObjects) {
-		if (obj == nullptr) continue;
-
-		Warp* warpObj = dynamic_cast<Warp*>(obj);
-
-		if (warpObj != nullptr) {
-			if (warpObj->IsHit(playerX, playerY, player.GetCollisionWidth(), player.GetCollisionHeight())) {
-				player.SetPosition(warpObj->GetToX(), warpObj->GetToY());
-
-				break;
-			}
-		}
-	}*/
-
-	goal.Update(delta_second);
-	/*warp->Update(delta_second);*/
 
 	for (const auto& obj : allObjects) {
 		if (obj != nullptr) {
@@ -388,182 +334,97 @@ eSceneType InGameScene::Update(const float& delta_second)
 		}
 	}
 
-	//for (auto& wall : walls)
-	//{
-	//	wall.Update(delta_second);
-	//}
+	// ステージクリア判定（プレイヤーが開いたゴールの中心座標に完全に重なった時）
+	int playerX, playerY;
+	player.GetLocation(playerX, playerY);
 
-	//for (auto& block : blocks)
-	//{
-	//	block.Update(delta_second);
-	//}
+	for (const auto& obj : allObjects)
+	{
+		Goal* goalObj = dynamic_cast<Goal*>(obj);
+		if (goalObj != nullptr && goalObj->IsOpen())
+		{
+			int goalX, goalY;
+			goalObj->GetLocation(goalX, goalY);
 
-	//for (auto& warp : warps)
-	//{
-	//	warp.Update(delta_second);
-	//}
+			if (playerX == goalX && playerY == goalY)
+			{
+				m_stageManager.NextLevel();
+				StopSoundMem(beepSE);
 
-	// --- 1. 検知判定フェーズ ---
-    // 毎フレーム、まずは「見つかっていない」状態からチェックを開始する
-	bool isCamDetected = false;          // カメラに検知
-	bool isLightDetected = false;        // ライトに検知
+				if (m_stageManager.GetCurrentLevel() >= 5) // 全ステージクリアならタイトルへ
+				{
+					StopSoundMem(mainBGM);
+					return eSceneType::eTitle;
+				}
 
-	for (auto d : detectors) {
-		// 設置物（カメラ・ライト）の状態を更新（プレイヤーとの距離計算など）
-		d->Update(player,delta_second);
-
-		// その設置物の検知範囲内にプレイヤーが入っているか判定
-		if (d->IsDetected()) {
-			// カメラに検知された場合
-			if (d->GetType() == TrapType::Camera) {
-				isCamDetected = true;
-			}
-			// ライトに検知され、かつプレイヤーが「影状態」だった場合
-			else if (d->GetType() == TrapType::Light && player.GetState() == Player::State::Shadow) {
-				isLightDetected = true;
+				state = SceneState::Restarting;
+				fade->Start(FadeType::IrisOut, true, 1.5f);
+				return GetNowSceneType();
 			}
 		}
 	}
 
-	// カメラの音源処理
+	// -------------------------------------------------------------
+	// ⑤ 罠（カメラ・ライト）の検知判定フェーズ
+	// -------------------------------------------------------------
+	bool isCamDetected = false;
+	bool isLightDetected = false;
+
+	for (auto d : detectors) {
+		d->Update(player, delta_second);
+		if (d->IsDetected()) {
+			if (d->GetType() == TrapType::Camera) isCamDetected = true;
+			else if (d->GetType() == TrapType::Light && player.GetState() == Player::State::Shadow) isLightDetected = true;
+		}
+	}
+
 	if (isCamDetected) {
-		// 【見つかっている間】
-		// まだ鳴っていなければ、ループ再生を開始
-		if (CheckSoundMem(beepSE) == 0) {
-			PlaySoundMem(beepSE, DX_PLAYTYPE_LOOP);
+		if (CheckSoundMem(beepSE) == 0) PlaySoundMem(beepSE, DX_PLAYTYPE_LOOP);
+	}
+	else {
+		if (CheckSoundMem(beepSE) == 1) StopSoundMem(beepSE);
+	}
+
+	// -------------------------------------------------------------
+	// ⑥ 状態管理＆ペナルティ（失敗確定）判定フェーズ
+	// -------------------------------------------------------------
+	if (isCamDetected || isLightDetected) {
+		if (state == SceneState::Playing) {
+			state = SceneState::Detected;
+			detectionTimer = 0.0f;
+		}
+		if (isLightDetected) {
+			PlaySoundMem(dieSE, DX_PLAYTYPE_BACK);
+			detectionTimer = LIMIT_TIME;
+		}
+		else {
+			detectionTimer += delta_second;
+		}
+
+		if (detectionTimer >= LIMIT_TIME) {
+			StopSoundMem(beepSE);
+			state = SceneState::Restarting;
+			if (isLightDetected || player.GetTekazu() == 0) fade->Start(FadeType::Normal, true, 0.8f);
+			else fade->Start(FadeType::IrisOut, true, 1.0f);
 		}
 	}
 	else {
-		// 【逃げ切った、または範囲外】
-		// 鳴っていたら止める
-		if (CheckSoundMem(beepSE) == 1) {
-			StopSoundMem(beepSE);
-		}
-
 		if (state == SceneState::Detected) {
 			state = SceneState::Playing;
 			detectionTimer = 0.0f;
 		}
 	}
 
-
-	// --- 2. ステート（進行状況）管理フェーズ ---
-	// カメラかライト、どちらかに検知されている場合
-	if (isCamDetected || isLightDetected) {
-
-		// 通常プレイ中(Playing)に見つかったら、即座に「検知猶予状態(Detected)」へ移行
-		if (state == SceneState::Playing) {
-			state = SceneState::Detected;
-			detectionTimer = 0.0f; // タイマーをリセットしてカウント開始
-		}
-
-		// 【重要】ライト（影で触れた）なら猶予なし、カメラなら時間経過でタイマーを進める
-		if (isLightDetected) {
-			// 状態が切り替わるタイミングで再生
-			PlaySoundMem(dieSE, DX_PLAYTYPE_BACK);
-			detectionTimer = LIMIT_TIME; // ライトの場合は強制的にタイムアップ状態にする
-		}
-		else {
-			detectionTimer += delta_second; // カメラの場合は現実時間の経過秒数を加算
-		}
-
-		
-
-		// --- 3. 失敗（リセット）確定判定 ---
-		// タイマーが制限時間を超えた（＝捕まった）場合の処理
-		if (detectionTimer >= LIMIT_TIME) {
-			// 例：入れるかは別。ここで上記のループ音を止め、「ガシャーン！」などの失敗音を再生する
-			// ここに入れる
-			StopSoundMem(beepSE);
-		
-			// 「リスタート待機状態(Restarting)」へ移行し、画面演出を開始
-			state = SceneState::Restarting;
-
-			if (isLightDetected || player.GetTekazu() == 0) {
-				// 【ライト演出】
-				// 画面全体が非常にゆっくり暗くなる(Normal)演出
-				// 1.0f(完了) / 3.0(秒) = 約 0.33f
-				fade->Start(FadeType::Normal, true, 0.8f);
-			}
-			else {
-				// 【カメラ演出】見つかって捕まったイメージ
-				// 円形に画面が閉じていく(IrisOut)演出
-				// パシッと1秒で暗くする場合
-	            // 1.0f(完了) / 1.0(秒) = 1.0f
-				fade->Start(FadeType::IrisOut, true, 1.0f);
-			}
-		}
-	}
-	// どちらにも検知されていない場合
-	else {
-		// もし「検知猶予中」に範囲外へ逃げ出せたら、通常プレイ状態に戻す
-		if (state == SceneState::Detected) {
-			state = SceneState::Playing;
-			detectionTimer = 0.0f; // 猶予タイマーをリセット
-
-			// ここでループ音を止める
-		}
-	}
-
-
-    // 手数が0になったらゲームオーバー（リスタート処理へ）
+	// -------------------------------------------------------------
+	// ⑦ 手数ゼロによるゲームオーバー判定
+	// -------------------------------------------------------------
 	if (player.GetTekazu() == 0 && state != SceneState::Restarting)
 	{
-		StopSoundMem(mainBGM); // 音を止める
-		StopSoundMem(beepSE); // 音を止める
-
-		// 1. 状態をリスタート中（暗転中）に変更する
+		StopSoundMem(mainBGM);
+		StopSoundMem(beepSE);
 		state = SceneState::Restarting;
-
-		// 2. フェードアウトを開始（1秒かけてIrisOutで画面を閉じる）
 		fade->Start(FadeType::IrisOut, true, 1.0f);
 	}
-
-	// ゴール判定
-	if (player.IsHitGoal())
-	{
-		goal.Update(delta_second);
-		 //少し遅れさせて遷移する
-		 delay++;
-		 if (delay >= 3000)
-		 {
-			 // 次の階層を呼び出す
-			 m_stageManager.NextLevel();
-
-
-			 StopSoundMem(beepSE);
-
-			 // 次の階層を呼び出す
-		 /*	m_stageManager.NextLevel();*/
-
-			 // 状態をリスタート中（暗転中）に変更する
-			 state = SceneState::Restarting;
-			 // フェードアウトを開始（1秒かけてIrisOutで画面を閉じる）
-			 fade->Start(FadeType::IrisOut, true, 1.5f);
-
-			 // プレイヤーの初期化
-			 //player.Initialize();
-
-			 // ゴールの初期化(これが無かったら重くなる)
-			 goal.Initialize();
-			 goal.SetPlayer(&player);
-
-			 // ステージが5階クリアしたらタイトルに戻る
-			 if (m_stageManager.GetCurrentLevel() >= 5)
-			 {
-				 StopSoundMem(mainBGM);
-				 // シーンの遷移
-				 return eSceneType::eTitle;
-			 }
-
-			 // シーンの遷移
-			 // return eSceneType::eTitle;
-
-			 return GetNowSceneType();
-		 }
-	}
-
-
 
 	return GetNowSceneType();
 }
@@ -574,23 +435,19 @@ void InGameScene::Draw() const
 	// ベースの黒背景
 	DrawBox(0, 0, 1280, 720, GetColor(0, 0, 0), TRUE);
 
-	// ステージ全ての下にタイルを自動で敷き詰める
+	// ステージ床タイルを敷き詰める
 	m_stageManager.DrawFloorBackground();
 
 	SetFontSize(20);
-	DrawString(10, 10, "INGAME", 0xffffff);
-	
-	// タイトル画像の描画
-	//DrawExtendGraph(0, 0, 1280, 720, background, TRUE);
 
-	// 追加したオブジェクト（壁やブロック）を全て描画
+	// 追加したオブジェクト（壁やブロック、各種罠）を全て描画
 	for (const auto& obj : allObjects) {
 		if (obj != nullptr) {
 			obj->Draw();
 		}
 	}
 
-	// スコアの描画
+	// 手数（スコア）の描画
 	DrawNumber::Draw(230, 550, tekazu, 0.8f);
 
 	//DrawStringToHandle(40, 450, "STAGE1", GetColor(255, 255, 255), font[0]);
@@ -606,46 +463,13 @@ void InGameScene::Draw() const
 	}*/
 	
 	//goal.Draw();			// これはいらない
+	// プレイヤーの描画
 	player.Draw();
-	/*warp->Draw();*/
 
-	//// --- カメラ・照明の描画 ---
-	//// プレイヤーより後に描くことで、視界範囲をプレイヤーの上に重ねて確認しやすくする
-	/*for (auto d : detectors)
-	{
-		d->Draw();
-	}*/
+	// 罠（カメラ・ライト）の可視エリアなどの追加描画が必要な場合は、ここで obj->Draw() とは別に d->Draw() を回してください。
 
-	//// 照明のみ
-	//for (auto d : detectors)
-	//{
-	//	// 自分のタイプが Light の時だけ Draw を呼ぶ
-	//	if (d->GetType() == DetectiveType::Light)
-	//	{
-	//		d->Draw();
-	//	}
-	//}
-
-	/*二重構造になっている*/
-	// ここから
-	//// カメラのみ
-	// for (auto d : detectors)
-	// {
-	// 	// 自分のタイプが Light の時だけ Camera を呼ぶ
-	// 	if (d->GetType() == TrapType::Camera)
-	// 	{
-	// 		d->Draw();
-	// 	}
-	// }
-
-	//for (auto d : detectors) d->Draw();
-
-	/*ここまで(何なら三重構造)*/
-
-	// 猶予期間中の演出
+	// 猶予期間（検知中）の画面赤点滅演出
 	if (state == SceneState::Detected) {
-
-		// カメラ検知があるか確認
 		bool isCameraDetecting = false;
 		for (auto d : detectors) {
 			if (d->GetType() == TrapType::Camera && d->IsDetected()) {
@@ -654,108 +478,68 @@ void InGameScene::Draw() const
 			}
 		}
 
-		// カメラ検知時のみ点滅させる
 		if (isCameraDetecting) {
-			// detectionTimerを使って点滅ロジックを作る 
 			if ((int)(detectionTimer * 2) % 2 == 0) {
 				SetDrawBlendMode(DX_BLENDMODE_ALPHA, 80);
 				DrawBox(0, 0, 1280, 720, GetColor(255, 0, 0), TRUE);
 				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 			}
 		}
-		// Lightの時は赤色を表示しないので、ここに else は書かない
 	}
+
 	// フェードを最前面に描画
 	if (fade) fade->Draw();
 
-	// �X�e�[�W���`�悳��Ă��Ȃ����m�F���鏈��
-	// int level = m_stageManager.GetCurrentLevel() + 1;
-	// int moves = m_stageManager.GetCurrentMoveLimit();
-	// int total = m_stageManager.GetTotalStages();
-
+	// ステージ切り替え時の開始通知表示
 	if (state == SceneState::StageNotifier)
 	{
 		DrawBox(0, 0, 1280, 720, GetColor(0, 0, 0), TRUE);
-
-		// 透明度の設定
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_notifierAlpha);
-
-		// char stageText[32];
-		//sprintf_s(stageText, "STAGE %d", level);
-
-		// int textWidth = GetDrawStringWidthToHandle(stageText, (int)strlen(stageText), font[0]);
-		// int posX = (1280 - textWidth) / 2;
-		// int posY = (720 - 100) / 2; // フォントサイズが100なので、縦幅100として中央計算
-
-		// 5. 文字の描画（影をつけて見やすくする）
-		// DrawStringToHandle(posX + 4, posY + 4, stageText, GetColor(20, 20, 20), font[0]); // 影（黒）
-		// DrawStringToHandle(posX, posY, stageText, GetColor(255, 255, 255), font[0]);     // 本尊（白）
-
-		// 文字の描画 (影有)
 		DrawStringToHandle(fontPosX + 4, fontPosY + 4, fontText, GetColor(30, 30, 30), font[0]); // 影
-		DrawStringToHandle(fontPosX, fontPosY, fontText, GetColor(255, 255, 255), font[0]);     // 白い文字(本体)
-
-		// ブレンドモードの解除
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		DrawStringToHandle(fontPosX, fontPosY, fontText, GetColor(255, 255, 255), font[0]);      // 本尊
 	}
-
-	// ��F����ɁuSTAGE 1 / 8�v
-	// DrawFormatString(20, 120, 0xff0000, "STAGE %d / %d", level, total);
-
-	// ��F�E��ɁuMOVE LIMIT : �v
-	// DrawFormatString(20, 140, 0x00ff00, "MOVE LIMIT : %d", moves);
-
-	// m_stageManager.DrawDebugInfo();		// �f�o�b�N
 
 	// -------------------------------------------------------------
 	// ポーズ画面の描画処理（一番手前に重ねる）
 	// -------------------------------------------------------------
 	if (isPaused)
 	{
-		// 1. キャプチャしたボカシ背景を描画
 		DrawGraph(0, 0, pauseBackgroundHandle, FALSE);
 
-		// 2. メニュー用ボックス（4項目用に縦幅を少し広げて y軸を 150 -> 180 に拡張）
-		int menuLeft = 640 - 200; // 440
-		int menuTop = 360 - 180; // 180 (少し上に広げる)
-		int menuBottom = 360 + 180; // 540 (少し下に広げる)
-		int menuRight = 640 + 200; // 840
+		int menuLeft = 640 - 200;
+		int menuTop = 360 - 180;
+		int menuBottom = 360 + 180;
+		int menuRight = 640 + 200;
 
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
 		DrawBox(menuLeft, menuTop, menuRight, menuBottom, GetColor(15, 15, 15), TRUE);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		DrawBox(menuLeft, menuTop, menuRight, menuBottom, GetColor(255, 255, 255), FALSE);
 
-		// 3. メニューテキストの描画
 		SetFontSize(32);
 		DrawString(640 - 80, 200, "- PAUSE -", GetColor(255, 255, 255));
 
 		SetFontSize(24);
-		// 💡 各項目の色を判定（選択中なら黄色、それ以外はグレー）
 		unsigned int c0 = (pauseSelectIndex == 0) ? GetColor(255, 220, 0) : GetColor(200, 200, 200);
 		unsigned int c1 = (pauseSelectIndex == 1) ? GetColor(255, 220, 0) : GetColor(200, 200, 200);
 		unsigned int c2 = (pauseSelectIndex == 2) ? GetColor(255, 220, 0) : GetColor(200, 200, 200);
 		unsigned int c3 = (pauseSelectIndex == 3) ? GetColor(255, 220, 0) : GetColor(200, 200, 200);
 
-		// 💡 4つの項目を縦に綺麗にならべる（Y座標を 270, 320, 370, 420 と50px刻みに配置）
-		DrawFormatString(640 - 120, 270, c0, "%s ゲームに戻る", (pauseSelectIndex == 0) ? "▶" : "　");
-		DrawFormatString(640 - 120, 320, c1, "%s リスタート", (pauseSelectIndex == 1) ? "▶" : "　");
-		DrawFormatString(640 - 120, 370, c2, "%s ヘルプ", (pauseSelectIndex == 2) ? "▶" : "　");
-		DrawFormatString(640 - 120, 420, c3, "%s タイトルに戻る", (pauseSelectIndex == 3) ? "▶" : "　");
+		DrawFormatString(640 - 120, 270, c0, "%s ゲームに戻る", (pauseSelectIndex == 0) ? "▶" : " ");
+		DrawFormatString(640 - 120, 320, c1, "%s リスタート", (pauseSelectIndex == 1) ? "▶" : " ");
+		DrawFormatString(640 - 120, 370, c2, "%s ヘルプ", (pauseSelectIndex == 2) ? "▶" : " ");
+		DrawFormatString(640 - 120, 420, c3, "%s タイトルに戻る", (pauseSelectIndex == 3) ? "▶" : " ");
 	}
 }
 
 // 終了時処理
 void InGameScene::Finalize()
 {
-	// ⭕ 【追加】ポーズ用グラフィックハンドルの解放
 	if (pauseBackgroundHandle != -1)
 	{
 		DeleteGraph(pauseBackgroundHandle);
 		pauseBackgroundHandle = -1;
 	}
 
-	// 動的に生成したオブジェクトを削除してメモリリークを防ぐ
 	for (auto d : detectors)
 	{
 		delete d;
@@ -768,14 +552,6 @@ void InGameScene::Finalize()
 		background = -1;
 	}
 
-	//for (auto& obj : allObjects)
-	//{
-	//	if (obj != nullptr)
-	//	{
-	//		delete obj;
-	//		obj = nullptr;
-	//	}
-	//}
 	allObjects.clear();
 }
 

@@ -2,7 +2,6 @@
 #include "../Block/Block.h"
 #include "../Goal/Goal.h"
 #include "../Key/Key.h"
-//#include "../Wall/Wall.h"
 #include "../Warp/Warp.h"
 #include "../Trap/Cam/Cam.h"
 #include "../Trap/SpikeTrap/SpikeTrap.h"
@@ -11,101 +10,48 @@
 #include "../../Stage/StageData.h"
 
 #include <typeinfo>
+#include <iostream>
 
 // =========================
 // 初期化処理
 // =========================
 void Player::Initialize()
 {
-    // 初期位置
-  /*  x = 64;
-    y = 250;*/
-
-
     radius = 64;
-    speed = 128; 
+    speed = 128;
 
     state = State::Normal;
-    currentImage = 0; // 最初は通常ポーズ
-
     currentImage = 0;
-    // コリジョンサイズ
-    /*collisionWidth = radius * 1.5f;
-    collisionHeight = radius * 1.5f;*/
 
     collisionWidth = radius;
     collisionHeight = radius;
 
-    //tekazu = 18;
-
     revers = TRUE;
 
-    isHitGoal = false;
+    canMove = true;
     hasKey = false;
 
-    // 音源読み込み・関連
-    //moveSE = LoadSoundMem("Resource/Sounds/SE/object/player/");
-
-
-    // 変身時
+    // 変身音の読み込み・設定
     changeStateSE = LoadSoundMem("Resource/Sounds/SE/object/player/change.mp3");
-    // 読み込み直後に設定
-    // 基本の周波数は 44100 が一般的です
     freq = GetFrequencySoundMem(changeStateSE); // 元の周波数を取得
-    // 音量を設定（例：半分の 128 や、かなり控えめな 80 など）
     ChangeVolumeSoundMem(70, changeStateSE);
-    // 倍速にする場合
-    SetFrequencySoundMem((int)(freq * 2.0f), changeStateSE);
+    SetFrequencySoundMem((int)(freq * 2.0f), changeStateSE); // 倍速
 
-    // プレイヤーキャラ画像分割読み込み
-    // 1. 通常状態の画像読み込み（player_01.png）
-    // （前回の設定のまま：1536x1024を想定）
+    // プレイヤーキャラ画像分割読み込み（通常状態）
     LoadDivGraph(
         "Resource/Images/Player/player_01.png",
         2, 2, 1, 768, 1024, images
     );
 
-    // =============================================================
-    // 【重要】2. シャドウ状態の画像読み込み（shadow.png）の修正
-    // =============================================================
-    // プロパティで確認した 612x408 の画像に合わせて引数を修正します。
+    // シャドウ状態の画像読み込み
     int result = LoadDivGraph(
         "Resource/Images/Player/shadow2.png",
-        2,      // 総枚数
-        2, 1,   // 横2, 縦1
-        768,    // 1枚あたりの横幅 (612 / 2)
-        1024,    // 1枚あたりの縦幅 (そのまま)
-        images2 // shadow用配列に格納
+        2, 2, 1, 768, 1024, images2
     );
 
     if (result == -1) {
         printfDx("画像読み込み失敗\n");
     }
-
-  //  // =============================================================
-  //// 移動用画像込みで考える場合　
-  //// =============================================================
-  //  int fullNormal = LoadGraph("Resource/Images/Player/player_03.png");
-  //  int fullShadow = LoadGraph("Resource/Images/Player/shadow3.png");
-
-  //  // --- 1. 通常状態（これは整列されているのでループでOK） ---
-  //  for (int i = 0; i < 3; i++) {
-  //      images[i] = DerivationGraph(i * 512, 0, 512, 1024, fullNormal);
-  //  }
-
-  //  for (int i = 0; i < 3; i++) {
-  //      images2[i] = DerivationGraph(i * 512, 0, 480, 1024, fullShadow);
-  //  }
-
-  //  // 3. 親画像を解放（これで子画像だけがメモリに残る）
-  //  DeleteGraph(fullNormal);
-  //  DeleteGraph(fullShadow);
-
-  //  // 4. エラーチェック
-  //  if (images2[0] == -1 || images2[1] == -1) {
-  //      printfDx("シャドウ画像の切り出しに失敗しました。\n");
-  //  }
-
 }
 
 // =========================
@@ -114,16 +60,15 @@ void Player::Initialize()
 void Player::Update(const float& delta_second)
 {
     ChangeState();
-    //Move(walls);
     UpdateAnimation(delta_second);
-
     effectManager.Update(delta_second);
 }
 
 // =========================
 // 移動処理
 // =========================
-void Player::Move(const std::vector<GameObject*>& objects) {
+void Player::Move(const std::vector<GameObject*>& objects) 
+{
     InputManager* input = InputManager::GetInstance();
 
     if (state == State::Normal)
@@ -136,37 +81,27 @@ void Player::Move(const std::vector<GameObject*>& objects) {
             float kickX = 0.0f;
             float kickY = 0.0f;
 
-            // 十字キーまたはキーボードの入力をチェック
             if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_LEFT) == eInputState::eHold ||
                 input->GetKeyInputState(KEY_INPUT_LEFT) == eInputState::eHold) {
-                //kickX = -128.0f;
                 kickX = -chipSize;
             }
             else if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_RIGHT) == eInputState::eHold ||
                 input->GetKeyInputState(KEY_INPUT_RIGHT) == eInputState::eHold) {
-                //kickX = 128.0f;
                 kickX = chipSize;
             }
             else if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_UP) == eInputState::eHold ||
                 input->GetKeyInputState(KEY_INPUT_UP) == eInputState::eHold) {
-                //kickY = -128.0f;
                 kickY = -chipSize;
             }
             else if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_DOWN) == eInputState::eHold ||
                 input->GetKeyInputState(KEY_INPUT_DOWN) == eInputState::eHold) {
-                //kickY = 128.0f;
                 kickY = chipSize;
             }
             else {
-                // 何も方向が押されていない場合は、今のプレイヤーの向き(revers)に蹴る
                 kickX = (revers == TRUE) ? chipSize : -chipSize;
             }
 
             // --- 2. 判定を出す位置（check座標）を計算 ---
-            // 実際に蹴りだす量(128)ではなく、目の前(64)にブロックがあるか調べる
-            // float checkX = (float)x + (kickX != 0 ? (kickX > 0 ? 64.0f : -64.0f) : 0.0f);
-            // float checkY = (float)y + (kickY != 0 ? (kickY > 0 ? 64.0f : -64.0f) : 0.0f);
-
             float halfSize = chipSize / 2.0f;
             float checkX = (float)x + (kickX != 0 ? (kickX > 0 ? halfSize : -halfSize) : 0.0f);
             float checkY = (float)y + (kickY != 0 ? (kickY > 0 ? halfSize : -halfSize) : 0.0f);
@@ -186,14 +121,6 @@ void Player::Move(const std::vector<GameObject*>& objects) {
                         return;     // 成功したら終了
                     }
                 }
-
-                //if (obj->IsHit((int)checkX, (int)checkY, 60, 60)) { // 少し遊び(60)を持たせる
-                //    Block* targetBlock = dynamic_cast<Block*>(obj);
-                //    if (targetBlock != nullptr) {
-                //        targetBlock->Push(kickX, kickY, objects);
-                //        return; // 成功したら終了
-                //    }
-                //}
             }
         }
     }
@@ -202,7 +129,7 @@ void Player::Move(const std::vector<GameObject*>& objects) {
     int moveY = 0;
 
     // =========================
-    // 入力（1方向だけに制限）
+    // 入力（自動入力分岐は削除）
     // =========================
     if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_LEFT) == eInputState::ePress ||
         input->GetKeyInputState(KEY_INPUT_LEFT) == eInputState::ePress)
@@ -228,7 +155,10 @@ void Player::Move(const std::vector<GameObject*>& objects) {
     }
 
     // 入力がなければ何もしない
-    if (moveX == 0 && moveY == 0) return;
+    if (moveX == 0 && moveY == 0)
+    {
+        return;
+    }
 
     // =========================
     // 次の座標を計算
@@ -239,7 +169,7 @@ void Player::Move(const std::vector<GameObject*>& objects) {
     // =========================
     // 画面外チェック
     // =========================
-    if (nextX < radius || nextX > 1280 - radius || // 右端もradiusを考慮
+    if (nextX < radius || nextX > 1280 - radius ||
         nextY < radius || nextY > 720 - radius)
     {
         return;
@@ -248,15 +178,12 @@ void Player::Move(const std::vector<GameObject*>& objects) {
     // =========================
     // オブジェクトとの当たり判定
     // =========================
-    bool canMove = true;
-
+    canMove = true;
 
     for (const auto& obj : objects)
     {
-        // 自分自身（プレイヤー）との判定はスキップ
         if (obj == this) continue;
 
-        // GameObjectクラスに追加したIsHitを呼び出す
         if (obj->IsHit(nextX, nextY, collisionWidth, collisionHeight))
         {
             auto keyObj = dynamic_cast<Key*>(obj);
@@ -264,76 +191,54 @@ void Player::Move(const std::vector<GameObject*>& objects) {
             {
                 if (state == State::Normal)
                 {
-                    if (hasKey)
-                    {
-                        continue;
-                    }
-
-                    // 鍵のマスは通り抜けられるので、そのまま次のオブジェクトの判定へ進む
-                    continue;
+                    if (hasKey) continue;
+                    continue; // 鍵の上は通り抜け可能
                 }
             }
 
             auto goalObj = dynamic_cast<Goal*>(obj);
             if (goalObj != nullptr)
             {
+                // 鍵を持っていて、通常状態のとき
                 if (hasKey && state == State::Normal)
                 {
-                    isHitGoal = true;
-                    continue;
+                    // ゴールがまだ閉まっている（檻付き）なら開ける
+                    if (!goalObj->IsOpen())
+                    {
+                        goalObj->Open();   // ゴールの檻を開ける（画像が変わる）
+                        canMove = false;   // 手前で足を止める
+                        break;
+                    }
+                    else
+                    {
+                        // すでにゴールが開いているなら、そのまま上に乗ることを許可！
+                        continue;
+                    }
                 }
                 else
                 {
+                    // 鍵がない、または影状態ならただの壁
                     canMove = false;
                     break;
                 }
-                continue;
             }
-
 
             auto WarpObj = dynamic_cast<Warp*>(obj);
             if (WarpObj != nullptr)
             {
-                //continue;
-                // 影状態なら、ワープ発動可能にする、じゃなかったら壁と同じように止まる
-                if (this->state == State::Shadow)
-                {
-                    continue;
-                }
-                else
-                {
-                    canMove = false;
-                    break;
-                }
-
+                if (this->state == State::Shadow) continue; // 影なら通過（ワープ可能）
+                else { canMove = false; break; }
             }
 
             auto spikeObj = dynamic_cast<SpikeTrap*>(obj);
-            if (spikeObj != nullptr)
-            {
-                continue;
-            }
+            if (spikeObj != nullptr) continue;
 
             auto camObj = dynamic_cast<Cam*>(obj);
-            if (camObj != nullptr)
-            {
-                continue;
-            }
+            if (camObj != nullptr) continue;
 
             canMove = false;
             break;
-            // --- 発展：オブジェクトごとの特殊処理 ---
-            // もし「動かせるブロック」だった場合の処理をここに書く
-            if (obj->IsMovable())
-            {
-                // ここでブロック側のMoveなどを呼び出し、
-                // ブロックが移動に成功したら canMove = true にする、といった処理が可能
-            }
-
-            // ぶつかった時点でこのループは抜ける
-            break;
         }
-
     }
 
     // =========================
@@ -344,62 +249,41 @@ void Player::Move(const std::vector<GameObject*>& objects) {
         float oldX = (float)x;
         float oldY = (float)y;
 
-        // 変数の準備
         float spawnX = oldX;
         float spawnY = oldY;
         float angle = 0.0f;
         bool isReversedX = false;
 
-        // 画像パスを保存する変数を1つ用意する
-        std::string effectImagePath = "Resource/Images/Effect/Smoke3.png"; // デフォルト
+        std::string effectImagePath = "Resource/Images/Effect/Smoke3.png";
 
-        // --- ★移動方向別の「正確な位置調整」と「見た目」の割り出し ---
         if (moveX != 0)
         {
-            // 【横移動】
-            spawnY = oldY + 20.0f; // 横移動のときは一律で少し下にずらす
-
-            if (moveX < 0) {
-                // 左移動：プレイヤーの画像基準が「左移動＝反転なし」なら、煙も合わせる
-                isReversedX = false;
-            }
-            else {
-                // 右移動：右を向くので反転させる
-                isReversedX = true;
-            }
-
-            // 横移動のときは、横専用の煙画像をセット！
+            spawnY = oldY + 20.0f;
+            if (moveX < 0) isReversedX = false;
+            else isReversedX = true;
             effectImagePath = "Resource/Images/Effect/Smoke.png";
         }
         else if (moveY != 0)
         {
-            // 【縦移動】画像が縦向きに回転するため、上下でずらす方向を変える
-            if (moveY < 0)
-            {
-                // 上移動：一歩前の足元なので、少し「下」にずらして縦向き（270度）にする
+            if (moveY < 0) {
                 spawnY = oldY + 10.0f;
                 angle = 0.0f;
             }
-            else
-            {
-                // 下移動：一歩前の足元なので、少し「上」にずらして縦向き（90度）にする
+            else {
                 spawnY = oldY - 10.0f;
                 angle = 0.0f;
             }
-
-            // 縦移動のときは、縦専用の煙画像をセット！
             effectImagePath = "Resource/Images/Effect/Smoke3.png";
         }
 
-        // 座標更新と手数減算（既存の処理）
+        // 座標更新と手数減算
         x = nextX;
         y = nextY;
 
         canWarp = true;
-
         tekazu--;
 
-        // 最後の引数に、上で切り替えた「effectImagePath」をそのまま渡す！
+        // 移動煙エフェクト発生
         effectManager.AddEffect(spawnX, spawnY, EffectType::Smoke, effectImagePath, 0.2f, angle, isReversedX);
     }
 }
@@ -415,12 +299,9 @@ void Player::ChangeState()
         input->GetButtonInputState(XINPUT_BUTTON_RIGHT_SHOULDER) == eInputState::ePress ||
         input->GetKeyInputState(KEY_INPUT_RETURN) == eInputState::ePress)
     {
-        // 状態が切り替わるタイミングで再生
         PlaySoundMem(changeStateSE, DX_PLAYTYPE_BACK);
-
         state = (state == State::Normal) ? State::Shadow : State::Normal;
         tekazu--;
-       
     }
 }
 
@@ -433,26 +314,23 @@ void Player::UpdateAnimation(float delta_second)
 
     if (state == State::Normal)
     {
-        // 1. ボタンが押された瞬間を検知
         bool isPressed = (input->GetButtonInputState(XINPUT_BUTTON_B) == eInputState::ePress ||
             input->GetKeyInputState(KEY_INPUT_SPACE) == eInputState::ePress);
 
-        // ボタンが押されていて、かつ「今は硬直中でない（タイマーが0）」ときだけ実行する
         if (isPressed && actionTimer <= 0.0f)
         {
-            actionTimer = 0.25f; // 蹴り発動！0.25秒の硬直スタート
-            tekazu--;            // 手数を1減らす
+            actionTimer = 0.25f; // 蹴り発動
+            tekazu--;
         }
 
-        // タイマーのカウントダウンと画像の制御（変更なし）
         if (actionTimer > 0.0f)
         {
-            currentImage = 1;           // 硬直中はアクション画像
-            actionTimer -= delta_second; // タイマーを減らしていく
+            currentImage = 1;
+            actionTimer -= delta_second;
         }
         else
         {
-            currentImage = 0;           // 通常画像に戻る
+            currentImage = 0;
             actionTimer = 0.0f;
         }
     }
@@ -461,73 +339,46 @@ void Player::UpdateAnimation(float delta_second)
 void Player::SetChipSize(float size)
 {
     chipSize = size;
-    speed = (int)size;                  // 移動速度をマスと同じする
-    collisionWidth = size * 0.9f;       // あたり判定のマス(幅)を合わせる
-    collisionHeight = size * 0.9f;      // あたり判定のマス(高さ)を合わせる
-    radius = (int)(size / 2.0f);        // 当たり判定ようの半径
+    speed = (int)size;
+    collisionWidth = size * 0.9f;
+    collisionHeight = size * 0.9f;
+    radius = (int)(size / 2.0f);
 
     drawScale = 0.2f * (size / 128.0f);
 }
 
+// =========================
+// 描画処理
+// =========================
 void Player::Draw() const
 {
     if (state == State::Normal)
     {
-        // 通常状態（player_01.png は大きいので 0.17倍）
         if (images[currentImage] != -1)
         {
-            //↓移動の画像の追加時はここを0.3
             DrawRotaGraph(x, y, drawScale, 0.0, images[currentImage], TRUE, revers);
-
-            // drawScaleに変更
-            // DrawRotaGraph(x, y, drawScale, 0.0, images[currentImage], TRUE, revers);
         }
     }
-    else // Shadow状態時
+    else
     {
-        // シャドウ状態：少し透けさせる（アルファ値 150前後）
-        // これにより「隠れている」「実体がない」感じに
         SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
-
-        // シャドウ状態（shadow.png は小さいので、もっと大きくする）
         if (images2[currentImage] != -1)
         {
             float shadowScale = drawScale * 0.85f;
-            //↓移動の画像の追加時はここを0.3
             DrawRotaGraph(x, y, shadowScale, 0.0, images2[currentImage], TRUE, revers);
-
-            //drawScaleに変更
-            // DrawRotaGraph(x, y, drawScale, 0.0, images2[currentImage], TRUE, revers);
         }
-        // 他の描画に影響が出ないよう、最後に描画モードをリセットする
-    SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+        SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
     }
-
-    // プレイヤーの背後に発生したエフェクトを描画
     effectManager.Draw();
 }
 
 // =========================
-// コリジョン取得
+// 各種ゲッター・セッター
 // =========================
-Vector2D Player::GetCollisionPos() const
-{
-    return Vector2D{ (float)x, (float)y };
-}
+Vector2D Player::GetCollisionPos() const { return Vector2D{ (float)x, (float)y }; }
+float Player::GetCollisionWidth() const { return collisionWidth; }
+float Player::GetCollisionHeight() const { return collisionHeight; }
 
-float Player::GetCollisionWidth() const
-{
-    return collisionWidth;
-}
-
-float Player::GetCollisionHeight() const
-{
-    return collisionHeight;
-}
-
-// =========================
-// 座標取得
-// =========================
 void Player::GetLocation(int& outX, int& outY) const
 {
     outX = x;
@@ -540,12 +391,5 @@ void Player::SetPosition(float newX, float newY)
     y = newY;
 }
 
-void Player::SetTekazu(int maxLimit)
-{
-    tekazu = maxLimit;
-}
-
-int Player::GetTekazu() const
-{
-    return tekazu;
-}
+void Player::SetTekazu(int maxLimit) { tekazu = maxLimit; }
+int Player::GetTekazu() const { return tekazu; }
