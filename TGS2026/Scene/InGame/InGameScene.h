@@ -44,6 +44,12 @@ private:
 	int font[2];
 
 	float m_notifierTimer;			// ステージ表示の残り時間を削るタイマー
+	int m_notifierAlpha;			// 現在の文字の透明度を保存する
+
+	/// <summary>
+	/// フラグがtrueになったらリスタート
+	/// </summary>
+	bool m_isRestartNotifier;		// リスタート判定フラグ
 
 	int fontPosX;					// 計算済みのX座標
 	int fontPosY;					// 計算済みのY座標
@@ -97,6 +103,10 @@ public:
 	virtual void Draw() const override;
 	// 終了時処理
 	virtual void Finalize() override;
+
+private:
+	// 文字列を画面の中心に描画する処理
+	void SetUpStageText(const char* text);
 
 public:
 	// 現在のシーン情報を返す

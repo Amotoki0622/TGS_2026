@@ -124,15 +124,22 @@ void InGameScene::Initialize()
 
 	state = SceneState::StageNotifier;
 	m_notifierTimer = 1.8f;
+	m_notifierAlpha = 0;		// 透明
+	m_isRestartNotifier = false;
 
 	// 文字列の保存
 	int level = m_stageManager.GetCurrentLevel() + 1;
-	sprintf_s(fontText, "STAGE %d", level);
+	
+	char buf[32];
+	sprintf_s(buf, "STAGE %d", level);
+	SetUpStageText(buf);
 
-	// 文字の描画座標
-	int textWidth = GetDrawStringWidthToHandle(fontText, (int)strlen(fontText), font[0]);
-	fontPosX = (1280 - textWidth) / 2;
-	fontPosY = (720 - 100) / 2;
+	//sprintf_s(fontText, "STAGE %d", level);
+
+	//// 文字の描画座標
+	//int textWidth = GetDrawStringWidthToHandle(fontText, (int)strlen(fontText), font[0]);
+	//fontPosX = (1280 - textWidth) / 2;
+	//fontPosY = (720 - 100) / 2;
 
 
 	for (GameObject* obj : allObjects)
@@ -299,18 +306,11 @@ eSceneType InGameScene::Update(const float& delta_second)
 			state = SceneState::StageNotifier;
 			m_notifierTimer = 1.8f;
 
-			// 文字列の保存
-			int level = m_stageManager.GetCurrentLevel() + 1;
-			sprintf_s(fontText, "STAGE %d", level);
-			//sprintf_s(fontText, "これはステージ%dです。", level);
+			/*失敗した時に「RESTART」にするパターン*/
+			m_isRestartNotifier = true;		// リスタート
 
-			// 文字の描画座標
-			int textWidth = GetDrawStringWidthToHandle(fontText, (int)strlen(fontText), font[0]);
-			fontPosX = (1280 - textWidth) / 2;
-			fontPosY = (720 - 100) / 2;
+			SetUpStageText("RESTART");
 
-			// fade->Start(FadeType::IrisOut, false, 1.0f);  // フェードイン開始
-			// state = SceneState::Playing;
 		}
 		return GetNowSceneType(); // リスタート中は以下の処理をスキップ
 	}
@@ -321,10 +321,34 @@ eSceneType InGameScene::Update(const float& delta_second)
 		// カウントダウン開始
 		m_notifierTimer -= delta_second;
 
+		m_notifierAlpha = 255;	// 不透明
+
+		// フェードイン
+		if (m_notifierTimer > 1.5f)
+		{
+			float progress = (1.8f - m_notifierTimer) / 0.3f; // 0.0 〜 1.0に変換
+			m_notifierAlpha = (int)(progress * 255.0f);
+		}
+		// フェードアウト
+		else if (m_notifierTimer < 0.3f)
+		{
+			float progress = m_notifierTimer / 0.3f; // 1.0 〜 0.0に変換
+			m_notifierAlpha = (int)(progress * 255.0f);
+		}
+
+		// 範囲外に行かないようにする
+		if (m_notifierAlpha < 0)
+		{
+			m_notifierAlpha = 0;
+		}
+		if (m_notifierAlpha > 255)
+		{
+			m_notifierAlpha = 255;
+		}
 		// 時間が来たら、文字を消してフェードイン(徐々に明るくして)
 		if (m_notifierTimer <= 0.0f)
 		{
-			// IrisOutの引数をfalse
+			// IrisOutの引数をFalseにする
 			fade->Start(FadeType::IrisOut, false, 1.2f);
 
 			state = SceneState::Playing;		// 通常プレイにする
@@ -653,6 +677,9 @@ void InGameScene::Draw() const
 	{
 		DrawBox(0, 0, 1280, 720, GetColor(0, 0, 0), TRUE);
 
+		// 透明度の設定
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_notifierAlpha);
+
 		// char stageText[32];
 		//sprintf_s(stageText, "STAGE %d", level);
 
@@ -664,8 +691,12 @@ void InGameScene::Draw() const
 		// DrawStringToHandle(posX + 4, posY + 4, stageText, GetColor(20, 20, 20), font[0]); // 影（黒）
 		// DrawStringToHandle(posX, posY, stageText, GetColor(255, 255, 255), font[0]);     // 本尊（白）
 
+		// 文字の描画 (影有)
 		DrawStringToHandle(fontPosX + 4, fontPosY + 4, fontText, GetColor(30, 30, 30), font[0]); // 影
-		DrawStringToHandle(fontPosX, fontPosY, fontText, GetColor(255, 255, 255), font[0]);     // 本尊
+		DrawStringToHandle(fontPosX, fontPosY, fontText, GetColor(255, 255, 255), font[0]);     // 白い文字(本体)
+
+		// ブレンドモードの解除
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
 
 	// ��F����ɁuSTAGE 1 / 8�v
@@ -746,6 +777,20 @@ void InGameScene::Finalize()
 	//	}
 	//}
 	allObjects.clear();
+}
+
+void InGameScene::SetUpStageText(const char* text)
+{
+	// 文字列をコピー
+	sprintf_s(fontText, "%s", text);
+
+	// 座標を計算(画面の中心)
+	int textWidth = GetDrawStringWidthToHandle(fontText, (int)strlen(fontText), font[0]);
+	fontPosX = (1280 - textWidth) / 2;
+	fontPosY = (720 - 100) / 2;
+
+	// 透明度をリセット
+	m_notifierAlpha = 0;
 }
 
 // 現在のシーン情報を返す
