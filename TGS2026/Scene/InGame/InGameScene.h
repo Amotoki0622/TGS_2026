@@ -64,12 +64,22 @@ private:
 
 	int background;
 
+
+
+	static const int MAX_HELP_PAGES = 3;    // ヘルプ画像の総枚数
+	int helpImageHandles[MAX_HELP_PAGES];   // 画像ハンドルを保存する配列
+	int currentHelpPage = 0;                // 現在何枚目を表示しているか (0が1枚目)
+	bool isHelpOpen = false;                // ヘルプ画面が開いているかフラグ
+	float helpOffsetY = 720.0f;             // アニメーション用
+	float pausePushTimer = 0.0f;            // ポーズ画面のボタン押し込みタイマー
+
 	// 音源関連
 	int freq;
 	bool isBgmStarted = false; // これはメンバ変数
 	int mainBGM;
 	int beepSE;          // 警報音
 	int dieSE;           // プレイヤー死亡時の音
+	int pageSE;          //　ヘルプ音
 
 	SceneState state = SceneState::Playing;
 	Fade* fade = nullptr;          // フェードクラス
