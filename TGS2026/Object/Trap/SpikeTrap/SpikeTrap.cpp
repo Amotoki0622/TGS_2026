@@ -66,10 +66,10 @@ void SpikeTrap::Draw() const {
         DrawRotaGraph((int)x, (int)y, (double)scale, 0.0, spikeImage, TRUE);
     }
 
-    // デバッグ用表示：踏んでいる間だけ文字を出す
-    if (detected) {
-        DrawFormatString((int)x - 20, (int)y - 50, GetColor(255, 255, 0), "HIT!");
-    }
+    //// デバッグ用表示：踏んでいる間だけ文字を出す
+    //if (detected) {
+    //    DrawFormatString((int)x - 20, (int)y - 50, GetColor(255, 255, 0), "HIT!");
+    //}
 }
 
 void SpikeTrap::SetRadius(float r)
