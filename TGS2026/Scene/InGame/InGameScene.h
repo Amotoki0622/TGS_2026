@@ -108,6 +108,8 @@ private:
 	// 文字列を画面の中心に描画する処理
 	void SetUpStageText(const char* text);
 
+	// ステージ通知のアルファ値を計算する処理
+	void UpdateNotifierAlpha(float fadeInTime, float fadeOutTime);
 public:
 	// 現在のシーン情報を返す
 	virtual eSceneType GetNowSceneType() const override;

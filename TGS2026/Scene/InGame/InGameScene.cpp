@@ -247,30 +247,15 @@ eSceneType InGameScene::Update(const float& delta_second)
 		// カウントダウン開始
 		m_notifierTimer -= delta_second;
 
-		m_notifierAlpha = 255;	// 不透明
+		// UpdateNotifierAlpha(0.3f, 0.3f);
 
-		// フェードイン
-		if (m_notifierTimer > 1.5f)
-		{
-			float progress = (1.8f - m_notifierTimer) / 0.3f; // 0.0 〜 1.0に変換
-			m_notifierAlpha = (int)(progress * 255.0f);
+		if (m_isRestartNotifier) {
+			UpdateNotifierAlpha(0.1f, 0.1f); // リスタート時は高速フェード
 		}
-		// フェードアウト
-		else if (m_notifierTimer < 0.3f)
-		{
-			float progress = m_notifierTimer / 0.3f; // 1.0 〜 0.0に変換
-			m_notifierAlpha = (int)(progress * 255.0f);
+		else {
+			UpdateNotifierAlpha(0.4f, 0.4f); // 通常時はじっくりフェード
 		}
 
-		// 範囲外に行かないようにする
-		if (m_notifierAlpha < 0)
-		{
-			m_notifierAlpha = 0;
-		}
-		if (m_notifierAlpha > 255)
-		{
-			m_notifierAlpha = 255;
-		}
 		// 時間が来たら、文字を消してフェードイン(徐々に明るくして)
 		if (m_notifierTimer <= 0.0f)
 		{
@@ -301,12 +286,16 @@ eSceneType InGameScene::Update(const float& delta_second)
 			Initialize();
 			state = SceneState::StageNotifier;
 			m_notifierTimer = 1.8f;
+			m_isRestartNotifier = true;
 
-			int level = m_stageManager.GetCurrentLevel() + 1;
+			SetUpStageText("RESTART");		// リスタートを中心に描画
+
+			/*ステージ遷移のもの*/
+			/*int level = m_stageManager.GetCurrentLevel() + 1;
 			sprintf_s(fontText, "STAGE %d", level);
 			int textWidth = GetDrawStringWidthToHandle(fontText, (int)strlen(fontText), font[0]);
 			fontPosX = (1280 - textWidth) / 2;
-			fontPosY = (720 - 100) / 2;
+			fontPosY = (720 - 100) / 2;*/
 		}
 		return GetNowSceneType();
 	}
@@ -494,8 +483,13 @@ void InGameScene::Draw() const
 	if (state == SceneState::StageNotifier)
 	{
 		DrawBox(0, 0, 1280, 720, GetColor(0, 0, 0), TRUE);
+
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_notifierAlpha);
+
 		DrawStringToHandle(fontPosX + 4, fontPosY + 4, fontText, GetColor(30, 30, 30), font[0]); // 影
 		DrawStringToHandle(fontPosX, fontPosY, fontText, GetColor(255, 255, 255), font[0]);      // 本尊
+
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
 
 	// -------------------------------------------------------------
@@ -567,6 +561,38 @@ void InGameScene::SetUpStageText(const char* text)
 
 	// 透明度をリセット
 	m_notifierAlpha = 0;
+}
+
+void InGameScene::UpdateNotifierAlpha(float fadeInTime, float fadeOutTime)
+{
+	m_notifierAlpha = 255;		// 最初は不透明
+
+	// フェードイン
+	if (m_notifierTimer > (1.8f - fadeInTime))
+	{
+		// 1.8秒の時に0、(1.8 - fadeInTime)秒の時に1.0になる割合を計算
+		float progress = (1.8f - m_notifierTimer) / fadeInTime;
+		m_notifierAlpha = (int)(progress * 255.0f);
+	}
+	// フェードアウト
+	else if (m_notifierTimer < fadeOutTime)
+	{
+		// fadeOutTime秒の時に1.0、0秒の時に0になる割合を計算
+		float progress = m_notifierTimer / fadeOutTime;
+		m_notifierAlpha = (int)(progress * 255.0f);
+	}
+
+	// 範囲外に行かないようにする
+			// 範囲外に行かないようにする
+	if (m_notifierAlpha < 0)
+	{
+		m_notifierAlpha = 0;
+	}
+	if (m_notifierAlpha > 255)
+	{
+		m_notifierAlpha = 255;
+	}
+
 }
 
 // 現在のシーン情報を返す
