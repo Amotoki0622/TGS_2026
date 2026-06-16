@@ -6,18 +6,13 @@
 #pragma once
 #include "DxLib.h"
 #include "../../Utility/Vector2D.h"
-#include "../Wall/Wall.h"
 #include "../GameObject.h"
 #include "../../Utility/EffectManager/EffectManager.h"
 
 #include <vector>
 
-class Wall;
-class EffectManager;
-
 class Player : public GameObject
 {
-
 public:
     // -----------------------------------------
     // プレイヤーの状態
@@ -28,40 +23,38 @@ public:
         Shadow
     };
 
-
     // 現在の状態（Normal / Shadow）を返す
-    State GetState() const {
-        return state; 
-    }
+    State GetState() const { return state; }
 
-    // 手数用テスト
+    // 手数
     int tekazu;
 
     void AddEffectFromObject(float x, float y) {
-        // プレイヤー自身が持っている effectManager にそのまま横流しする
         effectManager.AddEffect(x, y, EffectType::Smoke, "Resource/Images/GameMain/smoke.png", 0.6f, 0.0f, false);
     }
 
 private:
+
     // 位置情報
     int x;
     int y;
+
+    bool canMove;
 
     // 見た目
     int radius;
     int color;
 
     // 画像関連
-    static const int IMAGE_NUM = 3; // 分割数（例：4枚）
-    int images[IMAGE_NUM];          // 分割画像を格納
-    int images2[IMAGE_NUM];          // 分割画像を格納
-    int currentImage;               // 現在表示している画像
+    static const int IMAGE_NUM = 3;
+    int images[IMAGE_NUM];
+    int images2[IMAGE_NUM];
+    int currentImage;
 
     // 音源関連
     int freq;
     int moveSE;          // 移動音
-    int changeStateSE;   // 状態切り替え音（Shadow化など）
-
+    int changeStateSE;   // 状態切り替え音
 
     // 移動関連
     int speed;
@@ -77,23 +70,23 @@ private:
     bool revers = TRUE;
 
     float actionTimer = 0.0f; // アクション画像の維持タイマー
-    int motionTimer = 0; // 移動アニメーション維持用
+    int motionTimer = 0;       // 移動アニメーション維持用
 
     // =========================================
     // エフェクト用変数
     // =========================================
-    EffectManager effectManager; // プレイヤー専用のエフェクトマネージャ
-    int lastPx = -1;             // 1フレーム前のX座標
-    int lastPy = -1;             // 1フレーム前のY座標
+    EffectManager effectManager;
+    int lastPx = -1;
+    int lastPy = -1;
 
-    bool isHitGoal;  // ゴールフラグ
-    bool hasKey;  //鍵フラグ
-    bool canWarp = true;//ワープフラグ
+    bool hasKey;         // 鍵フラグ
+    bool canWarp = true; // ワープフラグ
 
 public:
     void Initialize();
     void Update(const float& delta_second);
     void Draw() const;
+    void Move(const std::vector<GameObject*>& objects);
 
     // 手数を1減らす関数
     void DecreaseMoveCount() {
@@ -109,37 +102,29 @@ public:
     float GetCollisionWidth() const;
     float GetCollisionHeight() const;
 
-    // 座標取得
+    // 座標取得・設定
     void GetLocation(int& outX, int& outY) const;
-    void SetPosition(float x, float y);  //プレイヤーの座標設定
+    void SetPosition(float x, float y);
 
     // 手数関連の処理
     int GetTekazu() const;
     void SetTekazu(int maxLimit);
 
-    void Move(const std::vector<GameObject*>& objects);
-
 private:
     void ChangeState();
-
-    // =========================
-    // アニメーション更新
-    // =========================
     void UpdateAnimation(float delta_second);
 
 public:
-    bool IsHitGoal() const { return isHitGoal; }
 
     void SetHasKey(bool flag) { hasKey = flag; }
 
     bool CanWarp() const { return canWarp; }
     void SetCanWarp(bool flag) { canWarp = flag; }
- 
-    private:
-        float chipSize = 128.0f;
-        float drawScale = 128.0f;
 
-    public:
-        void SetChipSize(float size);
+private:
+    float chipSize = 128.0f;
+    float drawScale = 128.0f;
 
+public:
+    void SetChipSize(float size);
 };

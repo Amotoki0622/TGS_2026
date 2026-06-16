@@ -40,16 +40,7 @@ void Goal::Initialize()
 // 更新
 void Goal::Update(float delta_second)
 {
-    // ★デバッグ表示4：このUpdate関数自体が毎フレーム呼ばれているかチェック
-    DrawString(10, 60, "Debug: Goal::Update() is Running!", GetColor(0, 255, 255));
-    if (image_count == 1)
-    {
-        return;
-    }
-    if (player != nullptr && player->IsHitGoal())
-    {
-        image_count = 1;
-    }
+
 }
 
 void Goal::SetChipSize(float size)
@@ -63,8 +54,6 @@ void Goal::SetChipSize(float size)
 // 描画
 void Goal::Draw() const
 {
-    DrawFormatString(700, 20, GetColor(0, 255, 255), "%d", image_count);
-
     DrawRotaGraph(
         (int)location.x,
         (int)location.y,
@@ -123,4 +112,23 @@ bool Goal::IsHit(int nextX, int nextY, int width, int height) const
         pTop < gBottom &&
         pBottom > gTop
         );
+}
+
+// 外部（Playerクラスなど）から檻を開けるための関数
+void Goal::Open()
+{
+    image_count = 1; // 画像を普通の階段（インデックス1）に変える
+}
+
+// 今ゴールが開いているかどうかを返す関数
+bool Goal::IsOpen() const
+{
+    return (image_count == 1);
+}
+
+// インゲームシーンがゴールの座標を知るための関数
+void Goal::GetLocation(int& outX, int& outY) const
+{
+    outX = (int)location.x;
+    outY = (int)location.y;
 }
