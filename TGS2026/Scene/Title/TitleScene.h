@@ -8,8 +8,17 @@ private:
     int menu_cursor;
     eSceneType next_scene;   
 
-    //追加
+    // 背景画像
     int background;
+
+    // タイトル音声
+    int title_main_bgm;
+
+    // スタート音声
+    int title_start_se;
+
+    bool is_selected = false;   // ボタンが押されたかどうか
+    float transition_timer = 0.0f;  // 遷移するまでの時間を計るタイマー
 
     int font[2];        // font[1]だと、font[0]しか使えない
 

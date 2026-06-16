@@ -130,8 +130,8 @@ void Cam::Draw() const {
 
     // カメラ本体（画像）の描画
     if (cam_image != -1) {
-        // 設定したスケール（例: 0.2f など）
-        float displayScale = 0.15f; // ※今あなたがうまくいっている数値をそのまま使ってください
+        // 設定スケール
+        float displayScale = 0.15f; 
 
         // 画像を描画
         DrawRotaGraph((int)x, (int)y, displayScale, 0.0f, cam_image, TRUE);
