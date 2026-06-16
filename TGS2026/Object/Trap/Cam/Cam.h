@@ -16,6 +16,9 @@ private:
     float pauseTimer;        // 停止時間を計る用
     bool isPausing;          // 今止まっているか
     int direction;           // 1 なら右、-1 なら左へ動く
+    int cam_image;
+
+    bool IsHit(int nextX, int nextY, int width, int height) const override;
 
 public:
     Cam();
