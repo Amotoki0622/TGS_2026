@@ -11,7 +11,7 @@ private:
     //í«â¡
     int background;
 
-    int font[1];
+    int font[2];        // font[1]ÇæÇ∆ÅAfont[0]ÇµÇ©égÇ¶Ç»Ç¢
 
 public:
     TitleScene();
