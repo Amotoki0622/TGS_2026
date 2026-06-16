@@ -11,6 +11,8 @@ private:
     //’Ç‰Á
     int background;
 
+    int font[1];
+
 public:
     TitleScene();
     ~TitleScene();
