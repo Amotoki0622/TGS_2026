@@ -26,6 +26,7 @@ InGameScene::InGameScene()
 	// フォントの設定
 	font[0] = CreateFontToHandle("廻想体 ネクスト UP B", 100, 6);
 	font[1] = CreateFontToHandle("廻想体 ネクスト UP B", 32, 6); // ポーズ画面に使用
+	font[2] = CreateFontToHandle("廻想体 ネクスト UP B", 70, 6); // ポーズ画面に使用
 
 	helpImageHandles[0] = LoadGraph("Resource/Images/Hint/shadow_hint.png");
 	helpImageHandles[1] = LoadGraph("Resource/Images/Hint/kick_hint.png");
@@ -640,7 +641,7 @@ void InGameScene::Draw() const
 			DrawExtendGraph(x1, y1, x2, y2, helpImageHandles[currentHelpPage], FALSE);
 
 			// ページ数の描画（MAX_HELP_PAGES がエラーになる場合は、直接 3 に書き換えてください）
-			DrawFormatStringToHandle(665 - 45, y2 + 15, GetColor(255, 255, 255), font[1], "%d / 3", currentHelpPage + 1);
+			DrawFormatStringToHandle(665 - 45, y2 + 15, GetColor(255, 255, 255), font[2], "%d / 3", currentHelpPage + 1);
 		}
 	} 
 } 

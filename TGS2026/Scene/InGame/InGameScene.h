@@ -41,7 +41,7 @@ private:
 	std::vector<GameObject*> allObjects;
 
 	// フォント
-	int font[2];
+	int font[3];
 
 	float m_notifierTimer;			// ステージ表示の残り時間を削るタイマー
 	int m_notifierAlpha;			// 現在の文字の透明度を保存する
