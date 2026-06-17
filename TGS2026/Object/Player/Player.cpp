@@ -129,7 +129,7 @@ void Player::Move(const std::vector<GameObject*>& objects)
     int moveY = 0;
 
     // =========================
-    // 入力（自動入力分岐は削除）
+    // プレイヤー入力
     // =========================
     if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_LEFT) == eInputState::ePress ||
         input->GetKeyInputState(KEY_INPUT_LEFT) == eInputState::ePress)
@@ -211,8 +211,9 @@ void Player::Move(const std::vector<GameObject*>& objects)
                     }
                     else
                     {
-                        // すでにゴールが開いているなら、そのまま上に乗ることを許可！
-                        continue;
+                        // すでにゴールが開いているなら、移動を許可してループを抜ける！
+                        canMove = true;    // 進むことを確定させる
+                        break;             // 他の判定に邪魔されないようにここでループを抜ける
                     }
                 }
                 else
