@@ -17,10 +17,19 @@ InGameScene::InGameScene()
 	ChangeVolumeSoundMem(70, beepSE);
 	SetFrequencySoundMem((int)(freq * 0.6f), beepSE); // 減速
 
+	// ヘルプ音
+	pageSE = LoadSoundMem("Resource/Sounds/SE/object/push/paper_push.mp3");
+	ChangeVolumeSoundMem(60, pageSE);
+
 	m_stageManager.Initialize();
 
 	// フォントの設定
 	font[0] = CreateFontToHandle("廻想体 ネクスト UP B", 100, 6);
+	font[1] = CreateFontToHandle("廻想体 ネクスト UP B", 32, 6); // ポーズ画面に使用
+
+	helpImageHandles[0] = LoadGraph("Resource/Images/Hint/shadow_hint.png");
+	helpImageHandles[1] = LoadGraph("Resource/Images/Hint/kick_hint.png");
+	helpImageHandles[2] = LoadGraph("Resource/Images/Hint/key_hint.png");
 
 }
 
@@ -110,15 +119,22 @@ void InGameScene::Initialize()
 	state = SceneState::StageNotifier;
 	detectionTimer = 0.0f;
 	m_notifierTimer = 1.8f;
+	m_notifierAlpha = 0;		// 透明
+	m_isRestartNotifier = false;
 
 	// 文字列の保存
 	int level = m_stageManager.GetCurrentLevel() + 1;
-	sprintf_s(fontText, "STAGE %d", level);
+	
+	char buf[32];
+	sprintf_s(buf, "STAGE %d", level);
+	SetUpStageText(buf);
 
-	// 文字の描画座標
-	int textWidth = GetDrawStringWidthToHandle(fontText, (int)strlen(fontText), font[0]);
-	fontPosX = (1280 - textWidth) / 2;
-	fontPosY = (720 - 100) / 2;
+	//sprintf_s(fontText, "STAGE %d", level);
+
+	//// 文字の描画座標
+	//int textWidth = GetDrawStringWidthToHandle(fontText, (int)strlen(fontText), font[0]);
+	//fontPosX = (1280 - textWidth) / 2;
+	//fontPosY = (720 - 100) / 2;
 
 	for (GameObject* obj : allObjects)
 	{
@@ -171,39 +187,96 @@ eSceneType InGameScene::Update(const float& delta_second)
 
 	if (isPaused)
 	{
-		if (input->GetKeyInputState(KEY_INPUT_UP) == eInputState::ePress || input->GetButtonInputState(XINPUT_BUTTON_DPAD_UP) == eInputState::ePress)
+		// ヘルプ画面が開いている時のページ切り替え操作
+		if (isHelpOpen)
 		{
-			pauseSelectIndex--;
-			if (pauseSelectIndex < 0) pauseSelectIndex = 3;
-		}
-		if (input->GetKeyInputState(KEY_INPUT_DOWN) == eInputState::ePress || input->GetButtonInputState(XINPUT_BUTTON_DPAD_DOWN) == eInputState::ePress)
-		{
-			pauseSelectIndex++;
-			if (pauseSelectIndex > 3) pauseSelectIndex = 0;
-		}
-
-		if (input->GetKeyInputState(KEY_INPUT_RETURN) == eInputState::ePress || input->GetButtonInputState(XINPUT_BUTTON_B) == eInputState::ePress)
-		{
-			if (pauseSelectIndex == 0) isPaused = false;
-			if (pauseSelectIndex == 1)
+			// ◀ 左キー（またはDパッド左）で前のページに戻る
+			if (input->GetKeyInputState(KEY_INPUT_LEFT) == eInputState::ePress || input->GetButtonInputState(XINPUT_BUTTON_DPAD_LEFT) == eInputState::ePress)
 			{
-				StopSoundMem(beepSE);
-				Initialize();
-				state = SceneState::Restarting;
-				fade->Start(FadeType::IrisOut, true, 1.5f);
-				isPaused = false;
+				PlaySoundMem(pageSE, DX_PLAYTYPE_BACK); // 音を鳴らす
+				currentHelpPage--;
+				if (currentHelpPage < 0) currentHelpPage = 0; // 1枚目より前には戻らない
 			}
-			if (pauseSelectIndex == 2) { /* ヘルプ */ }
-			if (pauseSelectIndex == 3)
+			// ▶ 右キー（またはDパッド右）で次のページに進む
+			if (input->GetKeyInputState(KEY_INPUT_RIGHT) == eInputState::ePress || input->GetButtonInputState(XINPUT_BUTTON_DPAD_RIGHT) == eInputState::ePress)
 			{
-				StopSoundMem(mainBGM);
-				StopSoundMem(beepSE);
-				isPaused = false;
-				return eSceneType::eTitle;
+				PlaySoundMem(pageSE, DX_PLAYTYPE_BACK); // 音を鳴らす
+				currentHelpPage++;
+				if (currentHelpPage >= MAX_HELP_PAGES) currentHelpPage = MAX_HELP_PAGES - 1; // 最後のページで止まる
+			}
+
+			// BackSpaceキー または コントローラーのAボタン でヘルプを閉じる処理
+			if (input->GetKeyInputState(KEY_INPUT_BACK) == eInputState::ePress || input->GetButtonInputState(XINPUT_BUTTON_A) == eInputState::ePress)
+			{
+				isHelpOpen = false;
 			}
 		}
+		// ヘルプが開いていない時だけ、いつものポーズメニューを動かす
+		else
+		{
+			// 決定ボタンが押されて「押し込みアニメーション中」は、上下入力を受け付けないようにする
+			if (pausePushTimer <= 0.0f)
+			{
+				if (input->GetKeyInputState(KEY_INPUT_UP) == eInputState::ePress || input->GetButtonInputState(XINPUT_BUTTON_DPAD_UP) == eInputState::ePress)
+				{
+					pauseSelectIndex--;
+					if (pauseSelectIndex < 0) pauseSelectIndex = 3;
+				}
+				if (input->GetKeyInputState(KEY_INPUT_DOWN) == eInputState::ePress || input->GetButtonInputState(XINPUT_BUTTON_DPAD_DOWN) == eInputState::ePress)
+				{
+					pauseSelectIndex++;
+					if (pauseSelectIndex > 3) pauseSelectIndex = 0;
+				}
 
-		return GetNowSceneType(); // 💡 ここで終わらせることで、これより下の移動やタイマー処理をフリーズさせる
+				// 決定ボタンが押されたら、まずは「押し込みタイマー」だけをセット！
+				if (input->GetKeyInputState(KEY_INPUT_RETURN) == eInputState::ePress || input->GetButtonInputState(XINPUT_BUTTON_B) == eInputState::ePress)
+				{
+					pausePushTimer = 0.2f; // 0.2秒のアニメーション時間を確保
+				}
+			}
+		}
+
+		// 押し込みタイマーのカウントダウンと、時間が切れた時の画面遷移処理
+		if (pausePushTimer > 0.0f)
+		{
+			pausePushTimer -= delta_second; // 毎フレームタイマーを減らす
+
+			// 0.2秒が経過して、タイマーが0以下になった瞬間に本来の処理をドカンと実行！
+			if (pausePushTimer <= 0.0f)
+			{
+				if (pauseSelectIndex == 0) isPaused = false;
+				if (pauseSelectIndex == 1)
+				{
+					StopSoundMem(beepSE);
+					Initialize();
+					state = SceneState::Restarting;
+					fade->Start(FadeType::IrisOut, true, 1.5f);
+					isPaused = false;
+				}
+
+				// 💡【重要！】ボタンの押し込み演出が完全に終わった「ここ」でヘルプを開く！
+				if (pauseSelectIndex == 2)
+				{
+					isHelpOpen = true;
+					currentHelpPage = 0;
+					helpOffsetY = 720.0f; // 💡 念のため、初期位置（下端）を強制リセットして確実ににゅーんさせる
+				}
+
+				if (pauseSelectIndex == 3)
+				{
+					StopSoundMem(mainBGM);
+					StopSoundMem(beepSE);
+					isPaused = false;
+					return eSceneType::eTitle;
+				}
+			}
+		}
+
+		// アニメーション
+		float targetHelpY = isHelpOpen ? 0.0f : 720.0f;
+		helpOffsetY += (targetHelpY - helpOffsetY) * 0.1f;
+
+		return GetNowSceneType();
 	}
 
 
@@ -225,18 +298,11 @@ eSceneType InGameScene::Update(const float& delta_second)
 			state = SceneState::StageNotifier;
 			m_notifierTimer = 1.8f;
 
-			// 文字列の保存
-			int level = m_stageManager.GetCurrentLevel() + 1;
-			sprintf_s(fontText, "STAGE %d", level);
-			//sprintf_s(fontText, "これはステージ%dです。", level);
+			/*失敗した時に「RESTART」にするパターン*/
+			m_isRestartNotifier = true;		// リスタート
 
-			// 文字の描画座標
-			int textWidth = GetDrawStringWidthToHandle(fontText, (int)strlen(fontText), font[0]);
-			fontPosX = (1280 - textWidth) / 2;
-			fontPosY = (720 - 100) / 2;
+			SetUpStageText("RESTART");
 
-			// fade->Start(FadeType::IrisOut, false, 1.0f);  // フェードイン開始
-			// state = SceneState::Playing;
 		}
 		return GetNowSceneType(); // リスタート中は以下の処理をスキップ
 	}
@@ -247,10 +313,19 @@ eSceneType InGameScene::Update(const float& delta_second)
 		// カウントダウン開始
 		m_notifierTimer -= delta_second;
 
+		// UpdateNotifierAlpha(0.3f, 0.3f);
+
+		if (m_isRestartNotifier) {
+			UpdateNotifierAlpha(0.1f, 0.1f); // リスタート時は高速フェード
+		}
+		else {
+			UpdateNotifierAlpha(0.4f, 0.4f); // 通常時はじっくりフェード
+		}
+
 		// 時間が来たら、文字を消してフェードイン(徐々に明るくして)
 		if (m_notifierTimer <= 0.0f)
 		{
-			// IrisOutの引数をfalse
+			// IrisOutの引数をFalseにする
 			fade->Start(FadeType::IrisOut, false, 1.2f);
 
 			state = SceneState::Playing;		// 通常プレイにする
@@ -277,12 +352,16 @@ eSceneType InGameScene::Update(const float& delta_second)
 			Initialize();
 			state = SceneState::StageNotifier;
 			m_notifierTimer = 1.8f;
+			m_isRestartNotifier = true;
 
-			int level = m_stageManager.GetCurrentLevel() + 1;
+			SetUpStageText("RESTART");		// リスタートを中心に描画
+
+			/*ステージ遷移のもの*/
+			/*int level = m_stageManager.GetCurrentLevel() + 1;
 			sprintf_s(fontText, "STAGE %d", level);
 			int textWidth = GetDrawStringWidthToHandle(fontText, (int)strlen(fontText), font[0]);
 			fontPosX = (1280 - textWidth) / 2;
-			fontPosY = (720 - 100) / 2;
+			fontPosY = (720 - 100) / 2;*/
 		}
 		return GetNowSceneType();
 	}
@@ -437,7 +516,7 @@ void InGameScene::Draw() const
 	{
 		block.Draw();
 	}*/
-	
+
 	//goal.Draw();			// これはいらない
 	// プレイヤーの描画
 	player.Draw();
@@ -470,13 +549,16 @@ void InGameScene::Draw() const
 	if (state == SceneState::StageNotifier)
 	{
 		DrawBox(0, 0, 1280, 720, GetColor(0, 0, 0), TRUE);
+
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_notifierAlpha);
+
 		DrawStringToHandle(fontPosX + 4, fontPosY + 4, fontText, GetColor(30, 30, 30), font[0]); // 影
 		DrawStringToHandle(fontPosX, fontPosY, fontText, GetColor(255, 255, 255), font[0]);      // 本尊
+
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
 
-	// -------------------------------------------------------------
-	// ポーズ画面の描画処理（一番手前に重ねる）
-	// -------------------------------------------------------------
+	// ポーズ画面の描画処理
 	if (isPaused)
 	{
 		DrawGraph(0, 0, pauseBackgroundHandle, FALSE);
@@ -491,21 +573,77 @@ void InGameScene::Draw() const
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		DrawBox(menuLeft, menuTop, menuRight, menuBottom, GetColor(255, 255, 255), FALSE);
 
-		SetFontSize(32);
-		DrawString(640 - 80, 200, "- PAUSE -", GetColor(255, 255, 255));
+		// ポーズのタイトルをカスタムフォント化
+		DrawStringToHandle(660 - 80, 200, "- PAUSE -", GetColor(255, 255, 255), font[1]);
 
-		SetFontSize(24);
+		// --- 既存の c0 〜 c3 の色判定の下に追加 ---
 		unsigned int c0 = (pauseSelectIndex == 0) ? GetColor(255, 220, 0) : GetColor(200, 200, 200);
 		unsigned int c1 = (pauseSelectIndex == 1) ? GetColor(255, 220, 0) : GetColor(200, 200, 200);
 		unsigned int c2 = (pauseSelectIndex == 2) ? GetColor(255, 220, 0) : GetColor(200, 200, 200);
 		unsigned int c3 = (pauseSelectIndex == 3) ? GetColor(255, 220, 0) : GetColor(200, 200, 200);
 
-		DrawFormatString(640 - 120, 270, c0, "%s ゲームに戻る", (pauseSelectIndex == 0) ? "▶" : " ");
-		DrawFormatString(640 - 120, 320, c1, "%s リスタート", (pauseSelectIndex == 1) ? "▶" : " ");
-		DrawFormatString(640 - 120, 370, c2, "%s ヘルプ", (pauseSelectIndex == 2) ? "▶" : " ");
-		DrawFormatString(640 - 120, 420, c3, "%s タイトルに戻る", (pauseSelectIndex == 3) ? "▶" : " ");
-	}
-}
+		// 💡【新設】押し込みアニメーション用の変数を準備
+		int pushOffsetY = 0; // 下にずらす量
+		unsigned int activeCursorColor = GetColor(255, 220, 0);
+
+		// ボタンが押されている間（タイマー作動中）は、見た目を変化させる
+		if (pausePushTimer > 0.0f)
+		{
+			pushOffsetY = 4;                 // 💡 項目とカーソルを 4ピクセル 下に沈ませる
+			activeCursorColor = GetColor(120, 100, 0); // 💡 カーソルの黄色を暗くする
+
+			// 現在選ばれている項目の文字色をグレーにして「消灯感」を出す
+			if (pauseSelectIndex == 0) c0 = GetColor(100, 100, 100);
+			if (pauseSelectIndex == 1) c1 = GetColor(100, 100, 100);
+			if (pauseSelectIndex == 2) c2 = GetColor(100, 100, 100);
+			if (pauseSelectIndex == 3) c3 = GetColor(100, 100, 100);
+		}
+
+		int textLeftX = 640 - 100;
+
+		// 各項目のベースとなる文字を描画（💡 pushOffsetY をY座標にプラス！）
+		DrawStringToHandle(textLeftX, 270 + (pauseSelectIndex == 0 ? pushOffsetY : 0), "ゲームに戻る", c0, font[1]);
+		DrawStringToHandle(textLeftX, 320 + (pauseSelectIndex == 1 ? pushOffsetY : 0), "リスタート", c1, font[1]);
+		DrawStringToHandle(textLeftX, 370 + (pauseSelectIndex == 2 ? pushOffsetY : 0), "ヘルプ", c2, font[1]);
+		DrawStringToHandle(textLeftX, 420 + (pauseSelectIndex == 3 ? pushOffsetY : 0), "タイトルに戻る", c3, font[1]);
+
+		// 現在選んでいる項目の Y座標（💡 pushOffsetY をプラス！）
+		int cursorY = 270 + (pauseSelectIndex * 50) + pushOffsetY;
+
+		// 今選ばれている項目の文字列と横幅を取得
+		const char* currentMenuText = "";
+		if (pauseSelectIndex == 0) currentMenuText = "ゲームに戻る";
+		if (pauseSelectIndex == 1) currentMenuText = "リスタート";
+		if (pauseSelectIndex == 2) currentMenuText = "ヘルプ";
+		if (pauseSelectIndex == 3) currentMenuText = "タイトルに戻る";
+
+		int textWidth = GetDrawStringWidthToHandle(currentMenuText, (int)strlen(currentMenuText), font[1]);
+
+		// カーソル描画（💡 色が自動で変化し、位置も pushOffsetY で一緒に沈みます）
+		DrawStringToHandle(textLeftX - 30, cursorY, ">", activeCursorColor, font[1]);
+		DrawStringToHandle(textLeftX + textWidth + 15, cursorY, "<", activeCursorColor, font[1]);
+		
+		// ヘルプ描画
+		if (helpOffsetY < 720.0f)
+		{
+			// 画面サイズ
+			int helpWidth = 960;
+			int helpHeight = 540;
+
+			// 画面中央に配置するための座標を計算
+			int x1 = (1280 - helpWidth) / 2;
+			int y1 = (720 - helpHeight) / 2 + (int)helpOffsetY;
+			int x2 = x1 + helpWidth;
+			int y2 = y1 + helpHeight;
+
+			// 画像描画
+			DrawExtendGraph(x1, y1, x2, y2, helpImageHandles[currentHelpPage], FALSE);
+
+			// ページ数の描画（MAX_HELP_PAGES がエラーになる場合は、直接 3 に書き換えてください）
+			DrawFormatStringToHandle(665 - 45, y2 + 15, GetColor(255, 255, 255), font[1], "%d / 3", currentHelpPage + 1);
+		}
+	} 
+} 
 
 // 終了時処理
 void InGameScene::Finalize()
@@ -529,6 +667,52 @@ void InGameScene::Finalize()
 	}
 
 	allObjects.clear();
+}
+
+void InGameScene::SetUpStageText(const char* text)
+{
+	// 文字列をコピー
+	sprintf_s(fontText, "%s", text);
+
+	// 座標を計算(画面の中心)
+	int textWidth = GetDrawStringWidthToHandle(fontText, (int)strlen(fontText), font[0]);
+	fontPosX = (1280 - textWidth) / 2;
+	fontPosY = (720 - 100) / 2;
+
+	// 透明度をリセット
+	m_notifierAlpha = 0;
+}
+
+void InGameScene::UpdateNotifierAlpha(float fadeInTime, float fadeOutTime)
+{
+	m_notifierAlpha = 255;		// 最初は不透明
+
+	// フェードイン
+	if (m_notifierTimer > (1.8f - fadeInTime))
+	{
+		// 1.8秒の時に0、(1.8 - fadeInTime)秒の時に1.0になる割合を計算
+		float progress = (1.8f - m_notifierTimer) / fadeInTime;
+		m_notifierAlpha = (int)(progress * 255.0f);
+	}
+	// フェードアウト
+	else if (m_notifierTimer < fadeOutTime)
+	{
+		// fadeOutTime秒の時に1.0、0秒の時に0になる割合を計算
+		float progress = m_notifierTimer / fadeOutTime;
+		m_notifierAlpha = (int)(progress * 255.0f);
+	}
+
+	// 範囲外に行かないようにする
+			// 範囲外に行かないようにする
+	if (m_notifierAlpha < 0)
+	{
+		m_notifierAlpha = 0;
+	}
+	if (m_notifierAlpha > 255)
+	{
+		m_notifierAlpha = 255;
+	}
+
 }
 
 // 現在のシーン情報を返す

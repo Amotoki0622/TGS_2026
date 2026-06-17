@@ -234,8 +234,11 @@ void Player::Move(const std::vector<GameObject*>& objects)
             if (spikeObj != nullptr) continue;
 
             auto camObj = dynamic_cast<Cam*>(obj);
-            if (camObj != nullptr) continue;
-
+            if (camObj != nullptr)
+            {
+                canMove = false;
+                break;
+            }
             canMove = false;
             break;
         }
