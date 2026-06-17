@@ -32,7 +32,7 @@ void Player::Initialize()
     hasKey = false;
 
     step_se = LoadSoundMem("Resource/Sounds/SE/object/player/player_step.mp3");
-    ChangeVolumeSoundMem(70, step_se);
+    ChangeVolumeSoundMem(110, step_se);
 
     // 変身音の読み込み・設定
     changeStateSE = LoadSoundMem("Resource/Sounds/SE/object/player/change.mp3");
