@@ -401,6 +401,25 @@ eSceneType InGameScene::Update(const float& delta_second)
 		}
 	}
 
+	// =============================================================
+	// デバッグ用：Nキーが押されたら強制的に次のステージへ
+	// =============================================================
+	if (input->GetKeyInputState(KEY_INPUT_N) == eInputState::ePress)
+	{ 
+		m_stageManager.NextLevel(); // ステージの内部進行度を次に進める
+		StopSoundMem(beepSE);       
+
+		if (m_stageManager.GetCurrentLevel() >= 5)
+		{
+			StopSoundMem(mainBGM);
+			return eSceneType::eTitle;
+		}
+
+		state = SceneState::Restarting;
+		fade->Start(FadeType::IrisOut, true, 1.5f);
+		return GetNowSceneType();
+	}
+
 	// -------------------------------------------------------------
 	// ⑤ 罠（カメラ・ライト）の検知判定フェーズ
 	// -------------------------------------------------------------
