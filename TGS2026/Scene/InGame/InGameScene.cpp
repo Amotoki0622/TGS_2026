@@ -159,9 +159,9 @@ void InGameScene::Initialize()
 	delay = 0;
 	tekazu = 0;
 
-	DrawNumber::SetImage(
-		ResourceManager::GetInstance()->GetImages("Resource/Images/Number/number.png")
-	);
+	//DrawNumber::SetImage(
+	//	ResourceManager::GetInstance()->GetImages("Resource/Images/Number/number.png")
+	//);
 }
 
 // 更新処理
@@ -169,6 +169,9 @@ eSceneType InGameScene::Update(const float& delta_second)
 {
 	tekazu = player.GetTekazu();
 	InputManager* input = InputManager::GetInstance();
+
+	// 手数を保存する変数
+	sprintf_s(m_tekazuText, "%d", tekazu);
 
 	// -------------------------------------------------------------
 	// ① 一時停止（ポーズ）の入力・制御フェーズ（最優先）
@@ -504,7 +507,10 @@ void InGameScene::Draw() const
 	}
 
 	// 手数（スコア）の描画
-	DrawNumber::Draw(230, 550, tekazu, 0.8f);
+	// DrawNumber::Draw(230, 550, tekazu, 0.8f);
+	DrawStringToHandle(230 + 2, 550 + 2, m_tekazuText, GetColor(30, 30, 30), font[0]); // 影
+	DrawStringToHandle(230, 550, m_tekazuText, GetColor(255, 255, 255), font[0]);     // 本尊
+
 
 	//DrawStringToHandle(40, 450, "STAGE1", GetColor(255, 255, 255), font[0]);
 
