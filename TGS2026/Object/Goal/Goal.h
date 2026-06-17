@@ -17,6 +17,7 @@ private:
 	/*int goal_image;*/
 	int goal_image[2];
 	int image_count;
+	int unlock_se;  // Œ®‰ğœ‚ÌSE
 
 	bool isOpen;
 

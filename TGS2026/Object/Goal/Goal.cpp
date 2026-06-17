@@ -34,7 +34,17 @@ Goal::~Goal()
 void Goal::Initialize()
 {
     image_count = 0;
-    LoadDivGraph("Resource/Images/Gimmick/goal_image.png",2,2,1,128,128,goal_image);
+    LoadDivGraph("Resource/Images/Gimmick/goal_image.png", 2, 2, 1, 128, 128, goal_image);
+
+    // 読み込みの直前に、非圧縮展開モードに切り替える
+    SetCreateSoundDataType(DX_SOUNDDATATYPE_MEMNOPRESS);
+
+    unlock_se = LoadSoundMem("Resource/Sounds/SE/object/key/unlock.mp3");
+    ChangeVolumeSoundMem(128, unlock_se);
+
+    // 読み込みが終わったら、他のBGMなどのために元の圧縮モードに戻す
+    SetCreateSoundDataType(DX_SOUNDDATATYPE_MEMPRESS);
+
 }
 
 // 更新
@@ -117,7 +127,13 @@ bool Goal::IsHit(int nextX, int nextY, int width, int height) const
 // 外部（Playerクラスなど）から檻を開けるための関数
 void Goal::Open()
 {
+    // すでに画像が 1（解放状態）なら、処理をスルーする
+    if (image_count == 1) {
+        StopSoundMem(unlock_se);
+        return;
+    }
     image_count = 1; // 画像を普通の階段（インデックス1）に変える
+    PlaySoundMem(unlock_se, DX_PLAYTYPE_NORMAL);
 }
 
 // 今ゴールが開いているかどうかを返す関数
