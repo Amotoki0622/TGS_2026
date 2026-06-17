@@ -4,6 +4,10 @@
 
 class ResultScene : public SceneBase
 {
+private:
+	int background;
+
+	int font[2];
 
 public:
 	// コンストラクタ
