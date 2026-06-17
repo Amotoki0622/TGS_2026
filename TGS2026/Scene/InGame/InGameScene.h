@@ -54,6 +54,7 @@ private:
 	int fontPosX;					// 計算済みのX座標
 	int fontPosY;					// 計算済みのY座標
 	char fontText[32];				// 作成済みの文字列
+	char m_tekazuText[16];
 
 	// リソースマネージャー
 	ResourceManager* resource;      
