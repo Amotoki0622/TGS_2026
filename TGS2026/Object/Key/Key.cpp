@@ -42,7 +42,7 @@ void Key::Initialize()
     key_image = LoadGraph("Resource/Images/Gimmick/Key.png");
 
     key_se = LoadSoundMem("Resource/Sounds/SE/object/key/key1.mp3");
-    ChangeVolumeSoundMem(128, key_se);
+    ChangeVolumeSoundMem(70, key_se);
 }
 
 void Key::Update(float delta_second)
