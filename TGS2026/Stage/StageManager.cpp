@@ -258,7 +258,12 @@ void StageManager::CreateStageObject()
 				case 'T':
 				{
 					// トラップ(トラばさみのような地面に設置する罠)を生成する処理
-					const float TRAP_RADIUS = 100.0f;
+					float TRAP_RADIUS = 100.0f;
+
+					if (m_currentLevel >= 2)
+					{
+						TRAP_RADIUS = 80.0f;
+					}
 
 					SpikeTrap* new_spike = CreateStageObjectInstance<SpikeTrap>(Vector2D(posX, posY));
 					if (new_spike != nullptr)
