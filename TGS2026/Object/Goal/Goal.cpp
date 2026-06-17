@@ -36,14 +36,8 @@ void Goal::Initialize()
     image_count = 0;
     LoadDivGraph("Resource/Images/Gimmick/goal_image.png", 2, 2, 1, 128, 128, goal_image);
 
-    // 読み込みの直前に、非圧縮展開モードに切り替える
-    SetCreateSoundDataType(DX_SOUNDDATATYPE_MEMNOPRESS);
-
     unlock_se = LoadSoundMem("Resource/Sounds/SE/object/key/unlock.mp3");
     ChangeVolumeSoundMem(128, unlock_se);
-
-    // 読み込みが終わったら、他のBGMなどのために元の圧縮モードに戻す
-    SetCreateSoundDataType(DX_SOUNDDATATYPE_MEMPRESS);
 
 }
 
@@ -133,7 +127,7 @@ void Goal::Open()
         return;
     }
     image_count = 1; // 画像を普通の階段（インデックス1）に変える
-    PlaySoundMem(unlock_se, DX_PLAYTYPE_NORMAL);
+    PlaySoundMem(unlock_se, DX_PLAYTYPE_BACK);
 }
 
 // 今ゴールが開いているかどうかを返す関数

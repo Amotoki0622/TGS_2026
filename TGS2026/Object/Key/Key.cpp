@@ -40,6 +40,9 @@ void Key::Initialize()
     this->box_size.y = 64.0f;
 
     key_image = LoadGraph("Resource/Images/Gimmick/Key.png");
+
+    key_se = LoadSoundMem("Resource/Sounds/SE/object/key/key.mp3");
+    ChangeVolumeSoundMem(128, key_se);
 }
 
 void Key::Update(float delta_second)
@@ -71,6 +74,8 @@ void Key::Update(float delta_second)
         if (left < pRight && right > pLeft && top < pBottom && bottom > pTop && targetPlayer->GetState() == Player::State::Normal)
         {
             isPickedUp = true; // 重なったら取得！
+
+            PlaySoundMem(key_se, DX_PLAYTYPE_BACK);
         }
 
         // 演出用の角度を更新（拾う前と同じゆったりしたテンポ）
@@ -167,4 +172,18 @@ void Key::SetPlayer(Player* p)
     targetPlayer = p;
 }
 
-void Key::Finalize() {}
+void Key::Finalize()
+{
+    // ⭕ 読み込んだサウンドハンドルの解放
+    if (key_se != -1 && key_se != 0)
+    {
+        DeleteSoundMem(key_se);
+        key_se = -1;
+    }
+
+    if (key_image != -1 && key_image != 0)
+    {
+        DeleteGraph(key_image);
+        key_image = -1;
+    }
+}

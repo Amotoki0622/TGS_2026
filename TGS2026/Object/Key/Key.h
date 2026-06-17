@@ -12,7 +12,8 @@ private:
 
     float drawScale = 1.0f; // 描画用の倍率を保存する変数
 
-    int key_image;  // 鍵の画像
+    int key_image;  // 鍵の画像 
+    int key_se;  // 鍵を取得した際のSE
 
 public:
     Key();
