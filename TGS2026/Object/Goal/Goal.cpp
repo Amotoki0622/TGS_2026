@@ -37,7 +37,9 @@ void Goal::Initialize()
     LoadDivGraph("Resource/Images/Gimmick/goal_image.png", 2, 2, 1, 128, 128, goal_image);
 
     unlock_se = LoadSoundMem("Resource/Sounds/SE/object/key/unlock.mp3");
+    goal_se = LoadSoundMem("Resource/Sounds/SE/object/kaidan/goal.m4a");
     ChangeVolumeSoundMem(128, unlock_se);
+    ChangeVolumeSoundMem(128, goal_se);
 
 }
 
@@ -141,4 +143,10 @@ void Goal::GetLocation(int& outX, int& outY) const
 {
     outX = (int)location.x;
     outY = (int)location.y;
+}
+
+// プレイヤーがゴールに乗ったときにSEを鳴らす関数
+void Goal::PlayGoalSE()
+{
+    PlaySoundMem(goal_se, DX_PLAYTYPE_BACK);
 }

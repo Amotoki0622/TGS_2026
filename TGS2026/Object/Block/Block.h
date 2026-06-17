@@ -24,6 +24,7 @@ private:
 	float drawScale = 1.0f; // 描画用の倍率を保存する変数
 
 	int block_image;  // ブロックの画像
+	int block_se;  // ブロックが蹴られた時のSE
 
 public:
 	void SetPlayer(Player* p); // 追加

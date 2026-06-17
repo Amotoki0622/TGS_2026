@@ -31,6 +31,9 @@ void Player::Initialize()
     canMove = true;
     hasKey = false;
 
+    step_se = LoadSoundMem("Resource/Sounds/SE/object/player/player_step.mp3");
+    ChangeVolumeSoundMem(70, step_se);
+
     // 変身音の読み込み・設定
     changeStateSE = LoadSoundMem("Resource/Sounds/SE/object/player/change.mp3");
     freq = GetFrequencySoundMem(changeStateSE); // 元の周波数を取得
@@ -286,6 +289,8 @@ void Player::Move(const std::vector<GameObject*>& objects)
 
         canWarp = true;
         tekazu--;
+
+        PlaySoundMem(step_se, DX_PLAYTYPE_BACK);
 
         // 移動煙エフェクト発生
         effectManager.AddEffect(spawnX, spawnY, EffectType::Smoke, effectImagePath, 0.2f, angle, isReversedX);

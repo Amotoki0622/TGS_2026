@@ -18,6 +18,7 @@ private:
 	int goal_image[2];
 	int image_count;
 	int unlock_se;  // Œ®‰ğœ‚ÌSE
+	int goal_se;  // ƒS[ƒ‹‚ÌSE
 
 	bool isOpen;
 
@@ -56,5 +57,7 @@ public:
 	bool IsOpen() const;
 
 	void GetLocation(int& outX, int& outY) const;
+
+	void PlayGoalSE();
 };
 

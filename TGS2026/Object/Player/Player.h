@@ -55,6 +55,7 @@ private:
     int freq;
     int moveSE;          // 移動音
     int changeStateSE;   // 状態切り替え音
+    int step_se;  // プレイヤーの足音
 
     // 移動関連
     int speed;

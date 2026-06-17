@@ -37,6 +37,8 @@ Block::~Block()
 void Block::Initialize()
 {
     block_image = LoadGraph("Resource/Images/Gimmick/wall.png");
+    block_se = LoadSoundMem("Resource/Sounds/SE/object/move_object/move_object.mp3");
+    ChangeVolumeSoundMem(128, block_se);
 }
 
 // 更新
@@ -218,6 +220,9 @@ void Block::Push(float moveX, float moveY, const std::vector<GameObject*>& objec
         // 実際に木箱の座標を更新
         this->location.x = (float)nextX;
         this->location.y = (float)nextY;
+
+        // 蹴られたときにSEを流す
+        PlaySoundMem(block_se, DX_PLAYTYPE_BACK);
 
         // 最後の引数に、上で切り替えた「effectImagePath」をそのまま渡す！
         effectManager.AddEffect(spawnX, spawnY, EffectType::Smoke, effectImagePath, 0.2f, angle, isReversedX);

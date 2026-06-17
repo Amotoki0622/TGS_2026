@@ -404,6 +404,7 @@ eSceneType InGameScene::Update(const float& delta_second)
 
 			if (playerX == goalX && playerY == goalY)
 			{
+				goalObj->PlayGoalSE();
 				m_stageManager.NextLevel();
 				StopSoundMem(beepSE);
 
