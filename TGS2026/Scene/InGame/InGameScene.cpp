@@ -9,7 +9,7 @@ InGameScene::InGameScene()
 
 	// メインBGM
 	mainBGM = LoadSoundMem("Resource/Sounds/BGM/main/main01.mp3");
-	ChangeVolumeSoundMem(85, mainBGM);
+	ChangeVolumeSoundMem(140, mainBGM);
 
 	// 警報音
 	beepSE = LoadSoundMem("Resource/Sounds/SE/object/cam/cam3.mp3");

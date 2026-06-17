@@ -11,12 +11,12 @@ TitleScene::TitleScene()
     // タイトルメインBGM
     title_main_bgm = LoadSoundMem("Resource/Sounds/BGM/title/title_main_bgm.mp3");
     // 音量を設定
-    ChangeVolumeSoundMem(55, title_main_bgm);
+    ChangeVolumeSoundMem(180, title_main_bgm);
 
     // スタート時音声
     title_start_se = LoadSoundMem("Resource/Sounds/SE/title/title_start_se.mp3");
     // 音量を設定（例：半分の 128 や、かなり控えめな 80 など）
-    ChangeVolumeSoundMem(70, title_start_se);
+    ChangeVolumeSoundMem(130, title_start_se);
 }
 
 // デストラクタ
