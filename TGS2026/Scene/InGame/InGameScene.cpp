@@ -294,18 +294,12 @@ eSceneType InGameScene::Update(const float& delta_second)
 	if (state == SceneState::Restarting)
 	{
 		if (fade->IsFinished()) {
-			Initialize(); // 暗転しきったら初期化
-
+			Initialize();
 			state = SceneState::StageNotifier;
 			m_notifierTimer = 1.8f;
 
-			/*失敗した時に「RESTART」にするパターン*/
-			m_isRestartNotifier = true;		// リスタート
-
-			SetUpStageText("RESTART");
-
 		}
-		return GetNowSceneType(); // リスタート中は以下の処理をスキップ
+		return GetNowSceneType();
 	}
 
 
@@ -314,14 +308,8 @@ eSceneType InGameScene::Update(const float& delta_second)
 		// カウントダウン開始
 		m_notifierTimer -= delta_second;
 
-		// UpdateNotifierAlpha(0.3f, 0.3f);
+		UpdateNotifierAlpha(0.3f, 0.3f);
 
-		if (m_isRestartNotifier) {
-			UpdateNotifierAlpha(0.1f, 0.1f); // リスタート時は高速フェード
-		}
-		else {
-			UpdateNotifierAlpha(0.4f, 0.4f); // 通常時はじっくりフェード
-		}
 
 		// 時間が来たら、文字を消してフェードイン(徐々に明るくして)
 		if (m_notifierTimer <= 0.0f)
@@ -347,27 +335,19 @@ eSceneType InGameScene::Update(const float& delta_second)
 	// -------------------------------------------------------------
 	// ③ 特殊ステート制御（リスタート中・ステージ開始演出中）
 	// -------------------------------------------------------------
-	if (state == SceneState::Restarting)
-	{
-		if (fade->IsFinished()) {
-			Initialize();
-			state = SceneState::StageNotifier;
-			m_notifierTimer = 1.8f;
-			m_isRestartNotifier = true;
+	// フェードアウト中（リスタート待機中）の処理
+	//if (state == SceneState::Restarting)
+	//{
+	//	if (fade->IsFinished()) {
+	//		Initialize();
+	//		state = SceneState::StageNotifier;
+	//		m_notifierTimer = 1.8f;
 
-			SetUpStageText("RESTART");		// リスタートを中心に描画
+	//	}
+	//	return GetNowSceneType();
+	//}
 
-			/*ステージ遷移のもの*/
-			/*int level = m_stageManager.GetCurrentLevel() + 1;
-			sprintf_s(fontText, "STAGE %d", level);
-			int textWidth = GetDrawStringWidthToHandle(fontText, (int)strlen(fontText), font[0]);
-			fontPosX = (1280 - textWidth) / 2;
-			fontPosY = (720 - 100) / 2;*/
-		}
-		return GetNowSceneType();
-	}
-
-	if (state == SceneState::StageNotifier)
+	/*if (state == SceneState::StageNotifier)
 	{
 		m_notifierTimer -= delta_second;
 		if (m_notifierTimer <= 0.0f)
@@ -376,7 +356,7 @@ eSceneType InGameScene::Update(const float& delta_second)
 			state = SceneState::Playing;
 		}
 		return GetNowSceneType();
-	}
+	}*/
 
 	// -------------------------------------------------------------
 	// ④ 通常ゲームプレイ（オブジェクト・プレイヤー更新）フェーズ
