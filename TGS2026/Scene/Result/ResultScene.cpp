@@ -5,6 +5,8 @@
 // コンストラクタ
 ResultScene::ResultScene()
 {
+	font[0] = CreateFontToHandle("廻想体 ネクスト UP B", 125, 6);
+	font[1] = CreateFontToHandle("廻想体 ネクスト UP B", 45, 6);
 }
 
 // デストラクタ
@@ -15,7 +17,7 @@ ResultScene::~ResultScene()
 // 初期化処理
 void ResultScene::Initialize()
 {
-	/*is_selected = false;*/
+	is_selected = false;
 
 	background = LoadGraph("Resource/Images/result.png");
 }
@@ -52,6 +54,8 @@ eSceneType ResultScene::Update(const float& delta_second)
 void ResultScene::Draw() const
 {
 	DrawGraph(0, 0, background, TRUE);
+
+	DrawStringToHandle(350, 100, "GAME CLEAR", 0xffffff, font[0]);
 }
 
 // 終了時処理

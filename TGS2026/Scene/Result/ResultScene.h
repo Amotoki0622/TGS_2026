@@ -5,6 +5,8 @@
 class ResultScene : public SceneBase
 {
 private:
+
+	//”wŒi‰æ‘œ
 	int background;
 
 	int font[2];
