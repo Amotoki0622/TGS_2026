@@ -15,12 +15,36 @@ ResultScene::~ResultScene()
 // ‰Šú‰»ˆ—
 void ResultScene::Initialize()
 {
+	/*is_selected = false;*/
+
 	background = LoadGraph("Resource/Images/result.png");
 }
 
 // XVˆ—
 eSceneType ResultScene::Update(const float& delta_second)
 {
+	InputManager* input = InputManager::GetInstance();
+
+	if (!is_selected)
+	{
+		if (input->GetButtonInputState(XINPUT_BUTTON_B) == eInputState::ePress ||
+			input->GetKeyInputState(KEY_INPUT_RETURN) == eInputState::ePress)
+		{
+			is_selected = true;
+		}
+	}
+	else
+	{
+		transition_timer += delta_second;
+
+		if (transition_timer >= 2.0f)
+		{
+			return eSceneType::eTitle;
+		}
+	}
+
+	return eSceneType::eResult;
+
 	return GetNowSceneType();
 }
 

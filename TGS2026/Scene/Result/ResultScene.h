@@ -9,6 +9,10 @@ private:
 
 	int font[2];
 
+	//追加
+	bool is_selected = false;
+	float transition_timer = 0.0f;
+
 public:
 	// コンストラクタ
 	ResultScene();

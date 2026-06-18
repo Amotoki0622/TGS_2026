@@ -394,7 +394,7 @@ eSceneType InGameScene::Update(const float& delta_second)
 				if (m_stageManager.GetCurrentLevel() >= 5) // 全ステージクリアならタイトルへ
 				{
 					StopSoundMem(mainBGM);
-					return eSceneType::eTitle;
+					return eSceneType::eResult;
 				}
 
 				state = SceneState::Restarting;
@@ -415,7 +415,7 @@ eSceneType InGameScene::Update(const float& delta_second)
 		if (m_stageManager.GetCurrentLevel() >= 5)
 		{
 			StopSoundMem(mainBGM);
-			return eSceneType::eTitle;
+			return eSceneType::eResult;
 		}
 
 		state = SceneState::Restarting;
