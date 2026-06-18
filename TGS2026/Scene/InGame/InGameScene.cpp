@@ -26,11 +26,12 @@ InGameScene::InGameScene()
 	// フォントの設定
 	font[0] = CreateFontToHandle("廻想体 ネクスト UP B", 100, 6);
 	font[1] = CreateFontToHandle("廻想体 ネクスト UP B", 32, 6); // ポーズ画面に使用
-	font[2] = CreateFontToHandle("廻想体 ネクスト UP B", 70, 6); // ポーズ画面に使用
+	font[2] = CreateFontToHandle("廻想体 ネクスト UP B", 45, 6); // ポーズ画面に使用
 
 	helpImageHandles[0] = LoadGraph("Resource/Images/Hint/shadow_hint.png");
 	helpImageHandles[1] = LoadGraph("Resource/Images/Hint/kick_hint.png");
 	helpImageHandles[2] = LoadGraph("Resource/Images/Hint/key_hint.png");
+	helpImageHandles[3] = LoadGraph("Resource/Images/Hint/spike_trap_hint.png");
 
 }
 
@@ -258,12 +259,12 @@ eSceneType InGameScene::Update(const float& delta_second)
 					isPaused = false;
 				}
 
-				// 💡【重要！】ボタンの押し込み演出が完全に終わった「ここ」でヘルプを開く！
+				// ヘルプ画面
 				if (pauseSelectIndex == 2)
 				{
 					isHelpOpen = true;
 					currentHelpPage = 0;
-					helpOffsetY = 720.0f; // 💡 念のため、初期位置（下端）を強制リセットして確実ににゅーんさせる
+					helpOffsetY = 720.0f; 
 				}
 
 				if (pauseSelectIndex == 3)
@@ -583,21 +584,21 @@ void InGameScene::Draw() const
 		// ポーズのタイトルをカスタムフォント化
 		DrawStringToHandle(660 - 80, 200, "- PAUSE -", GetColor(255, 255, 255), font[1]);
 
-		// --- 既存の c0 〜 c3 の色判定の下に追加 ---
+		// 既存の c0 〜 c3 の色判定の下に追加
 		unsigned int c0 = (pauseSelectIndex == 0) ? GetColor(255, 220, 0) : GetColor(200, 200, 200);
 		unsigned int c1 = (pauseSelectIndex == 1) ? GetColor(255, 220, 0) : GetColor(200, 200, 200);
 		unsigned int c2 = (pauseSelectIndex == 2) ? GetColor(255, 220, 0) : GetColor(200, 200, 200);
 		unsigned int c3 = (pauseSelectIndex == 3) ? GetColor(255, 220, 0) : GetColor(200, 200, 200);
 
-		// 💡【新設】押し込みアニメーション用の変数を準備
+		// 押し込みアニメーション用の変数を準備
 		int pushOffsetY = 0; // 下にずらす量
 		unsigned int activeCursorColor = GetColor(255, 220, 0);
 
 		// ボタンが押されている間（タイマー作動中）は、見た目を変化させる
 		if (pausePushTimer > 0.0f)
 		{
-			pushOffsetY = 4;                 // 💡 項目とカーソルを 4ピクセル 下に沈ませる
-			activeCursorColor = GetColor(120, 100, 0); // 💡 カーソルの黄色を暗くする
+			pushOffsetY = 4;                 // 項目とカーソルを 4ピクセル 下に沈ませる
+			activeCursorColor = GetColor(120, 100, 0); // カーソルの黄色を暗くする
 
 			// 現在選ばれている項目の文字色をグレーにして「消灯感」を出す
 			if (pauseSelectIndex == 0) c0 = GetColor(100, 100, 100);
@@ -608,13 +609,13 @@ void InGameScene::Draw() const
 
 		int textLeftX = 640 - 100;
 
-		// 各項目のベースとなる文字を描画（💡 pushOffsetY をY座標にプラス！）
+		// 各項目のベースとなる文字を描画
 		DrawStringToHandle(textLeftX, 270 + (pauseSelectIndex == 0 ? pushOffsetY : 0), "ゲームに戻る", c0, font[1]);
 		DrawStringToHandle(textLeftX, 320 + (pauseSelectIndex == 1 ? pushOffsetY : 0), "リスタート", c1, font[1]);
 		DrawStringToHandle(textLeftX, 370 + (pauseSelectIndex == 2 ? pushOffsetY : 0), "ヘルプ", c2, font[1]);
 		DrawStringToHandle(textLeftX, 420 + (pauseSelectIndex == 3 ? pushOffsetY : 0), "タイトルに戻る", c3, font[1]);
 
-		// 現在選んでいる項目の Y座標（💡 pushOffsetY をプラス！）
+		// 現在選んでいる項目の Y座標（pushOffsetY をプラス！）
 		int cursorY = 270 + (pauseSelectIndex * 50) + pushOffsetY;
 
 		// 今選ばれている項目の文字列と横幅を取得
@@ -626,7 +627,7 @@ void InGameScene::Draw() const
 
 		int textWidth = GetDrawStringWidthToHandle(currentMenuText, (int)strlen(currentMenuText), font[1]);
 
-		// カーソル描画（💡 色が自動で変化し、位置も pushOffsetY で一緒に沈みます）
+		// カーソル描画
 		DrawStringToHandle(textLeftX - 30, cursorY, ">", activeCursorColor, font[1]);
 		DrawStringToHandle(textLeftX + textWidth + 15, cursorY, "<", activeCursorColor, font[1]);
 		
@@ -638,16 +639,26 @@ void InGameScene::Draw() const
 			int helpHeight = 540;
 
 			// 画面中央に配置するための座標を計算
-			int x1 = (1280 - helpWidth) / 2;
-			int y1 = (720 - helpHeight) / 2 + (int)helpOffsetY;
+			int x1 = (1280 - helpWidth) / 2 + 5;
+			int y1 = (720 - helpHeight) / 2 + (int)helpOffsetY -20;
 			int x2 = x1 + helpWidth;
 			int y2 = y1 + helpHeight;
 
-			// 画像描画
-			DrawExtendGraph(x1, y1, x2, y2, helpImageHandles[currentHelpPage], FALSE);
+			// 角度の計算
+			float degree = -0.2f;
+			double angle = degree * (3.1415926f / 180.0f);
 
-			// ページ数の描画（MAX_HELP_PAGES がエラーになる場合は、直接 3 に書き換えてください）
-			DrawFormatStringToHandle(665 - 45, y2 + 15, GetColor(255, 255, 255), font[2], "%d / 3", currentHelpPage + 1);
+			// 元の画像サイズを取得して倍率を出す
+			int origW, origH;
+			GetGraphSize(helpImageHandles[currentHelpPage], &origW, &origH);
+			double scaleX = (double)helpWidth / origW;
+			double scaleY = (double)helpHeight / origH;
+
+			// 画像描画
+			DrawRotaGraph3(x1 + helpWidth / 2, y1 + helpHeight / 2, origW / 2, origH / 2, scaleX, scaleY, angle, helpImageHandles[currentHelpPage], FALSE);
+
+			// ページ数の描画
+			DrawFormatStringToHandle(665 - 45, y2 + 15, GetColor(255, 255, 255), font[2], "%d / 4", currentHelpPage + 1);
 		}
 	} 
 } 

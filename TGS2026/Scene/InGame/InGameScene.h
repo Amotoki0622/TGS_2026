@@ -67,7 +67,7 @@ private:
 
 
 
-	static const int MAX_HELP_PAGES = 3;    // ヘルプ画像の総枚数
+	static const int MAX_HELP_PAGES = 4;    // ヘルプ画像の総枚数
 	int helpImageHandles[MAX_HELP_PAGES];   // 画像ハンドルを保存する配列
 	int currentHelpPage = 0;                // 現在何枚目を表示しているか (0が1枚目)
 	bool isHelpOpen = false;                // ヘルプ画面が開いているかフラグ
