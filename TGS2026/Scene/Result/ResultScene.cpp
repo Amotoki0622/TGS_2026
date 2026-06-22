@@ -7,6 +7,7 @@ ResultScene::ResultScene()
 {
 	font[0] = CreateFontToHandle("廻想体 ネクスト UP B", 125, 6);
 	font[1] = CreateFontToHandle("廻想体 ネクスト UP B", 75, 6);
+	/*font[2] = CreateFontToHandle("廻想体 ネクスト UP B", 45, 6);*/
 }
 
 // デストラクタ
@@ -69,6 +70,9 @@ void ResultScene::Draw() const
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, (int)backAlpha);
 	DrawStringToHandle(456, 550, "BACK TO TITLE", 0xffffff, font[1]);
+
+	DrawStringToHandle(410, 550, ">", 0xff0000, font[1]);
+	DrawStringToHandle(850, 550, "<", 0xff0000, font[1]);
 }
 
 // 終了時処理
