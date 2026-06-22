@@ -23,6 +23,17 @@ public:
         Shadow
     };
 
+    enum class Direction {
+        Left,
+        Right,
+        Up,
+        Down
+    };
+
+private:
+    Direction dir = Direction::Right;
+
+public:
     // Œ»İ‚Ìó‘ÔiNormal / Shadowj‚ğ•Ô‚·
     State GetState() const { return state; }
 

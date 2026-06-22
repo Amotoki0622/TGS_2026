@@ -101,7 +101,11 @@ void Player::Move(const std::vector<GameObject*>& objects)
                 kickY = chipSize;
             }
             else {
-                kickX = (revers == TRUE) ? chipSize : -chipSize;
+                // 現在の向きを基準に蹴る
+                if (dir == Direction::Left)  kickX = -chipSize;
+                if (dir == Direction::Right) kickX = chipSize;
+                if (dir == Direction::Up)    kickY = -chipSize;
+                if (dir == Direction::Down)  kickY = chipSize;
             }
 
             // --- 2. 判定を出す位置（check座標）を計算 ---
@@ -139,22 +143,26 @@ void Player::Move(const std::vector<GameObject*>& objects)
     {
         moveX = -speed;
         revers = FALSE;
+        dir = Direction::Left;
     }
     else if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_RIGHT) == eInputState::ePress ||
         input->GetKeyInputState(KEY_INPUT_RIGHT) == eInputState::ePress)
     {
         moveX = speed;
         revers = TRUE;
+        dir = Direction::Right;
     }
     else if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_UP) == eInputState::ePress ||
         input->GetKeyInputState(KEY_INPUT_UP) == eInputState::ePress)
     {
         moveY = -speed;
+        dir = Direction::Up;
     }
     else if (input->GetButtonInputState(XINPUT_BUTTON_DPAD_DOWN) == eInputState::ePress ||
         input->GetKeyInputState(KEY_INPUT_DOWN) == eInputState::ePress)
     {
         moveY = speed;
+        dir = Direction::Down;
     }
 
     // 入力がなければ何もしない
@@ -378,6 +386,46 @@ void Player::Draw() const
         }
         SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
     }
+
+    // プレイヤーの向きを示す三角の描画
+    if (state == State::Normal) // 通常状態のときだけ出す場合
+    {
+        float offset = chipSize * 0.6f; // プレイヤー中心からの距離
+        float size = 24.0f;             // 三角形のサイズ
+
+        int rColor = GetColor(255, 0, 0);
+
+        // 三角形の3つの頂点座標
+        int x1 = 0, y1 = 0, x2 = 0, y2 = 0, x3 = 0, y3 = 0;
+
+        switch (dir)
+        {
+        case Direction::Left:
+            x1 = x - offset;          y1 = y;
+            x2 = x - offset + size;   y2 = y - size / 2;
+            x3 = x - offset + size;   y3 = y + size / 2;
+            break;
+        case Direction::Right:
+            x1 = x + offset;          y1 = y;
+            x2 = x + offset - size;   y2 = y - size / 2;
+            x3 = x + offset - size;   y3 = y + size / 2;
+            break;
+        case Direction::Up:
+            x1 = x;                   y1 = y - offset;
+            x2 = x - size / 2;        y2 = y - offset + size;
+            x3 = x + size / 2;        y3 = y - offset + size;
+            break;
+        case Direction::Down:
+            x1 = x;                   y1 = y + offset;
+            x2 = x - size / 2;        y2 = y + offset - size;
+            x3 = x + size / 2;        y3 = y + offset - size;
+            break;
+        }
+
+        // 塗りつぶしの三角形を描画（アンチエイリアス版を使うときれいです）
+        DrawTriangleAA((float)x1, (float)y1, (float)x2, (float)y2, (float)x3, (float)y3, rColor, TRUE);
+    }
+
     effectManager.Draw();
 }
 

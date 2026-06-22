@@ -9,7 +9,7 @@ private:
 	//”wŒi‰æ‘œ
 	int background;
 
-	int font[2];
+	int font[3];
 
 	//’Ç‰Á
 	bool is_selected = false;
