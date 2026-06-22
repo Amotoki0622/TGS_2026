@@ -65,7 +65,9 @@ private:
 
 	int background;
 
-
+	// チュートリアル用
+	bool isTutorialVisualOpen = false;   // チュートリアルかどうか
+	int tutorialImageIndex = 0;
 
 	static const int MAX_HELP_PAGES = 4;    // ヘルプ画像の総枚数
 	int helpImageHandles[MAX_HELP_PAGES];   // 画像ハンドルを保存する配列

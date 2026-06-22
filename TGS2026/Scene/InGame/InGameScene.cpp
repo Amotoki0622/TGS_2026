@@ -131,6 +131,27 @@ void InGameScene::Initialize()
 	sprintf_s(buf, "STAGE %d", level);
 	SetUpStageText(buf);
 
+	// チュートリアル判定と表示画像のセット
+	isTutorialVisualOpen = false;
+	tutorialImageIndex = 0;
+
+	// レベル(階層)によって出す画像を変える
+	if (level == 1) // STAGE 1 (Tutorial01)
+	{
+		isTutorialVisualOpen = true;
+		tutorialImageIndex = 0; // 基本操作
+	}
+	else if (level == 2) // STAGE 2 (Tutorial02)
+	{
+		isTutorialVisualOpen = true;
+		tutorialImageIndex = 1; // 影
+	}
+	else if (level == 3) // STAGE 3 (Tutorial03)
+	{
+		isTutorialVisualOpen = true;
+		tutorialImageIndex = 3; // トゲ罠 (helpImageHandles[3])
+	}
+
 	//sprintf_s(fontText, "STAGE %d", level);
 
 	//// 文字の描画座標
