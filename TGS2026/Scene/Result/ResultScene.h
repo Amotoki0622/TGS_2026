@@ -15,6 +15,9 @@ private:
 	bool is_selected = false;
 	float transition_timer = 0.0f;
 
+	float clearAlpha = 0.0f;
+	float backAlpha = 0.0f;
+
 public:
 	// コンストラクタ
 	ResultScene();
