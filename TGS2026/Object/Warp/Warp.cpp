@@ -46,6 +46,10 @@ void Warp::SetTargetPosition(float to_x, float to_y)
 void Warp::Initialize()
 {
 	LoadDivGraph("Resource/Images/Gimmick/warp.png",3,3,1,512,512,warpImage);
+
+	warpSE = LoadSoundMem("Resource/Sounds/SE/object/warp/warp_out.mp3");
+	ChangeVolumeSoundMem(110, warpSE);
+
 }
 
 void Warp::Update(float delta_second)
@@ -88,6 +92,10 @@ void Warp::Update(float delta_second)
 	// ワープ
 	if (hit && player->CanWarp())
 	{
+		// ワープイン・アウトの音を再生
+		PlaySoundMem(warpSE, DX_PLAYTYPE_BACK);
+
+		// プレイヤーの位置を変更
 		player->SetPosition(toX, toY);
 
 		player->SetCanWarp(false);

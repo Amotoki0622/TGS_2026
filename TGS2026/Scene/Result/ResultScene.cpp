@@ -7,7 +7,16 @@ ResultScene::ResultScene()
 {
 	font[0] = CreateFontToHandle("廻想体 ネクスト UP B", 125, 6);
 	font[1] = CreateFontToHandle("廻想体 ネクスト UP B", 75, 6);
-	/*font[2] = CreateFontToHandle("廻想体 ネクスト UP B", 45, 6);*/
+
+	//リザルトBGM
+	result_bgm = LoadSoundMem("Resource/Sounds/BGM/");
+	//音量調整
+	/*ChangeVolumeSoundMem();*/
+
+	//リザルトSE
+	result_se = LoadSoundMem("Resource/Sounds/SE/");
+	//音量調整
+	/*ChangeVolumeSoundMem();*/
 }
 
 // デストラクタ
@@ -26,6 +35,13 @@ void ResultScene::Initialize()
 // 更新処理
 eSceneType ResultScene::Update(const float& delta_second)
 {
+	//音の再生
+	if (CheckSoundMem(result_bgm) == 0)
+	{
+		//ループ再生
+		PlaySoundMem(result_bgm, DX_PLAYTYPE_LOOP);
+	}
+
 	if (clearAlpha < 255)
 	{
 		clearAlpha += 128 * delta_second;
@@ -39,9 +55,11 @@ eSceneType ResultScene::Update(const float& delta_second)
 
 	if (!is_selected)
 	{
+		//決定(コントローラーBまたはキーボードEnter)
 		if (input->GetButtonInputState(XINPUT_BUTTON_B) == eInputState::ePress ||
 			input->GetKeyInputState(KEY_INPUT_RETURN) == eInputState::ePress)
 		{
+			PlaySoundMem(result_se, DX_PLAYTYPE_BACK); //音を鳴らす
 			is_selected = true;
 		}
 	}
@@ -79,6 +97,7 @@ void ResultScene::Draw() const
 void ResultScene::Finalize()
 {
 	DeleteGraph(background);
+	StopSoundMem(result_bgm);
 }
 
 // 現在のシーン情報を返す

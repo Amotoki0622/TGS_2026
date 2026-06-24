@@ -14,6 +14,9 @@ private:
     Player* player;
 
     int warpImage[3];
+    int warpSE;
+    int warp_in_se;
+    int warp_out_se;
 
     int animFrame;
     int animTimer;
