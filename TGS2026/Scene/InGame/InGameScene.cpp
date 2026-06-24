@@ -33,6 +33,11 @@ InGameScene::InGameScene()
 	helpImageHandles[2] = LoadGraph("Resource/Images/Hint/key_hint.png");
 	helpImageHandles[3] = LoadGraph("Resource/Images/Hint/spike_trap_hint.png");
 
+	helpImageHandles[0] = LoadGraph("Resource/Images/Hint/shadow_hint.png");
+	helpImageHandles[1] = LoadGraph("Resource/Images/Hint/kick_hint.png");
+	helpImageHandles[2] = LoadGraph("Resource/Images/Hint/key_hint.png");
+	helpImageHandles[3] = LoadGraph("Resource/Images/Hint/spike_trap_hint.png");
+
 }
 
 // デストラクタ
@@ -133,23 +138,27 @@ void InGameScene::Initialize()
 
 	// チュートリアル判定と表示画像のセット
 	isTutorialVisualOpen = false;
-	tutorialImageIndex = 0;
+	currentTutorialPage = 0; // 常に1ページ目から開始
 
 	// レベル(階層)によって出す画像を変える
-	if (level == 1) // STAGE 1 (Tutorial01)
+	if (level == 1) // STAGE 1 (画像2枚)
 	{
 		isTutorialVisualOpen = true;
-		tutorialImageIndex = 0; // 基本操作
+		maxTutorialPages = 2; // 2ページ構成
+		tutorialImageIndices[1] = 0; // 1ページ目 (helpImageHandles[0])
+		tutorialImageIndices[2] = 1; // 2ページ目 (helpImageHandles[1])
 	}
-	else if (level == 2) // STAGE 2 (Tutorial02)
+	else if (level == 2) // STAGE 2 (画像1枚)
 	{
 		isTutorialVisualOpen = true;
-		tutorialImageIndex = 1; // 影
+		maxTutorialPages = 1; // 1ページ構成
+		tutorialImageIndices[0] = 0; // 1ページ目 (helpImageHandles[2])
 	}
-	else if (level == 3) // STAGE 3 (Tutorial03)
+	else if (level == 3) // STAGE 3 (画像1枚)
 	{
 		isTutorialVisualOpen = true;
-		tutorialImageIndex = 3; // トゲ罠 (helpImageHandles[3])
+		maxTutorialPages = 1; // 1ページ構成
+		tutorialImageIndices[3] = 3; // 1ページ目 (helpImageHandles[3])
 	}
 
 	//sprintf_s(fontText, "STAGE %d", level);
@@ -383,6 +392,42 @@ eSceneType InGameScene::Update(const float& delta_second)
 		return GetNowSceneType();
 	}*/
 
+	if (isTutorialVisualOpen && state == SceneState::Playing && fade->IsFinished())
+	{
+		// ◀ 左キーで前のページへ
+		if (input->GetKeyInputState(KEY_INPUT_LEFT) == eInputState::ePress ||
+			input->GetButtonInputState(XINPUT_BUTTON_DPAD_LEFT) == eInputState::ePress)
+		{
+			if (currentTutorialPage > 0)
+			{
+				currentTutorialPage--;
+				PlaySoundMem(pageSE, DX_PLAYTYPE_BACK);
+			}
+		}
+
+		// ▶ 右キーで次のページへ
+		if (input->GetKeyInputState(KEY_INPUT_RIGHT) == eInputState::ePress ||
+			input->GetButtonInputState(XINPUT_BUTTON_DPAD_RIGHT) == eInputState::ePress)
+		{
+			if (currentTutorialPage < maxTutorialPages - 1)
+			{
+				currentTutorialPage++;
+				PlaySoundMem(pageSE, DX_PLAYTYPE_BACK);
+			}
+		}
+
+		// Bボタンで閉じる（ゲーム開始）
+		if (input->GetKeyInputState(KEY_INPUT_BACK) == eInputState::ePress ||
+			input->GetKeyInputState(KEY_INPUT_RETURN) == eInputState::ePress ||
+			input->GetButtonInputState(XINPUT_BUTTON_B) == eInputState::ePress)
+		{
+			isTutorialVisualOpen = false;
+			PlaySoundMem(pageSE, DX_PLAYTYPE_BACK);
+		}
+
+		return GetNowSceneType();
+	}
+
 	// -------------------------------------------------------------
 	// ④ 通常ゲームプレイ（オブジェクト・プレイヤー更新）フェーズ
 	// -------------------------------------------------------------
@@ -394,6 +439,8 @@ eSceneType InGameScene::Update(const float& delta_second)
 			obj->Update(delta_second);
 		}
 	}
+
+	
 
 	// ステージクリア判定（プレイヤーが開いたゴールの中心座標に完全に重なった時）
 	int playerX, playerY;
@@ -407,17 +454,31 @@ eSceneType InGameScene::Update(const float& delta_second)
 			int goalX, goalY;
 			goalObj->GetLocation(goalX, goalY);
 
+
 			if (playerX == goalX && playerY == goalY)
 			{
 				goalObj->PlayGoalSE();
 				m_stageManager.NextLevel();
 				StopSoundMem(beepSE);
 
-				if (m_stageManager.GetCurrentLevel() >= 5) // 全ステージクリアならタイトルへ
+				// 「5」から「チュートリアルを含めた総ステージ数」に変更
+				if (m_stageManager.GetCurrentLevel() >= 8)
 				{
 					StopSoundMem(mainBGM);
 					return eSceneType::eResult;
 				}
+
+			//if (playerX == goalX && playerY == goalY)
+			//{
+			//	goalObj->PlayGoalSE();
+			//	m_stageManager.NextLevel();
+			//	StopSoundMem(beepSE);
+
+			//	if (m_stageManager.GetCurrentLevel() >= 5) // 全ステージクリアならタイトルへ
+			//	{
+			//		StopSoundMem(mainBGM);
+			//		return eSceneType::eResult;
+			//	}
 
 				state = SceneState::Restarting;
 				fade->Start(FadeType::IrisOut, true, 1.5f);
@@ -434,7 +495,7 @@ eSceneType InGameScene::Update(const float& delta_second)
 		m_stageManager.NextLevel(); // ステージの内部進行度を次に進める
 		StopSoundMem(beepSE);       
 
-		if (m_stageManager.GetCurrentLevel() >= 5)
+		if (m_stageManager.GetCurrentLevel() >= 8)
 		{
 			StopSoundMem(mainBGM);
 			return eSceneType::eResult;
@@ -585,6 +646,44 @@ void InGameScene::Draw() const
 		DrawStringToHandle(fontPosX, fontPosY, fontText, GetColor(255, 255, 255), font[0]);      // 本尊
 
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	}
+
+	// チュートリアル画像の描画
+// 💡 【修正】チュートリアル画像の描画（条件をUpdateと合わせる）
+	if (isTutorialVisualOpen && state == SceneState::Playing && fade->IsFinished())
+	{
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
+		DrawBox(0, 0, 1280, 720, GetColor(0, 0, 0), TRUE);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+		int helpWidth = 960;
+		int helpHeight = 540;
+		int x1 = (1280 - helpWidth) / 2 + 5;
+		int y1 = (720 - helpHeight) / 2 - 20;
+
+		int drawImageIndex = tutorialImageIndices[currentTutorialPage];
+
+		int origW, origH;
+		GetGraphSize(helpImageHandles[drawImageIndex], &origW, &origH);
+		double scaleX = (double)helpWidth / origW;
+		double scaleY = (double)helpHeight / origH;
+
+		DrawRotaGraph3(x1 + helpWidth / 2, y1 + helpHeight / 2, origW / 2, origH / 2, scaleX, scaleY, 0.0, helpImageHandles[drawImageIndex], TRUE);
+
+		if (maxTutorialPages > 1)
+		{
+			DrawFormatStringToHandle(665 - 45, y1 + helpHeight + 15, GetColor(255, 255, 255), font[2], "%d / %d", currentTutorialPage + 1, maxTutorialPages);
+
+			const char* guideText = "◀ ▶: ページ切替 / Bボタン: ゲーム開始";
+			int textW = GetDrawStringWidthToHandle(guideText, (int)strlen(guideText), font[1]);
+			DrawStringToHandle((1280 - textW) / 2, y1 + helpHeight + 70, guideText, GetColor(255, 255, 255), font[1]);
+		}
+		else
+		{
+			const char* guideText = "Bボタンでゲーム開始";
+			int textW = GetDrawStringWidthToHandle(guideText, (int)strlen(guideText), font[1]);
+			DrawStringToHandle((1280 - textW) / 2, y1 + helpHeight + 15, guideText, GetColor(255, 255, 255), font[1]);
+		}
 	}
 
 	// ポーズ画面の描画処理
