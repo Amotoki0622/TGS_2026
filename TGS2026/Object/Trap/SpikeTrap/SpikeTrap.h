@@ -36,7 +36,8 @@ private:
     // 血の「粒」をたくさん管理するリスト
     std::vector<BloodParticle> bloodParticles;
 
-    int spike_se;  // 棘床を踏んだ時のSE
+    int normal_spike_se;  // 棘床を踏んだ時のSE（通常状態）
+    int shadow_spike_se;  // 棘床を踏んだ時のSE（影状態）
 
 public:
     SpikeTrap();

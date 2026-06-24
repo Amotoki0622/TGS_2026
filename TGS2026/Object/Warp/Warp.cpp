@@ -48,7 +48,7 @@ void Warp::Initialize()
 	LoadDivGraph("Resource/Images/Gimmick/warp.png",3,3,1,512,512,warpImage);
 
 	warpSE = LoadSoundMem("Resource/Sounds/SE/object/warp/warp_out.mp3");
-	ChangeVolumeSoundMem(110, warpSE);
+	ChangeVolumeSoundMem(130, warpSE);
 
 }
 
