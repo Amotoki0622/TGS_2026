@@ -9,14 +9,14 @@ ResultScene::ResultScene()
 	font[1] = CreateFontToHandle("廻想体 ネクスト UP B", 75, 6);
 
 	//リザルトBGM
-	result_bgm = LoadSoundMem("Resource/Sounds/BGM/title/title_main_bgm.mp3");
+	result_bgm = LoadSoundMem("Resource/Sounds/BGM/result/result_bgm.mp3");
 	//音量調整
 	ChangeVolumeSoundMem(180, result_bgm);
 
 	//リザルトSE
-	result_se = LoadSoundMem("Resource/Sounds/SE/title/title_start_se.mp3");
+	result_se = LoadSoundMem("Resource/Sounds/SE/result/result_se.mp3");
 	//音量調整
-	ChangeVolumeSoundMem(130, result_se);
+	/*ChangeVolumeSoundMem(130, result_se);*/
 }
 
 // デストラクタ
