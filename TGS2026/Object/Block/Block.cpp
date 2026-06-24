@@ -38,7 +38,7 @@ void Block::Initialize()
 {
     block_image = LoadGraph("Resource/Images/Gimmick/wall.png");
     block_se = LoadSoundMem("Resource/Sounds/SE/object/move_object/move_object.mp3");
-    ChangeVolumeSoundMem(70, block_se);
+    ChangeVolumeSoundMem(120, block_se);
 }
 
 // 更新

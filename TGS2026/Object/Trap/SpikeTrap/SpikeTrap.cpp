@@ -35,6 +35,9 @@ void SpikeTrap::Initialize()
         LoadDivGraph("Resource/Images/Trap/SpikeTrap/SpikeTrap2.png", 2, 2, 1, 735, 930, handles);
         spikeImage = handles[1];
     }
+
+    spike_se = LoadSoundMem("Resource/Sounds/SE/object/spike_trap/spike_damage.mp3");
+    ChangeVolumeSoundMem(70, spike_se);
 }
 
 void SpikeTrap::Update(const Player& player, float delta_second) {
@@ -80,6 +83,7 @@ void SpikeTrap::Update(const Player& player, float delta_second) {
         else {
             // 通常状態の場合：手数を減らし、文字と赤い血しぶきを出す
             Player& mutablePlayer = const_cast<Player&>(player);
+            PlaySoundMem(spike_se, DX_PLAYTYPE_BACK);
             mutablePlayer.DecreaseMoveCount();
             OutputDebugString("トゲを踏んだ！手数が減りました。\n");
 
