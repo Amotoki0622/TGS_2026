@@ -124,11 +124,13 @@ void InGameScene::Initialize()
 	m_isRestartNotifier = false;
 
 	// 文字列の保存
+	UpdateStageNameText();
+	// 現在のレベル
 	int level = m_stageManager.GetCurrentLevel() + 1;
 	
-	char buf[32];
-	sprintf_s(buf, "STAGE %d", level);
-	SetUpStageText(buf);
+	// char buf[32];
+	// sprintf_s(buf, "STAGE %d", level);
+	// SetUpStageText(buf);
 
 	// チュートリアル判定と表示画像のセット
 	isTutorialVisualOpen = false;
@@ -461,6 +463,8 @@ eSceneType InGameScene::Update(const float& delta_second)
 					StopSoundMem(mainBGM);
 					return eSceneType::eResult;
 				}
+
+				UpdateStageNameText();
 
 			//if (playerX == goalX && playerY == goalY)
 			//{
@@ -799,6 +803,47 @@ void InGameScene::Finalize()
 	}
 
 	allObjects.clear();
+}
+
+void InGameScene::UpdateStageNameText()
+{
+	int currentLevel = m_stageManager.GetCurrentLevel();
+	char buf[32];
+
+	switch (currentLevel)
+	{
+		case 0:
+			sprintf_s(buf, "TUTORIAL 1");
+			break;
+		case 1:
+			sprintf_s(buf, "STAGE 1");
+			break;
+		case 2:
+			sprintf_s(buf, "TUTORIAL 2");
+			break;
+		case 3:
+			sprintf_s(buf, "STAGE 2");
+			break;
+		case 4:
+			sprintf_s(buf, "TUTORIAL 3");
+			break;
+		case 5:
+			sprintf_s(buf, "STAGE 4");
+			break;
+		case 6:
+			sprintf_s(buf, "STAGE 5");
+			break;
+		case 7:
+			sprintf_s(buf, "STAGE 6");
+			break;
+		case 8:
+			break;
+			sprintf_s(buf, "Stage %d", currentLevel + 1);
+		default:
+			break;
+	}
+
+	SetUpStageText(buf);
 }
 
 void InGameScene::SetUpStageText(const char* text)

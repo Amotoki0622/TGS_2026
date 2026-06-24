@@ -121,6 +121,9 @@ public:
 	virtual void Finalize() override;
 
 private:
+	// 現在のステージ番号から表示する文字を決定する関数
+	void UpdateStageNameText();
+
 	// 文字列を画面の中心に描画する処理
 	void SetUpStageText(const char* text);
 
