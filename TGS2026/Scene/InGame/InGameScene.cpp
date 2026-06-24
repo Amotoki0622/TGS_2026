@@ -148,7 +148,7 @@ void InGameScene::Initialize()
 		maxTutorialPages = 1; // 1ページ構成
 		tutorialImageIndices[0] = 0; // 1ページ目: Shadow (helpImageHandles[0])
 	}
-	else if (level == 5) // STAGE 3 (チュートリアル3：画像1枚 Trap)
+	else if (level == 6) // STAGE 3 (チュートリアル3：画像1枚 Trap)
 	{
 		isTutorialVisualOpen = true;
 		maxTutorialPages = 1; // 1ページ構成
