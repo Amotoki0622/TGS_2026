@@ -136,7 +136,7 @@ void StageManager::CreateStageObject()
 	// ステージごとに1マスを変更する処理(32.0f)が限界値
 	//float CHIP_SIZE = 128.0f - (m_currentLevel * 32.0f);
 
-	if (m_currentLevel >= 2)
+	if (m_currentLevel >= 4)
 	{
 		CHIP_SIZE = 100.0f;
 	}
@@ -396,7 +396,7 @@ void StageManager::DrawFloorBackground() const
 
 	// 現在のレベルに応じたCHIP_SIZEを計算
 	float CHIP_SIZE = 128.0f;
-	if (m_currentLevel >= 2)
+	if (m_currentLevel >= 4)
 	{
 		CHIP_SIZE = 100.0f;
 	}
