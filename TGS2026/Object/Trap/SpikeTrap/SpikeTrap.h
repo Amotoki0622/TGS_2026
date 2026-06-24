@@ -36,6 +36,8 @@ private:
     // 血の「粒」をたくさん管理するリスト
     std::vector<BloodParticle> bloodParticles;
 
+    int spike_se;  // 棘床を踏んだ時のSE
+
 public:
     SpikeTrap();
     SpikeTrap(float x, float y, float radius);
