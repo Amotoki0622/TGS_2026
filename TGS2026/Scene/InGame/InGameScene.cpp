@@ -32,12 +32,6 @@ InGameScene::InGameScene()
 	helpImageHandles[1] = LoadGraph("Resource/Images/Hint/kick_hint.png");
 	helpImageHandles[2] = LoadGraph("Resource/Images/Hint/key_hint.png");
 	helpImageHandles[3] = LoadGraph("Resource/Images/Hint/spike_trap_hint.png");
-
-	helpImageHandles[0] = LoadGraph("Resource/Images/Hint/shadow_hint.png");
-	helpImageHandles[1] = LoadGraph("Resource/Images/Hint/kick_hint.png");
-	helpImageHandles[2] = LoadGraph("Resource/Images/Hint/key_hint.png");
-	helpImageHandles[3] = LoadGraph("Resource/Images/Hint/spike_trap_hint.png");
-
 }
 
 // デストラクタ
@@ -73,7 +67,7 @@ void InGameScene::Initialize()
 
 	// デフォルトは 128.0f / ステージ3以降は一回り小さく
 	float currentChipSize = 128.0f;
-	if (currentLevel >= 2)
+	if (currentLevel >= 4)
 	{
 		currentChipSize = 100.0f;
 	}
@@ -141,24 +135,24 @@ void InGameScene::Initialize()
 	currentTutorialPage = 0; // 常に1ページ目から開始
 
 	// レベル(階層)によって出す画像を変える
-	if (level == 1) // STAGE 1 (画像2枚)
+	if (level == 1) // STAGE 1 (チュートリアル1：画像2枚 KickとKey)
 	{
 		isTutorialVisualOpen = true;
 		maxTutorialPages = 2; // 2ページ構成
-		tutorialImageIndices[1] = 0; // 1ページ目 (helpImageHandles[0])
-		tutorialImageIndices[2] = 1; // 2ページ目 (helpImageHandles[1])
+		tutorialImageIndices[0] = 1; // 1ページ目: Kick (helpImageHandles[1])
+		tutorialImageIndices[1] = 2; // 2ページ目: Key  (helpImageHandles[2])
 	}
-	else if (level == 2) // STAGE 2 (画像1枚)
+	else if (level == 3) // STAGE 2 (チュートリアル2：画像1枚 Shadow)
 	{
 		isTutorialVisualOpen = true;
 		maxTutorialPages = 1; // 1ページ構成
-		tutorialImageIndices[0] = 0; // 1ページ目 (helpImageHandles[2])
+		tutorialImageIndices[0] = 0; // 1ページ目: Shadow (helpImageHandles[0])
 	}
-	else if (level == 3) // STAGE 3 (画像1枚)
+	else if (level == 5) // STAGE 3 (チュートリアル3：画像1枚 Trap)
 	{
 		isTutorialVisualOpen = true;
 		maxTutorialPages = 1; // 1ページ構成
-		tutorialImageIndices[3] = 3; // 1ページ目 (helpImageHandles[3])
+		tutorialImageIndices[0] = 3; // 1ページ目: Trap (helpImageHandles[3])
 	}
 
 	//sprintf_s(fontText, "STAGE %d", level);
@@ -649,7 +643,7 @@ void InGameScene::Draw() const
 	}
 
 	// チュートリアル画像の描画
-// 💡 【修正】チュートリアル画像の描画（条件をUpdateと合わせる）
+    // チュートリアル画像の描画（条件をUpdateと合わせる）
 	if (isTutorialVisualOpen && state == SceneState::Playing && fade->IsFinished())
 	{
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
@@ -674,7 +668,7 @@ void InGameScene::Draw() const
 		{
 			DrawFormatStringToHandle(665 - 45, y1 + helpHeight + 15, GetColor(255, 255, 255), font[2], "%d / %d", currentTutorialPage + 1, maxTutorialPages);
 
-			const char* guideText = "◀ ▶: ページ切替 / Bボタン: ゲーム開始";
+			const char* guideText = "十字ボタン: ページ切替 / Bボタン: ゲーム開始";
 			int textW = GetDrawStringWidthToHandle(guideText, (int)strlen(guideText), font[1]);
 			DrawStringToHandle((1280 - textW) / 2, y1 + helpHeight + 70, guideText, GetColor(255, 255, 255), font[1]);
 		}
