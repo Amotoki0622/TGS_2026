@@ -68,7 +68,7 @@ void InGameScene::Initialize()
 
 	// デフォルトは 128.0f / ステージ3以降は一回り小さく
 	float currentChipSize = 128.0f;
-	if (currentLevel >= 2)
+	if (currentLevel >= 4)
 	{
 		currentChipSize = 100.0f;
 	}
