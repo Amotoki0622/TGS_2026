@@ -67,7 +67,10 @@ private:
 
 	// チュートリアル用
 	bool isTutorialVisualOpen = false;   // チュートリアルかどうか
-	int tutorialImageIndex = 0;
+	int currentTutorialPage = 0;       // 今見ているページ
+	int maxTutorialPages = 0;          // そのステージの最大ページ数
+	int tutorialImageIndices[4] = { 0 }; // 使う画像の番号を保存する箱
+
 
 	static const int MAX_HELP_PAGES = 4;    // ヘルプ画像の総枚数
 	int helpImageHandles[MAX_HELP_PAGES];   // 画像ハンドルを保存する配列
