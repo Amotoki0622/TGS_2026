@@ -813,28 +813,28 @@ void InGameScene::UpdateStageNameText()
 	switch (currentLevel)
 	{
 		case 0:
-			sprintf_s(buf, "チュートリアル");
+			sprintf_s(buf, "TUTORIAL 1");
 			break;
 		case 1:
-			sprintf_s(buf, "Stage 1");
+			sprintf_s(buf, "STAGE 1");
 			break;
 		case 2:
-			sprintf_s(buf, "チュートリアル");
+			sprintf_s(buf, "TUTORIAL 2");
 			break;
 		case 3:
-			sprintf_s(buf, "Stage 2");
+			sprintf_s(buf, "STAGE 2");
 			break;
 		case 4:
-			sprintf_s(buf, "Stage 3");
+			sprintf_s(buf, "TUTORIAL 3");
 			break;
 		case 5:
-			sprintf_s(buf, "Stage 4");
+			sprintf_s(buf, "STAGE 4");
 			break;
 		case 6:
-			sprintf_s(buf, "Stage 5");
+			sprintf_s(buf, "STAGE 5");
 			break;
 		case 7:
-			sprintf_s(buf, "Stage");
+			sprintf_s(buf, "STAGE 6");
 			break;
 		case 8:
 			break;
