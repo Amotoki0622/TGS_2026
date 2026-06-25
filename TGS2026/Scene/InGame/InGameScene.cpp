@@ -121,10 +121,9 @@ void InGameScene::Initialize()
 	detectionTimer = 0.0f;
 	m_notifierTimer = 1.8f;
 	m_notifierAlpha = 0;		// 透明
-	m_isRestartNotifier = false;
+	//m_isRestartNotifier = false;
 
-	// 文字列の保存
-	UpdateStageNameText();
+	
 	// 現在のレベル
 	int level = m_stageManager.GetCurrentLevel() + 1;
 	
@@ -189,6 +188,16 @@ void InGameScene::Initialize()
 	//DrawNumber::SetImage(
 	//	ResourceManager::GetInstance()->GetImages("Resource/Images/Number/number.png")
 	//);
+
+	// 文字列の保存
+	if (m_isRestartNotifier == false)
+	{
+		UpdateStageNameText();
+	}
+	else
+	{
+		m_isRestartNotifier = false;
+	}
 }
 
 // 更新処理
@@ -279,6 +288,10 @@ eSceneType InGameScene::Update(const float& delta_second)
 				if (pauseSelectIndex == 1)
 				{
 					StopSoundMem(beepSE);
+
+					m_isRestartNotifier = true;
+					UpdateStageNameText();
+
 					Initialize();
 					state = SceneState::Restarting;
 					fade->Start(FadeType::IrisOut, true, 1.5f);
@@ -464,6 +477,7 @@ eSceneType InGameScene::Update(const float& delta_second)
 					return eSceneType::eResult;
 				}
 
+				m_isRestartNotifier = false;
 				UpdateStageNameText();
 
 			//if (playerX == goalX && playerY == goalY)
@@ -543,6 +557,10 @@ eSceneType InGameScene::Update(const float& delta_second)
 
 		if (detectionTimer >= LIMIT_TIME) {
 			StopSoundMem(beepSE);
+
+			m_isRestartNotifier = true;
+			UpdateStageNameText();
+
 			state = SceneState::Restarting;
 			if (isLightDetected || player.GetTekazu() == 0) fade->Start(FadeType::Normal, true, 0.8f);
 			else fade->Start(FadeType::IrisOut, true, 1.0f);
@@ -562,6 +580,10 @@ eSceneType InGameScene::Update(const float& delta_second)
 	{
 		StopSoundMem(mainBGM);
 		StopSoundMem(beepSE);
+
+		m_isRestartNotifier = true;
+		UpdateStageNameText();
+
 		state = SceneState::Restarting;
 		fade->Start(FadeType::IrisOut, true, 1.0f);
 	}
@@ -807,6 +829,14 @@ void InGameScene::Finalize()
 
 void InGameScene::UpdateStageNameText()
 {
+
+	// 失敗によるリスタートなら、「RESTART」
+	if (m_isRestartNotifier == true)
+	{
+ 		SetUpStageText("RESTRT");
+		return;
+	}
+
 	int currentLevel = m_stageManager.GetCurrentLevel();
 	char buf[32];
 
@@ -825,16 +855,16 @@ void InGameScene::UpdateStageNameText()
 			sprintf_s(buf, "STAGE 2");
 			break;
 		case 4:
-			sprintf_s(buf, "TUTORIAL 3");
+			sprintf_s(buf, "STAGE 3");
 			break;
 		case 5:
-			sprintf_s(buf, "STAGE 4");
+			sprintf_s(buf, "TUTORIAL 3");
 			break;
 		case 6:
-			sprintf_s(buf, "STAGE 5");
+			sprintf_s(buf, "STAGE 4");
 			break;
 		case 7:
-			sprintf_s(buf, "STAGE 6");
+			sprintf_s(buf, "STAGE 5");
 			break;
 		case 8:
 			break;
