@@ -112,10 +112,14 @@ void Warp::SetChipSize(float size)
 
 void Warp::Draw() const
 {
+	double baseScale = box_size.x / 512.0f;
+
+	double dynamicScale = baseScale + sin(GetNowCount() * 0.005f) * (baseScale * 0.02f);
+
 	DrawRotaGraph(
 		(int)location.x,
 		(int)location.y,
-		0.25,
+		dynamicScale, 
 		angle,
 		warpImage[animFrame],
 		TRUE

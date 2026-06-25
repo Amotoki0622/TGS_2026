@@ -274,29 +274,22 @@ void StageManager::CreateStageObject()
 				case 'T':
 				{
 
-					// ゴールのサイズの変数を定義(70.0f)に設定
-					float TRAP_RADIUS = CHIP_SIZE;
+					// トラップ(トラばさみのような地面に設置する罠)を生成する処理
+					float TRAP_RADIUS = 75.0f;
+
+					if (m_currentLevel >= 6)
+					{
+						TRAP_RADIUS = 68.0f;
+					}
 
 					SpikeTrap* new_spike = CreateStageObjectInstance<SpikeTrap>(Vector2D(posX, posY));
-					new_spike->SetChipSize(CHIP_SIZE);
-					new_spike->Initialize();
+					if (new_spike != nullptr)
+					{
+						// 半径をセット
+						new_spike->SetRadius(TRAP_RADIUS);
 
-					//// トラップ(トラばさみのような地面に設置する罠)を生成する処理
-					//float TRAP_RADIUS = 100.0f;
-
-					//if (m_currentLevel >= 2)
-					//{
-					//	TRAP_RADIUS = 80.0f;
-					//}
-
-					//SpikeTrap* new_spike = CreateStageObjectInstance<SpikeTrap>(Vector2D(posX, posY));
-					//if (new_spike != nullptr)
-					//{
-					//	// 半径をセット
-					//	new_spike->SetRadius(TRAP_RADIUS);
-
-					//	new_spike->Initialize();
-					//}
+						new_spike->Initialize();
+					}
 				}
 					break;
 
@@ -317,7 +310,8 @@ void StageManager::CreateStageObject()
 					if (m_warpA != nullptr)
 					{
 						m_warpA->SetPosition(posX, posY);
-						m_warpA->SetSize(CHIP_SIZE, CHIP_SIZE);
+						//m_warpA->SetSize(CHIP_SIZE, CHIP_SIZE);
+						m_warpA->SetSize(93.0f, 93.0f);
 
 						m_warpSrcPos = Vector2D(posX, posY);
 						m_hasWarpSrc = true;
@@ -344,7 +338,8 @@ void StageManager::CreateStageObject()
 					if (m_warpB != nullptr)
 					{
 						m_warpB->SetPosition(posX, posY);
-						m_warpB->SetSize(CHIP_SIZE, CHIP_SIZE);
+						//m_warpB->SetSize(CHIP_SIZE, CHIP_SIZE);
+						m_warpB->SetSize(93.0f, 93.0f);
 
 						m_warpDstPos = Vector2D(posX, posY);
 						m_hasWarpDst = true;
