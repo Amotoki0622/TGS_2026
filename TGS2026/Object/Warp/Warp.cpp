@@ -102,6 +102,14 @@ void Warp::Update(float delta_second)
 	}
 }
 
+void Warp::SetChipSize(float size)
+{
+	// ★重要：128pxの画像を基準として倍率を求める
+	// sizeが128.0fなら 128/128 = 1.0倍（そのまま）
+	// sizeが100.0fなら 100/128 = 0.78125倍（自動で一回り小さくなる）
+	drawScale = size / 128.0f;
+}
+
 void Warp::Draw() const
 {
 	DrawRotaGraph(

@@ -1,7 +1,7 @@
-#include "StageManager.h"
+ï»¿#include "StageManager.h"
 #include "../Object/Player/Player.h"
 
-// ’Ç‰Á‚µ‚½Š
+
 #include "../Object/Block/Block.h"
 #include "../Object/Wall/Wall.h"
 #include "../Object/Goal/Goal.h"
@@ -11,7 +11,7 @@
 #include "../Object/Warp/Warp.h"
 #include <DxLib.h>
 
-// ƒCƒ“ƒXƒgƒ‰ƒNƒ^
+// ã‚¤ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 StageManager::StageManager()
 	: m_currentLevel(0)
 	, m_currentMoveLimit(0)
@@ -22,52 +22,52 @@ StageManager::StageManager()
 
 StageManager::~StageManager()
 {
-	// ‚à‚µc‚Á‚Ä‚½‚çÁ‚·‚½‚ß
+	// ã‚‚ã—æ®‹ã£ã¦ãŸã‚‰æ¶ˆã™ãŸã‚
 	ClearObjects();
 }
 
-// ‰Šú‰»ˆ—
+// åˆæœŸåŒ–å‡¦ç†
 void StageManager::Initialize()
 {
-	// 1. ƒŠƒXƒg‚ğ“Ç‚İ‚Ş
+	// 1. ãƒªã‚¹ãƒˆã‚’èª­ã¿è¾¼ã‚€
 	m_allStages = StageLoader::LoadMapList("Resource/Map/StageData.csv");
 
 	m_floorImageHandle = LoadGraph("Resource/Images/GameMain/tile.png");
 
-	// 2. ƒŠƒXƒg‚ª‹ó‚Á‚Û‚È‚ç‚±‚±‚Åˆ—‚ğ~‚ß‚éiƒAƒNƒZƒXˆá”½‚ğ–h‚®j
+	// 2. ãƒªã‚¹ãƒˆãŒç©ºã£ã½ãªã‚‰ã“ã“ã§å‡¦ç†ã‚’æ­¢ã‚ã‚‹ï¼ˆã‚¢ã‚¯ã‚»ã‚¹é•åã‚’é˜²ãï¼‰
 	if (m_allStages.empty())
 	{
-		// ‚±‚±‚Å~‚Ü‚éê‡‚Í StageData.csv ‚Ì“Ç‚İ‚İ©‘Ì‚É¸”s‚µ‚Ä‚¢‚Ü‚·
+		// ã“ã“ã§æ­¢ã¾ã‚‹å ´åˆã¯ StageData.csv ã®èª­ã¿è¾¼ã¿è‡ªä½“ã«å¤±æ•—ã—ã¦ã„ã¾ã™
 		return;
 	}
 
-	// 3. ŠeƒXƒe[ƒW‚Ì’†g(Stage1.csv‚È‚Ç)‚ğ“Ç‚İ‚Ş
+	// 3. å„ã‚¹ãƒ†ãƒ¼ã‚¸ã®ä¸­èº«(Stage1.csvãªã©)ã‚’èª­ã¿è¾¼ã‚€
 	for (int i = 0; i < (int)m_allStages.size(); i++)
 	{
 		StageLoader::LoadMapCSV(m_allStages[i]);
 	}
 
-	// 4. €”õ‚ª‚Å‚«‚½‚çÅ‰‚ÌƒŒƒxƒ‹‚ğƒ[ƒh
+	// 4. æº–å‚™ãŒã§ããŸã‚‰æœ€åˆã®ãƒ¬ãƒ™ãƒ«ã‚’ãƒ­ãƒ¼ãƒ‰
 	LoadLevel(0);
 }
 
-// w’è‚µ‚½ƒŒƒxƒ‹‚ÌƒXƒe[ƒW‚ğŠJn‚·‚é
+// æŒ‡å®šã—ãŸãƒ¬ãƒ™ãƒ«ã®ã‚¹ãƒ†ãƒ¼ã‚¸ã‚’é–‹å§‹ã™ã‚‹
 void StageManager::LoadLevel(int levelIndex)
 {
-	// ƒXƒe[ƒW‚Ì‘”‚ğæ“¾‚·‚é
+	// ã‚¹ãƒ†ãƒ¼ã‚¸ã®ç·æ•°ã‚’å–å¾—ã™ã‚‹
 	int totalStage = (int)m_allStages.size();
 
-	// ƒXƒe[ƒW‚ª0–¢–‚Å‚Í‚È‚¢‚©
-	// ƒXƒe[ƒW‚ª‘ƒXƒe[ƒW”‚ğ’´‚¦‚Ä‚¢‚È‚¢‚©
+	// ã‚¹ãƒ†ãƒ¼ã‚¸ãŒ0æœªæº€ã§ã¯ãªã„ã‹
+	// ã‚¹ãƒ†ãƒ¼ã‚¸ãŒç·ã‚¹ãƒ†ãƒ¼ã‚¸æ•°ã‚’è¶…ãˆã¦ã„ãªã„ã‹
 	if (levelIndex < 0 || levelIndex >= totalStage)
 	{
-		// ‘¶İ‚µ‚È‚¢ƒXƒe[ƒW‚¾‚©‚çAˆ—‚ğ’†’f‚·‚é
+		// å­˜åœ¨ã—ãªã„ã‚¹ãƒ†ãƒ¼ã‚¸ã ã‹ã‚‰ã€å‡¦ç†ã‚’ä¸­æ–­ã™ã‚‹
 		return;
 	}
 
-	// Œ»İ‚ÌƒXƒe[ƒW”Ô†‚ğ‹L˜^‚·‚é
+	// ç¾åœ¨ã®ã‚¹ãƒ†ãƒ¼ã‚¸ç•ªå·ã‚’è¨˜éŒ²ã™ã‚‹
 	m_currentLevel = levelIndex;
-	// u¡g‚¤ƒf[ƒ^v‚¾‚¯‚Éƒsƒ“‚ğ—§‚Ä‚é
+	// ã€Œä»Šä½¿ã†ãƒ‡ãƒ¼ã‚¿ã€ã ã‘ã«ãƒ”ãƒ³ã‚’ç«‹ã¦ã‚‹
 	m_pCurrentData = &m_allStages[m_currentLevel];
 
 	if (m_pCurrentData->map.empty())
@@ -75,29 +75,29 @@ void StageManager::LoadLevel(int levelIndex)
 		return;
 	}
 
-	// ƒXƒe[ƒW‚ÌÚ×(ƒXƒe[ƒW”z’u)‚ğƒ[ƒh
-	// StageLoader::LoadMapCSV(*m_pCurrentData);–ƒƒ“‚¿‚á‚ñ‚¢‚ç‚È‚¢‚©‚à‚µ‚ê‚È‚¢(—v‚ç‚È‚©‚Á‚½)
+	// ã‚¹ãƒ†ãƒ¼ã‚¸ã®è©³ç´°(ã‚¹ãƒ†ãƒ¼ã‚¸é…ç½®)ã‚’ãƒ­ãƒ¼ãƒ‰
+	// StageLoader::LoadMapCSV(*m_pCurrentData);ï¼Šãƒ¯ãƒ³ã¡ã‚ƒã‚“ã„ã‚‰ãªã„ã‹ã‚‚ã—ã‚Œãªã„(è¦ã‚‰ãªã‹ã£ãŸ)
 
-	// è”§ŒÀ‚ğƒZƒbƒg
+	// æ‰‹æ•°åˆ¶é™ã‚’ã‚»ãƒƒãƒˆ
 	m_currentMoveLimit = m_pCurrentData->moveLimit;
 
 
-	// ƒ}ƒbƒvƒf[ƒ^‚ÉŠî‚Ã‚¢‚ÄAÀÛ‚ÉƒQ[ƒ€ƒIƒuƒWƒFƒNƒg‚ğ¶¬‚·‚é
-	CreateStageObject();				// (ƒIƒuƒWƒFƒNƒg‚ğ¶¬‚·‚é‚Æ‚«‚Ég‚¤ˆ—)
+	// ãƒãƒƒãƒ—ãƒ‡ãƒ¼ã‚¿ã«åŸºã¥ã„ã¦ã€å®Ÿéš›ã«ã‚²ãƒ¼ãƒ ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ç”Ÿæˆã™ã‚‹
+	CreateStageObject();				// (ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ç”Ÿæˆã™ã‚‹ã¨ãã«ä½¿ã†å‡¦ç†)
 }
 
 void StageManager::NextLevel()
 {
 	int nextLevel = m_currentLevel + 1;
 
-	// Ÿ‚ÌƒXƒe[ƒW‚ª‚ ‚é‚©Šm”F
+	// æ¬¡ã®ã‚¹ãƒ†ãƒ¼ã‚¸ãŒã‚ã‚‹ã‹ç¢ºèª
 	if (nextLevel < (int)m_allStages.size())
 	{
 		LoadLevel(nextLevel);
 	}
 	else
 	{
-		// ‘SƒXƒe[ƒWƒNƒŠƒA‚µ‚½‚Ìˆ—(ƒGƒ“ƒfƒBƒ“ƒO‚ª‚ ‚Á‚½‚ç‚±‚±‚Åˆ—)
+		// å…¨ã‚¹ãƒ†ãƒ¼ã‚¸ã‚¯ãƒªã‚¢ã—ãŸæ™‚ã®å‡¦ç†(ã‚¨ãƒ³ãƒ‡ã‚£ãƒ³ã‚°ãŒã‚ã£ãŸã‚‰ã“ã“ã§å‡¦ç†)
 	}
 
 }
@@ -108,7 +108,7 @@ void StageManager::ClearObjects()
 }
 
 
-// ÀÛ‚ÉƒIƒuƒWƒFƒNƒg‚ğ¶¬‚·‚é“à•”ŠÖ”
+// å®Ÿéš›ã«ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ç”Ÿæˆã™ã‚‹å†…éƒ¨é–¢æ•°
 void StageManager::CreateStageObject()
 {
 	//if (!m_pCurrentData) return;
@@ -117,51 +117,67 @@ void StageManager::CreateStageObject()
 		return;
 	}
 
-	// ŒÃ‚¢ƒf[ƒ^‚ª—L‚ê‚Îˆê‰ñƒŠƒZƒbƒg‚·‚é
+	// å¤ã„ãƒ‡ãƒ¼ã‚¿ãŒæœ‰ã‚Œã°ä¸€å›ãƒªã‚»ãƒƒãƒˆã™ã‚‹
 	ClearObjects();
 
-	// ƒ[ƒvƒtƒ‰ƒOƒŠƒZƒbƒg
+	// ãƒ¯ãƒ¼ãƒ—ãƒ•ãƒ©ã‚°ãƒªã‚»ãƒƒãƒˆ
 	m_hasWarpSrc = false;
 	m_hasWarpDst = false;
 
-	//’Ç‰Á
+	//è¿½åŠ 
 	m_warpA = nullptr;
 	m_warpB = nullptr;
 	
-	/*Warp* temporaryWarpInstance = nullptr;*/	// ˆê•Û‘¶—p
+	/*Warp* temporaryWarpInstance = nullptr;*/	// ä¸€æ™‚ä¿å­˜ç”¨
 
-	// šƒfƒoƒbƒN—p‚Ì1ƒ}ƒXƒTƒCƒY
-	float CHIP_SIZE = 128.0f;
+	// â˜…ãƒ‡ãƒãƒƒã‚¯ç”¨ã®1ãƒã‚¹ã‚µã‚¤ã‚º
+	float CHIP_SIZE = 100.0f;
 
-	// ƒXƒe[ƒW‚²‚Æ‚É1ƒ}ƒX‚ğ•ÏX‚·‚éˆ—(32.0f)‚ªŒÀŠE’l
+	// ã‚¹ãƒ†ãƒ¼ã‚¸ã”ã¨ã«1ãƒã‚¹ã‚’å¤‰æ›´ã™ã‚‹å‡¦ç†(32.0f)ãŒé™ç•Œå€¤
 	//float CHIP_SIZE = 128.0f - (m_currentLevel * 32.0f);
 
-	if (m_currentLevel >= 4)
-	{
-		CHIP_SIZE = 100.0f;
-	}
+	//if (m_currentLevel >= 4)
+	//{
+	//	CHIP_SIZE = 100.0f;
+	//}
 
 	/*if (CHIP_SIZE < 32.0f)
 	{
 		CHIP_SIZE = 32.0f;
 	}*/
 
-	for (int y = 0; y < m_pCurrentData->height; ++y) 
+	// ãƒãƒƒãƒ—ã®ç¸¦æ¨ªãƒã‚¹æ•°ã‚’å–å¾—
+	int mapCols = 0;
+	if (!m_pCurrentData->map.empty()) {
+		mapCols = (int)m_pCurrentData->map[0].size();
+	}
+	int mapRows = m_pCurrentData->height;
+
+	float maxChipW = (1280.0f - 100.0f) / (float)mapCols;
+	float maxChipH = (720.0f - 100.0f) / (float)mapRows;
+	if (CHIP_SIZE > maxChipW) CHIP_SIZE = maxChipW;
+	if (CHIP_SIZE > maxChipH) CHIP_SIZE = maxChipH;
+
+	// ç”»é¢ä¸­å¤®ã«é…ç½®ã™ã‚‹ãŸã‚ã®ã‚ªãƒ•ã‚»ãƒƒãƒˆè¨ˆç®—
+	float mapTotalWidth = mapCols * CHIP_SIZE;
+	float mapTotalHeight = mapRows * CHIP_SIZE;
+	float offsetX = (1280.0f - mapTotalWidth) / 2.0f;
+	float offsetY = (720.0f - mapTotalHeight) / 2.0f;
+
+	const float start_x = offsetX + (CHIP_SIZE / 2.0f);
+	const float start_y = offsetY + (CHIP_SIZE / 2.0f);
+
+	for (int y = 0; y < m_pCurrentData->height; ++y)
 	{
-		for (int x = 0; x < (int)m_pCurrentData->map[y].size(); ++x) 
+		for (int x = 0; x < (int)m_pCurrentData->map[y].size(); ++x)
 		{
 			char mode = m_pCurrentData->map[y][x];
 
-			// À•WŒvZ‚·‚éˆ—
-
-			/*ƒ}ƒX‚Ì’†SÀ•W‚ğ‹‚ß‚Ä‚é*/
-			const float start_x = CHIP_SIZE / 2.0f;
-			const float start_y = CHIP_SIZE / 2.0f;
-
+			// ã‚ªãƒ•ã‚»ãƒƒãƒˆã‚’å«ã‚ãŸä¸­å¤®é…ç½®ã®åº§æ¨™
 			float posX = start_x + (x * CHIP_SIZE);
 			float posY = start_y + (y * CHIP_SIZE);
 			
-			// mode‚É‰‚¶‚½¶¬ˆ—	(ƒRƒƒ“ƒg•¶‚Ì’†‚ÉÚ×‚ğ‘‚­)
+			// modeã«å¿œã˜ãŸç”Ÿæˆå‡¦ç†	(ã‚³ãƒ¡ãƒ³ãƒˆæ–‡ã®ä¸­ã«è©³ç´°ã‚’æ›¸ã)
 			switch (mode)
 			{
 				case 'B':
@@ -170,11 +186,11 @@ void StageManager::CreateStageObject()
 					m_debug_bX = posX;
 					m_debug_bY = posY;
 
-					// ƒfƒoƒbƒN
+					// ãƒ‡ãƒãƒƒã‚¯
 					//DrawFormatString(20, 320, GetColor(255, 255, 255), "CSV 'B' Detect! X: %f Y: %f", posX, posY);
-					//AppLogAdd("šCSV‚©‚ç 'B' ‚ğŒŸ’m‚µ‚Ü‚µ‚½I ƒ}ƒbƒvƒf[ƒ^ˆÊ’u: [x:%d, y:%d] ŒvZÀ•W: (X:%f, Y:%f)\n", x, y, posX, posY);
+					//AppLogAdd("â˜…CSVã‹ã‚‰ 'B' ã‚’æ¤œçŸ¥ã—ã¾ã—ãŸï¼ ãƒãƒƒãƒ—ãƒ‡ãƒ¼ã‚¿ä½ç½®: [x:%d, y:%d] è¨ˆç®—åº§æ¨™: (X:%f, Y:%f)\n", x, y, posX, posY);
 
-					// “®‚©‚¹‚é•Ç‚ğ¶¬‚·‚éˆ—
+					// å‹•ã‹ã›ã‚‹å£ã‚’ç”Ÿæˆã™ã‚‹å‡¦ç†
 					Block * new_block = CreateStageObjectInstance<Block>(Vector2D(posX, posY));
 
 					if (new_block != nullptr)
@@ -187,7 +203,7 @@ void StageManager::CreateStageObject()
 
 				case 'W':
 				{
-					// •Ç‚ğ¶¬‚·‚éˆ—
+					// å£ã‚’ç”Ÿæˆã™ã‚‹å‡¦ç†
 					Wall* new_wall = CreateStageObjectInstance<Wall>(Vector2D(posX, posY));
 					if (new_wall != nullptr)
 					{
@@ -198,7 +214,7 @@ void StageManager::CreateStageObject()
 					break;
 
 				case 'P':
-					// ƒvƒŒƒCƒ„[‚ğ¶¬‚·‚éˆ—
+					// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’ç”Ÿæˆã™ã‚‹å‡¦ç†
 					m_playerSpawnPos = Vector2D(posX, posY);
 
 				/*	if (m_pPlayer != nullptr)
@@ -210,13 +226,13 @@ void StageManager::CreateStageObject()
 
 				case 'D':
 				{
-					// ƒJƒƒ‰‚ğ¶¬‚·‚éˆ—
+					// ã‚«ãƒ¡ãƒ©ã‚’ç”Ÿæˆã™ã‚‹å‡¦ç†
 					Cam* new_cam = CreateStageObjectInstance<Cam>(Vector2D(posX, posY));
 
 					if (new_cam != nullptr)
 					{
-						// 2. ƒJƒƒ‰‚Ì‰Šúƒpƒ‰ƒ[ƒ^‚ğƒZƒbƒg
-						// —áF‰ºŒü‚«iDX_PI_F / 2.0fjA‹——£350.0fA‹–ìŠp0.8f
+						// 2. ã‚«ãƒ¡ãƒ©ã®åˆæœŸãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã‚’ã‚»ãƒƒãƒˆ
+						// ä¾‹ï¼šä¸‹å‘ãï¼ˆDX_PI_F / 2.0fï¼‰ã€è·é›¢350.0fã€è¦–é‡è§’0.8f
 						new_cam->SetUpCamera(DX_PI_F / 2.0f, 350.0f, 0.8f);
 					}
 				}
@@ -224,14 +240,14 @@ void StageManager::CreateStageObject()
 
 				case 'U':
 				{
-					// ãŒü‚«
-					// ƒJƒƒ‰‚ğ¶¬‚·‚éˆ—
+					// ä¸Šå‘ã
+					// ã‚«ãƒ¡ãƒ©ã‚’ç”Ÿæˆã™ã‚‹å‡¦ç†
 					Cam* new_cam = CreateStageObjectInstance<Cam>(Vector2D(posX, posY));
 
 					if (new_cam != nullptr)
 					{
-						// 2. ƒJƒƒ‰‚Ì‰Šúƒpƒ‰ƒ[ƒ^‚ğƒZƒbƒg
-						// —áF‰ºŒü‚«iDX_PI_F / 2.0fjA‹——£350.0fA‹–ìŠp0.8f
+						// 2. ã‚«ãƒ¡ãƒ©ã®åˆæœŸãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã‚’ã‚»ãƒƒãƒˆ
+						// ä¾‹ï¼šä¸‹å‘ãï¼ˆDX_PI_F / 2.0fï¼‰ã€è·é›¢350.0fã€è¦–é‡è§’0.8f
 						//new_cam->SetUpCamera(DX_PI_F / 1.5f, 350.0f, 0.8f);
 						new_cam->SetUpCamera(DX_PI_F * 1.5f, 350.0f, 0.8f);
 					}
@@ -240,7 +256,7 @@ void StageManager::CreateStageObject()
 
 				case 'G':
 				{
-					// ƒS[ƒ‹‚ÌƒTƒCƒY‚Ì•Ï”‚ğ’è‹`(70.0f)‚Éİ’è
+					// ã‚´ãƒ¼ãƒ«ã®ã‚µã‚¤ã‚ºã®å¤‰æ•°ã‚’å®šç¾©(70.0f)ã«è¨­å®š
 					float GOAL_SIZE = CHIP_SIZE;
 
 					Goal* new_goal = CreateStageObjectInstance<Goal>(Vector2D(posX, posY));
@@ -251,41 +267,49 @@ void StageManager::CreateStageObject()
 
 				case 'L':
 				{
-					// ƒ‰ƒCƒg‚ğ¶¬‚·‚éˆ—
+					// ãƒ©ã‚¤ãƒˆã‚’ç”Ÿæˆã™ã‚‹å‡¦ç†
 				}
 					break;
 
 				case 'T':
 				{
-					// ƒgƒ‰ƒbƒv(ƒgƒ‰‚Î‚³‚İ‚Ì‚æ‚¤‚È’n–Ê‚Éİ’u‚·‚éã©)‚ğ¶¬‚·‚éˆ—
-					float TRAP_RADIUS = 100.0f;
 
-					if (m_currentLevel >= 2)
-					{
-						TRAP_RADIUS = 80.0f;
-					}
+					// ã‚´ãƒ¼ãƒ«ã®ã‚µã‚¤ã‚ºã®å¤‰æ•°ã‚’å®šç¾©(70.0f)ã«è¨­å®š
+					float TRAP_RADIUS = CHIP_SIZE;
 
 					SpikeTrap* new_spike = CreateStageObjectInstance<SpikeTrap>(Vector2D(posX, posY));
-					if (new_spike != nullptr)
-					{
-						// ”¼Œa‚ğƒZƒbƒg
-						new_spike->SetRadius(TRAP_RADIUS);
+					new_spike->SetChipSize(CHIP_SIZE);
+					new_spike->Initialize();
 
-						new_spike->Initialize();
-					}
+					//// ãƒˆãƒ©ãƒƒãƒ—(ãƒˆãƒ©ã°ã•ã¿ã®ã‚ˆã†ãªåœ°é¢ã«è¨­ç½®ã™ã‚‹ç½ )ã‚’ç”Ÿæˆã™ã‚‹å‡¦ç†
+					//float TRAP_RADIUS = 100.0f;
+
+					//if (m_currentLevel >= 2)
+					//{
+					//	TRAP_RADIUS = 80.0f;
+					//}
+
+					//SpikeTrap* new_spike = CreateStageObjectInstance<SpikeTrap>(Vector2D(posX, posY));
+					//if (new_spike != nullptr)
+					//{
+					//	// åŠå¾„ã‚’ã‚»ãƒƒãƒˆ
+					//	new_spike->SetRadius(TRAP_RADIUS);
+
+					//	new_spike->Initialize();
+					//}
 				}
 					break;
 
 				case 'F':
 				{
 
-					// °‚ğ¶¬‚·‚éˆ—
+					// åºŠã‚’ç”Ÿæˆã™ã‚‹å‡¦ç†
 				}
 					break;
 
 				case 'w':
 				{
-					//// ƒ[ƒv“üŒû‚Ì¶¬
+					//// ãƒ¯ãƒ¼ãƒ—å…¥å£ã®ç”Ÿæˆ
 					m_warpA =
 						CreateStageObjectInstance<Warp>(
 							Vector2D(posX, posY));
@@ -332,7 +356,7 @@ void StageManager::CreateStageObject()
 
 				case 'K':
 				{
-					// Œ®‚ğ¶¬‚·‚éˆ—
+					// éµã‚’ç”Ÿæˆã™ã‚‹å‡¦ç†
 					Key* new_key = CreateStageObjectInstance<Key>(Vector2D(posX, posY));
 					new_key->SetChipSize(CHIP_SIZE);
 				}
@@ -347,12 +371,12 @@ void StageManager::CreateStageObject()
 	if (m_warpA != nullptr &&
 		m_warpB != nullptr)
 	{
-		// A ¨ B
+		// A â†’ B
 		m_warpA->SetTargetPosition(
 			m_warpDstPos.x,
 			m_warpDstPos.y);
 
-		// B ¨ A
+		// B â†’ A
 		m_warpB->SetTargetPosition(
 			m_warpSrcPos.x,
 			m_warpSrcPos.y);
@@ -371,14 +395,14 @@ Vector2D StageManager::GetPlayerSpawnPosition() const
 
 void StageManager::DrawDebugInfo() const
 {
-	// ‚à‚µ 'B' ‚ªˆê“x‚Å‚à“Ç‚İ‚Ü‚ê‚Ä‚¢‚½‚çA‰æ–Ê‚Ì¶ã‚É‚¸‚Á‚Æ•¶š‚ğo‚µ‘±‚¯‚é ƒfƒoƒbƒN—p
+	// ã‚‚ã— 'B' ãŒä¸€åº¦ã§ã‚‚èª­ã¿è¾¼ã¾ã‚Œã¦ã„ãŸã‚‰ã€ç”»é¢ã®å·¦ä¸Šã«ãšã£ã¨æ–‡å­—ã‚’å‡ºã—ç¶šã‘ã‚‹ ãƒ‡ãƒãƒƒã‚¯ç”¨
 	if (m_debug_isB_Detected == true)
 	{
-		DrawFormatString(20, 20, GetColor(255, 255, 0), "yDEBUGzCSV 'B' Loaded! Pos:(%f, %f)", m_debug_bX, m_debug_bY);
+		DrawFormatString(20, 20, GetColor(255, 255, 0), "ã€DEBUGã€‘CSV 'B' Loaded! Pos:(%f, %f)", m_debug_bX, m_debug_bY);
 	}
 	else
 	{
-		DrawFormatString(20, 20, GetColor(255, 0, 0), "yDEBUGzCSV 'B' NOT FOUND...");
+		DrawFormatString(20, 20, GetColor(255, 0, 0), "ã€DEBUGã€‘CSV 'B' NOT FOUND...");
 	}
 }
 
@@ -394,29 +418,41 @@ void StageManager::DrawFloorBackground() const
 		return;
 	}
 
-	// Œ»İ‚ÌƒŒƒxƒ‹‚É‰‚¶‚½CHIP_SIZE‚ğŒvZ
-	float CHIP_SIZE = 128.0f;
-	if (m_currentLevel >= 4)
-	{
-		CHIP_SIZE = 100.0f;
-	}
+	//// ç¾åœ¨ã®ãƒ¬ãƒ™ãƒ«ã«å¿œã˜ãŸCHIP_SIZEã‚’è¨ˆç®—
+	//float CHIP_SIZE = 128.0f;
+	//if (m_currentLevel >= 4 )
+	//{
+	//	CHIP_SIZE = 100.0f;
+	//}
 
-	const float start_x = CHIP_SIZE / 2.0f;
-	const float start_y = CHIP_SIZE / 2.0f;
+	float CHIP_SIZE = 100.0f;
 
-	// “Á’è‚Ì•¶šŠÖŒW‚È‚­AƒXƒe[ƒW‚Ìc‰¡‚ÌƒTƒCƒY•ªŒvZ
+	int mapCols = (int)m_pCurrentData->map[0].size();
+	int mapRows = m_pCurrentData->height;
+
+	float maxChipW = (1280.0f - 100.0f) / (float)mapCols;
+	float maxChipH = (720.0f - 100.0f) / (float)mapRows;
+	if (CHIP_SIZE > maxChipW) CHIP_SIZE = maxChipW;
+	if (CHIP_SIZE > maxChipH) CHIP_SIZE = maxChipH;
+
+	float mapTotalWidth = mapCols * CHIP_SIZE;
+	float mapTotalHeight = mapRows * CHIP_SIZE;
+	float offsetX = (1280.0f - mapTotalWidth) / 2.0f;
+	float offsetY = (720.0f - mapTotalHeight) / 2.0f;
+
+	const float start_x = offsetX + (CHIP_SIZE / 2.0f);
+	const float start_y = offsetY + (CHIP_SIZE / 2.0f);
+
 	for (int y = 0; y < m_pCurrentData->height; y++)
 	{
-		// Šes‚Ì•¶š”‚ğæ“¾
 		int rowWidth = (int)m_pCurrentData->map[y].size();
 
 		for (int x = 0; x < rowWidth; x++)
 		{
-			// 1ƒ}ƒX‚¸‚Â’†SÀ•W‚ğŒvZ
+			// ä¸­å¤®é…ç½®ç”¨ã®åº§æ¨™
 			float posX = start_x + (x * CHIP_SIZE);
 			float posY = start_y + (y * CHIP_SIZE);
 
-			// ‘S‚Ä‚Ìƒ}ƒX‚ÌÅ”wŒi‚É1ƒ}ƒXƒTƒCƒY‚Ìƒ^ƒCƒ‹‚ğ•`‰æ
 			DrawExtendGraph((int)(posX - CHIP_SIZE / 2.0f), (int)(posY - CHIP_SIZE / 2.0f), (int)(posX + CHIP_SIZE / 2.0f), (int)(posY + CHIP_SIZE / 2.0f), m_floorImageHandle, TRUE);
 		}
 	}

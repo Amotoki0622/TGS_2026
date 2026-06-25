@@ -27,6 +27,7 @@ InGameScene::InGameScene()
 	font[0] = CreateFontToHandle("廻想体 ネクスト UP B", 100, 6);
 	font[1] = CreateFontToHandle("廻想体 ネクスト UP B", 32, 6); // ポーズ画面に使用
 	font[2] = CreateFontToHandle("廻想体 ネクスト UP B", 45, 6); // ポーズ画面に使用
+	font[3] = CreateFontToHandle("廻想体 ネクスト UP B", 24, 6); // チュートリアルに使用
 
 	helpImageHandles[0] = LoadGraph("Resource/Images/Hint/shadow_hint.png");
 	helpImageHandles[1] = LoadGraph("Resource/Images/Hint/kick_hint.png");
@@ -67,10 +68,10 @@ void InGameScene::Initialize()
 
 	// デフォルトは 128.0f / ステージ3以降は一回り小さく
 	float currentChipSize = 128.0f;
-	if (currentLevel >= 4)
-	{
-		currentChipSize = 100.0f;
-	}
+	//if (currentLevel >= 4 )
+	//{
+	//	currentChipSize = 100.0f;
+	//}
 
 	// プレイヤーのサイズ・移動量を自動計算してセット
 	player.SetChipSize(currentChipSize);
@@ -704,6 +705,13 @@ void InGameScene::Draw() const
 			int textW = GetDrawStringWidthToHandle(guideText, (int)strlen(guideText), font[1]);
 			DrawStringToHandle((1280 - textW) / 2, y1 + helpHeight + 15, guideText, GetColor(255, 255, 255), font[1]);
 		}
+
+		// 右上フォント
+		const char* subGuideText = "※ポーズメニューの「ヘルプ」から再度確認が可能です";
+		int subTextW = GetDrawStringWidthToHandle(subGuideText, (int)strlen(subGuideText), font[3]);
+
+		// 画面右上表記
+		DrawStringToHandle(1280 - subTextW - 20, 20, subGuideText, GetColor(200, 200, 200), font[3]);
 	}
 
 	// ポーズ画面の描画処理
@@ -799,6 +807,12 @@ void InGameScene::Draw() const
 
 			// ページ数の描画
 			DrawFormatStringToHandle(665 - 45, y2 + 15, GetColor(255, 255, 255), font[2], "%d / 4", currentHelpPage + 1);
+
+			//DrawFormatStringToHandle(665 - 45, y1 + helpHeight + 15, GetColor(255, 255, 255), font[2], "%d / %d", currentTutorialPage + 1, maxTutorialPages);
+
+			const char* guideText = "十字ボタン: ページ切替 / Bボタン: PAUSEに戻る";
+			int textW = GetDrawStringWidthToHandle(guideText, (int)strlen(guideText), font[1]);
+			DrawStringToHandle((1280 - textW) / 2, y1 + helpHeight + 70, guideText, GetColor(255, 255, 255), font[1]);
 		}
 	} 
 } 

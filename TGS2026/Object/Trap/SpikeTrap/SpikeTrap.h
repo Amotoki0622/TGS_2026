@@ -27,6 +27,8 @@ private:
     int spikeImage;     // トゲの画像
     float radius;       // 当たり判定の半径
 
+    float drawScale = 1.0f; // 描画用の倍率を保存する変数
+
     // フォント
     int font[3];
 
@@ -46,9 +48,11 @@ public:
     // 初期化処理
     void Initialize() override;
 
-    // 毎フレーム、純粋に「今プレイヤーが乗っているか」だけをチェックする
     void Update(const Player& player, float delta_second) override;
     void Draw() const override;
+
+    // 画像のサイズ変更処理
+    void SetChipSize(float size) override;
 
     // 外部からの当たり判定のサイズを設定できる関数
     void SetRadius(float r);

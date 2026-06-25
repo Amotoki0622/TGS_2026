@@ -13,6 +13,8 @@ private:
 
     Player* player;
 
+    float drawScale = 1.0f; // 描画用の倍率を保存する変数
+
     int warpImage[3];
     int warpSE;
     int warp_in_se;
@@ -40,6 +42,8 @@ public:
     void Initialize() override;
     void Update(float delta_second) override;
     void Draw() const override;
+    // 画像のサイズ変更処理
+    void SetChipSize(float size) override;
     void Finalize() override;
 
     bool IsHit(
@@ -48,4 +52,5 @@ public:
         float pW,
         float pH
     ) const;
+
 };
