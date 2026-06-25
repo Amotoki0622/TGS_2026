@@ -40,10 +40,12 @@ void Player::Initialize()
     ChangeVolumeSoundMem(70, changeStateSE);
     SetFrequencySoundMem((int)(freq * 2.0f), changeStateSE); // 倍速
 
+    // キック時の画像（通常状態限定）
     kickImage = LoadGraph(
         "Resource/Images/Player/player_kick.png"
     );
 
+    // 通常状態の待機モーション用
     LoadDivGraph(
         "Resource/Images/Player/player_idol.png",
         2,      // 2分割
@@ -53,15 +55,15 @@ void Player::Initialize()
         idleImages
     );
 
-    // シャドウ状態の画像読み込み
-    int result = LoadDivGraph(
-        "Resource/Images/Player/shadow2.png",
-        2, 2, 1, 768, 1024, images2
+    // 影状態の待機モーション用
+    LoadDivGraph(
+        "Resource/Images/Player/shadow_idol.png",
+        2,
+        2, 1,
+        772.5,
+        900,
+        shadowIdleImages
     );
-
-    if (result == -1) {
-        printfDx("画像読み込み失敗\n");
-    }
 }
 
 // =========================
@@ -443,11 +445,32 @@ void Player::Draw() const
     else
     {
         SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
-        if (images2[currentImage] != -1)
+
+        float shadowScale = drawScale * 0.85f;
+
+        int handle = shadowIdleImages[0];
+
+        // キック
+        if (isKicking)
         {
-            float shadowScale = drawScale * 0.85f;
-            DrawRotaGraph(x, y, shadowScale, 0.0, images2[currentImage], TRUE, revers);
+            handle = shadowIdleImages[0];
         }
+        // 待機
+        else if (isIdleAnimation)
+        {
+            handle = shadowIdleImages[idleFrame];
+        }
+
+        DrawRotaGraph(
+            x,
+            y,
+            shadowScale,
+            0.0,
+            handle,
+            TRUE,
+            revers
+        );
+
         SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
     }
 

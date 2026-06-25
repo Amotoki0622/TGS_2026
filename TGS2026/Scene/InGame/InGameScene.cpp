@@ -122,10 +122,9 @@ void InGameScene::Initialize()
 	detectionTimer = 0.0f;
 	m_notifierTimer = 1.8f;
 	m_notifierAlpha = 0;		// 透明
-	m_isRestartNotifier = false;
+	//m_isRestartNotifier = false;
 
-	// 文字列の保存
-	UpdateStageNameText();
+	
 	// 現在のレベル
 	int level = m_stageManager.GetCurrentLevel() + 1;
 	
@@ -187,9 +186,22 @@ void InGameScene::Initialize()
 	delay = 0;
 	tekazu = 0;
 
+	m_prevTekazu = currentLimit;
+	m_tekazuAniTimer = 0.0f;
+
 	//DrawNumber::SetImage(
 	//	ResourceManager::GetInstance()->GetImages("Resource/Images/Number/number.png")
 	//);
+
+	// 文字列の保存
+	if (m_isRestartNotifier == false)
+	{
+		UpdateStageNameText();
+	}
+	else
+	{
+		m_isRestartNotifier = false;
+	}
 }
 
 // 更新処理
@@ -200,6 +212,17 @@ eSceneType InGameScene::Update(const float& delta_second)
 
 	// 手数を保存する変数
 	sprintf_s(m_tekazuText, "%d", tekazu);
+
+	if (tekazu < m_prevTekazu)
+	{
+		m_tekazuAniTimer = 0.3f;		// 0.3秒間アニメーション
+	}
+	m_prevTekazu = tekazu;				// 現在の手数を記憶
+
+	if (m_tekazuAniTimer > 0.0f)
+	{
+		m_tekazuAniTimer -= delta_second;
+	}
 
 	// -------------------------------------------------------------
 	// ① 一時停止（ポーズ）の入力・制御フェーズ（最優先）
@@ -280,6 +303,10 @@ eSceneType InGameScene::Update(const float& delta_second)
 				if (pauseSelectIndex == 1)
 				{
 					StopSoundMem(beepSE);
+
+					m_isRestartNotifier = true;
+					UpdateStageNameText();
+
 					Initialize();
 					state = SceneState::Restarting;
 					fade->Start(FadeType::IrisOut, true, 1.5f);
@@ -465,6 +492,7 @@ eSceneType InGameScene::Update(const float& delta_second)
 					return eSceneType::eResult;
 				}
 
+				m_isRestartNotifier = false;
 				UpdateStageNameText();
 
 			//if (playerX == goalX && playerY == goalY)
@@ -544,6 +572,10 @@ eSceneType InGameScene::Update(const float& delta_second)
 
 		if (detectionTimer >= LIMIT_TIME) {
 			StopSoundMem(beepSE);
+
+			m_isRestartNotifier = true;
+			UpdateStageNameText();
+
 			state = SceneState::Restarting;
 			if (isLightDetected || player.GetTekazu() == 0) fade->Start(FadeType::Normal, true, 0.8f);
 			else fade->Start(FadeType::IrisOut, true, 1.0f);
@@ -563,6 +595,10 @@ eSceneType InGameScene::Update(const float& delta_second)
 	{
 		StopSoundMem(mainBGM);
 		StopSoundMem(beepSE);
+
+		m_isRestartNotifier = true;
+		UpdateStageNameText();
+
 		state = SceneState::Restarting;
 		fade->Start(FadeType::IrisOut, true, 1.0f);
 	}
@@ -588,11 +624,28 @@ void InGameScene::Draw() const
 		}
 	}
 
+	// 画面左下のベース
+	int tekazuX = 65;
+	int tekazuY = 560;
+
+	unsigned int textColor = GetColor(255, 255, 255);		// 通常は白
+	int fontIdx = 0;										// 通常サイズ (font[0])
+
+	// アニメーションタイマーが動いている間の演出
+	if (m_tekazuAniTimer > 0.0f)
+	{
+		textColor = GetColor(255, 70, 70);
+
+		tekazuX += (int)(sin(m_tekazuAniTimer * 50.0f) * 4.0f);
+	}
+
 	// 手数（スコア）の描画
 	// DrawNumber::Draw(230, 550, tekazu, 0.8f);
-	DrawStringToHandle(230 + 2, 550 + 2, m_tekazuText, GetColor(30, 30, 30), font[0]); // 影
-	DrawStringToHandle(230, 550, m_tekazuText, GetColor(255, 255, 255), font[0]);     // 本尊
+	// DrawStringToHandle(230 + 2, 550 + 2, m_tekazuText, GetColor(30, 30, 30), font[0]); // 影
+	// DrawStringToHandle(230, 550, m_tekazuText, GetColor(255, 255, 255), font[0]);     // 本尊
 
+	DrawStringToHandle(tekazuX + 4, tekazuY + 4, m_tekazuText, GetColor(30, 30, 30), font[fontIdx]); // 影
+	DrawStringToHandle(tekazuX, tekazuY, m_tekazuText, textColor, font[fontIdx]);                     // 本尊
 
 	//DrawStringToHandle(40, 450, "STAGE1", GetColor(255, 255, 255), font[0]);
 
@@ -821,6 +874,14 @@ void InGameScene::Finalize()
 
 void InGameScene::UpdateStageNameText()
 {
+
+	// 失敗によるリスタートなら、「RESTART」
+	if (m_isRestartNotifier == true)
+	{
+ 		SetUpStageText("RESTART");
+		return;
+	}
+
 	int currentLevel = m_stageManager.GetCurrentLevel();
 	char buf[32];
 
