@@ -109,6 +109,10 @@ void ResultScene::Draw() const
 void ResultScene::Finalize()
 {
 	DeleteGraph(background);
+
+	DeleteFontToHandle(font[0]);
+	DeleteFontToHandle(font[1]);
+
 	StopSoundMem(result_bgm);
 }
 
