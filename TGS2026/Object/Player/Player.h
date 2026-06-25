@@ -62,6 +62,7 @@ private:
     int images2[IMAGE_NUM];
     int currentImage;
     int idleImages[2];
+    int shadowIdleImages[2];
     int kickImage;
 
     float idleTimer = 0.0f;
