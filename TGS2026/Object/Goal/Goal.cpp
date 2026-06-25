@@ -38,8 +38,8 @@ void Goal::Initialize()
 
     unlock_se = LoadSoundMem("Resource/Sounds/SE/object/key/unlock.mp3");
     goal_se = LoadSoundMem("Resource/Sounds/SE/object/kaidan/goal.m4a");
-    ChangeVolumeSoundMem(80, unlock_se);
-    ChangeVolumeSoundMem(100, goal_se);
+    ChangeVolumeSoundMem(130, unlock_se);
+    ChangeVolumeSoundMem(140, goal_se);
 
 }
 

@@ -9,17 +9,17 @@ InGameScene::InGameScene()
 
 	// メインBGM
 	mainBGM = LoadSoundMem("Resource/Sounds/BGM/main/main01.mp3");
-	ChangeVolumeSoundMem(140, mainBGM);
+	ChangeVolumeSoundMem(120, mainBGM);
 
 	// 警報音
 	beepSE = LoadSoundMem("Resource/Sounds/SE/object/cam/cam3.mp3");
 	freq = GetFrequencySoundMem(beepSE);
-	ChangeVolumeSoundMem(70, beepSE);
+	ChangeVolumeSoundMem(120, beepSE);
 	SetFrequencySoundMem((int)(freq * 0.6f), beepSE); // 減速
 
 	// ヘルプ音
 	pageSE = LoadSoundMem("Resource/Sounds/SE/object/push/paper_push.mp3");
-	ChangeVolumeSoundMem(60, pageSE);
+	ChangeVolumeSoundMem(130, pageSE);
 
 	m_stageManager.Initialize();
 

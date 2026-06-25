@@ -108,6 +108,10 @@ void TitleScene::Draw() const
 void TitleScene::Finalize()
 {
     DeleteGraph(background);
+
+    DeleteFontToHandle(font[0]);
+    DeleteFontToHandle(font[1]);
+
     StopSoundMem(title_main_bgm);
 }
 
