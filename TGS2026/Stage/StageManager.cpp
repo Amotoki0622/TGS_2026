@@ -223,13 +223,13 @@ void StageManager::CreateStageObject()
 					//		m_pPlayer->SetChipSize(CHIP_SIZE);
 					//}
 
-					// プレイヤーを生成する処理
-					Player* new_player;
+					//// プレイヤーを生成する処理
+					//Player* new_player;
 
-					if (new_player != nullptr)
-					{
-						new_player->SetChipSize(CHIP_SIZE);
-					}
+					//if (new_player != nullptr)
+					//{
+					//	new_player->SetChipSize(CHIP_SIZE);
+					//}
 				}
 
 					break;
