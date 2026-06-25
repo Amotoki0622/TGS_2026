@@ -777,6 +777,12 @@ void InGameScene::Draw() const
 
 			// ページ数の描画
 			DrawFormatStringToHandle(665 - 45, y2 + 15, GetColor(255, 255, 255), font[2], "%d / 4", currentHelpPage + 1);
+
+			//DrawFormatStringToHandle(665 - 45, y1 + helpHeight + 15, GetColor(255, 255, 255), font[2], "%d / %d", currentTutorialPage + 1, maxTutorialPages);
+
+			const char* guideText = "十字ボタン: ページ切替 / Bボタン: PAUSEに戻る";
+			int textW = GetDrawStringWidthToHandle(guideText, (int)strlen(guideText), font[1]);
+			DrawStringToHandle((1280 - textW) / 2, y1 + helpHeight + 70, guideText, GetColor(255, 255, 255), font[1]);
 		}
 	} 
 } 
@@ -825,16 +831,16 @@ void InGameScene::UpdateStageNameText()
 			sprintf_s(buf, "STAGE 2");
 			break;
 		case 4:
-			sprintf_s(buf, "TUTORIAL 3");
+			sprintf_s(buf, "STAGE 3");
 			break;
 		case 5:
-			sprintf_s(buf, "STAGE 4");
+			sprintf_s(buf, "TUTORIAL 3");
 			break;
 		case 6:
-			sprintf_s(buf, "STAGE 5");
+			sprintf_s(buf, "STAGE 4");
 			break;
 		case 7:
-			sprintf_s(buf, "STAGE 6");
+			sprintf_s(buf, "STAGE 5");
 			break;
 		case 8:
 			break;
