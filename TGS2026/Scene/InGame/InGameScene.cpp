@@ -186,6 +186,9 @@ void InGameScene::Initialize()
 	delay = 0;
 	tekazu = 0;
 
+	m_prevTekazu = currentLimit;
+	m_tekazuAniTimer = 0.0f;
+
 	//DrawNumber::SetImage(
 	//	ResourceManager::GetInstance()->GetImages("Resource/Images/Number/number.png")
 	//);
@@ -209,6 +212,17 @@ eSceneType InGameScene::Update(const float& delta_second)
 
 	// 手数を保存する変数
 	sprintf_s(m_tekazuText, "%d", tekazu);
+
+	if (tekazu < m_prevTekazu)
+	{
+		m_tekazuAniTimer = 0.3f;		// 0.3秒間アニメーション
+	}
+	m_prevTekazu = tekazu;				// 現在の手数を記憶
+
+	if (m_tekazuAniTimer > 0.0f)
+	{
+		m_tekazuAniTimer -= delta_second;
+	}
 
 	// -------------------------------------------------------------
 	// ① 一時停止（ポーズ）の入力・制御フェーズ（最優先）
@@ -610,11 +624,28 @@ void InGameScene::Draw() const
 		}
 	}
 
+	// 画面左下のベース
+	int tekazuX = 65;
+	int tekazuY = 560;
+
+	unsigned int textColor = GetColor(255, 255, 255);		// 通常は白
+	int fontIdx = 0;										// 通常サイズ (font[0])
+
+	// アニメーションタイマーが動いている間の演出
+	if (m_tekazuAniTimer > 0.0f)
+	{
+		textColor = GetColor(255, 70, 70);
+
+		tekazuX += (int)(sin(m_tekazuAniTimer * 50.0f) * 4.0f);
+	}
+
 	// 手数（スコア）の描画
 	// DrawNumber::Draw(230, 550, tekazu, 0.8f);
-	DrawStringToHandle(230 + 2, 550 + 2, m_tekazuText, GetColor(30, 30, 30), font[0]); // 影
-	DrawStringToHandle(230, 550, m_tekazuText, GetColor(255, 255, 255), font[0]);     // 本尊
+	// DrawStringToHandle(230 + 2, 550 + 2, m_tekazuText, GetColor(30, 30, 30), font[0]); // 影
+	// DrawStringToHandle(230, 550, m_tekazuText, GetColor(255, 255, 255), font[0]);     // 本尊
 
+	DrawStringToHandle(tekazuX + 4, tekazuY + 4, m_tekazuText, GetColor(30, 30, 30), font[fontIdx]); // 影
+	DrawStringToHandle(tekazuX, tekazuY, m_tekazuText, textColor, font[fontIdx]);                     // 本尊
 
 	//DrawStringToHandle(40, 450, "STAGE1", GetColor(255, 255, 255), font[0]);
 
@@ -847,7 +878,7 @@ void InGameScene::UpdateStageNameText()
 	// 失敗によるリスタートなら、「RESTART」
 	if (m_isRestartNotifier == true)
 	{
- 		SetUpStageText("RESTRT");
+ 		SetUpStageText("RESTART");
 		return;
 	}
 
