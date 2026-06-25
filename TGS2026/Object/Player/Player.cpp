@@ -40,10 +40,17 @@ void Player::Initialize()
     ChangeVolumeSoundMem(70, changeStateSE);
     SetFrequencySoundMem((int)(freq * 2.0f), changeStateSE); // 倍速
 
-    // プレイヤーキャラ画像分割読み込み（通常状態）
+    kickImage = LoadGraph(
+        "Resource/Images/Player/player_kick.png"
+    );
+
     LoadDivGraph(
-        "Resource/Images/Player/player_01.png",
-        2, 2, 1, 768, 1024, images
+        "Resource/Images/Player/player_idol.png",
+        2,      // 2分割
+        2, 1,   // 横2 縦1
+        621,    // 1枚の幅
+        670,   // 1枚の高さ
+        idleImages
     );
 
     // シャドウ状態の画像読み込み
@@ -80,6 +87,9 @@ void Player::Move(const std::vector<GameObject*>& objects)
         if (input->GetButtonInputState(XINPUT_BUTTON_B) == eInputState::ePress ||
             input->GetKeyInputState(KEY_INPUT_SPACE) == eInputState::ePress)
         {
+            isKicking = true;
+            kickTimer = 0.3f;  // キック画像の描画しかん
+
             // --- 1. 蹴る方向（ベクトル）を決定する ---
             float kickX = 0.0f;
             float kickY = 0.0f;
@@ -291,6 +301,11 @@ void Player::Move(const std::vector<GameObject*>& objects)
             effectImagePath = "Resource/Images/Effect/Smoke3.png";
         }
 
+        // 待機アニメ解除
+        idleTimer = 0.0f;
+        isIdleAnimation = false;
+        idleFrame = 0;
+
         // 座標更新と手数減算
         x = nextX;
         y = nextY;
@@ -328,6 +343,37 @@ void Player::ChangeState()
 void Player::UpdateAnimation(float delta_second)
 {
     InputManager* input = InputManager::GetInstance();
+
+    idleTimer += delta_second;
+
+    if (idleTimer >= 1.0f)
+    {
+        isIdleAnimation = true;
+    }
+
+    if (isIdleAnimation)
+    {
+        static float frameTimer = 0.0f;
+
+        frameTimer += delta_second;
+
+        if (frameTimer >= 0.4f)
+        {
+            idleFrame = (idleFrame + 1) % 2;
+            frameTimer = 0.0f;
+        }
+    }
+
+    if (isKicking)
+    {
+        kickTimer -= delta_second;
+
+        if (kickTimer <= 0.0f)
+        {
+            kickTimer = 0.0f;
+            isKicking = false;
+        }
+    }
 
     if (state == State::Normal)
     {
@@ -371,10 +417,28 @@ void Player::Draw() const
 {
     if (state == State::Normal)
     {
-        if (images[currentImage] != -1)
+        int handle = idleImages[0];
+
+        // キック最優先
+        if (isKicking)
         {
-            DrawRotaGraph(x, y, drawScale, 0.0, images[currentImage], TRUE, revers);
+            handle = kickImage;
         }
+        // 待機
+        else if (isIdleAnimation)
+        {
+            handle = idleImages[idleFrame];
+        }
+
+        DrawRotaGraph(
+            x,
+            y,
+            drawScale,
+            0.0,
+            handle,
+            TRUE,
+            revers
+        );
     }
     else
     {
@@ -390,7 +454,7 @@ void Player::Draw() const
     // プレイヤーの向きを示す三角の描画
     if (state == State::Normal) // 通常状態のときだけ出す場合
     {
-        float offset = chipSize * 0.6f; // プレイヤー中心からの距離
+        float offset = chipSize * 0.8f; // プレイヤー中心からの距離
         float size = 24.0f;             // 三角形のサイズ
 
         int rColor = GetColor(255, 0, 0);
