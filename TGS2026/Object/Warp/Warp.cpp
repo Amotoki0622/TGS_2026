@@ -70,7 +70,7 @@ void Warp::Update(float delta_second)
 
 	animFrame = 0;
 	//‰ñ“]
-	angle += 0.003;
+	angle += 0.002;
 
 	double scale = 0.25 + sin(GetNowCount() * 0.001) * 0.02;
 
