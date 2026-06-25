@@ -56,6 +56,10 @@ private:
 	char fontText[32];				// 作成済みの文字列
 	char m_tekazuText[16];
 
+	// アニメーション用変数
+	int m_prevTekazu;				// 1フレーム前の手数
+	float m_tekazuAniTimer;		// アニメーションの残り時間(秒)
+
 	// リソースマネージャー
 	ResourceManager* resource;      
 
