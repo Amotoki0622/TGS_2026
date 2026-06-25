@@ -61,6 +61,15 @@ private:
     int images[IMAGE_NUM];
     int images2[IMAGE_NUM];
     int currentImage;
+    int idleImages[2];
+    int kickImage;
+
+    float idleTimer = 0.0f;
+    bool isIdleAnimation = false;
+    int idleFrame = 0;
+
+    float kickTimer = 0.0f;
+    bool isKicking = false;
 
     // ‰¹Œ¹ŠÖ˜A
     int freq;
