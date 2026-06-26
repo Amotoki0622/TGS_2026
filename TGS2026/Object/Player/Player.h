@@ -47,8 +47,8 @@ public:
 private:
 
     // 位置情報
-    int x;
-    int y;
+    float x;
+    float y;
 
     bool canMove;
 
@@ -79,7 +79,7 @@ private:
     int step_se;  // プレイヤーの足音
 
     // 移動関連
-    int speed;
+    float speed;
 
     // 状態
     State state;

@@ -144,8 +144,8 @@ void Player::Move(const std::vector<GameObject*>& objects)
         }
     }
 
-    int moveX = 0;
-    int moveY = 0;
+    float moveX = 0.0f;
+    float moveY = 0.0f;
 
     // =========================
     // プレイヤー入力
@@ -186,8 +186,8 @@ void Player::Move(const std::vector<GameObject*>& objects)
     // =========================
     // 次の座標を計算
     // =========================
-    int nextX = x + moveX;
-    int nextY = y + moveY;
+    float nextX = x + moveX;
+    float nextY = y + moveY;
 
     // =========================
     // 画面外チェック
@@ -404,7 +404,7 @@ void Player::UpdateAnimation(float delta_second)
 void Player::SetChipSize(float size)
 {
     chipSize = size;
-    speed = (int)size;
+    speed = size;
     collisionWidth = size * 0.9f;
     collisionHeight = size * 0.9f;
     radius = (int)(size / 2.0f);
