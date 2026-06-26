@@ -30,6 +30,8 @@ void TitleScene::Initialize()
     is_selected = false;
     transition_timer = 0.0f;
 
+    animation_time = 0.0f;
+
     // 背景画像
     background = LoadGraph("Resource/Images/Title.png");
 }
@@ -42,6 +44,9 @@ eSceneType TitleScene::Update(const float& delta_second)
         // ループ再生
         PlaySoundMem(title_main_bgm, DX_PLAYTYPE_LOOP);
     }
+
+    // アニメーション用のタイマーを毎フレーム進める
+    animation_time += delta_second;
 
 	InputManager* input = InputManager::GetInstance();
 
@@ -87,21 +92,45 @@ void TitleScene::Draw() const
     unsigned int cursorColor = 0xff0000;      // 通常は鮮やかな赤
     int pushOffsetY = 0;                      // 通常はズレなし
 
-    // ボタンが押されてからの色（STARTとカーソル）
-    if (is_selected && transition_timer < 0.6f) // 押し込まれた時の時間調整
+    if (is_selected == false)
     {
-        startTextColor = 0x888888;    // 押し込まれた暗いグレー
-        cursorColor = 0x990000;       // 押し込まれた暗い赤
-        pushOffsetY = 4;              // 4ピクセル下に下げる
+        int alpha = 177 + (int)(sin(animation_time * 3.0f) * 78.0f);
+
+        SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
+    }
+    else if (is_selected == true && transition_timer < 0.6f)
+    {
+        startTextColor = 0x888888;
+        cursorColor = 0x990000;
+        pushOffsetY = 4;
     }
 
     // スタート
-    DrawStringToHandle(556, 550, "GAME START", startTextColor, font[1]);
+    DrawStringToHandle(556, 550 + pushOffsetY, "GAME START", startTextColor, font[1]);
 
+    int cursorPulse = (int)(sin(animation_time * 5.0f) * 8.0f);
 
     // カーソル表示
-    DrawStringToHandle(515, 550, ">", cursorColor, font[1]);
-    DrawStringToHandle(778, 550, "<", cursorColor, font[1]);
+    DrawStringToHandle(515 + cursorPulse, 550 + pushOffsetY, ">", cursorColor, font[1]);
+    DrawStringToHandle(778 - cursorPulse, 550 + pushOffsetY, "<", cursorColor, font[1]);
+
+    SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+    //// ボタンが押されてからの色（STARTとカーソル）
+    //if (is_selected && transition_timer < 0.6f) // 押し込まれた時の時間調整
+    //{
+    //    startTextColor = 0x888888;    // 押し込まれた暗いグレー
+    //    cursorColor = 0x990000;       // 押し込まれた暗い赤
+    //    pushOffsetY = 4;              // 4ピクセル下に下げる
+    //}
+
+    //// スタート
+    //DrawStringToHandle(556, 550, "GAME START", startTextColor, font[1]);
+
+
+    //// カーソル表示
+    //DrawStringToHandle(515, 550, ">", cursorColor, font[1]);
+    //DrawStringToHandle(778, 550, "<", cursorColor, font[1]);
 }
 
 // 終了時処理

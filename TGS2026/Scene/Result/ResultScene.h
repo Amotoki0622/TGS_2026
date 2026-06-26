@@ -22,6 +22,8 @@ private:
 	float clearAlpha = 0.0f;
 	float backAlpha = 0.0f;
 
+	float animation_time;
+
 public:
 	// コンストラクタ
 	ResultScene();

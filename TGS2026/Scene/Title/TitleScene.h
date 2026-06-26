@@ -22,6 +22,8 @@ private:
 
     int font[2];        // font[1]だと、font[0]しか使えない
 
+    float animation_time;           // タイマー
+
 public:
     TitleScene();
     ~TitleScene();

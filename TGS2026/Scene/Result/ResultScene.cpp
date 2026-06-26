@@ -2,6 +2,8 @@
 #include "../../Utility/InputManager.h"
 #include "DxLib.h"
 
+#include <math.h>
+
 // コンストラクタ
 ResultScene::ResultScene()
 {
@@ -30,6 +32,10 @@ void ResultScene::Initialize()
 	is_selected = false;
 	transition_timer = 0.0f;
 
+	animation_time = 0.0f;
+	clearAlpha = 0.0f;
+	backAlpha = 0.0f;
+
 	background = LoadGraph("Resource/Images/result.png");
 }
 
@@ -42,6 +48,8 @@ eSceneType ResultScene::Update(const float& delta_second)
 		//ループ再生
 		PlaySoundMem(result_bgm, DX_PLAYTYPE_LOOP);
 	}
+
+	animation_time += delta_second;
 
 	if (clearAlpha < 255)
 	{
@@ -82,15 +90,39 @@ eSceneType ResultScene::Update(const float& delta_second)
 // 描画処理
 void ResultScene::Draw() const
 {
+	// 背景画像
 	DrawGraph(0, 0, background, TRUE);
 
+	int titleX = 350;		// 元X座標
+	int titleY = 100;		// 元Y座標
+
+	// 左上に赤丸を上から描画
+	/*if (fmod(animation_time, 1.0f) < 0.5f)
+	{
+		DrawCircle(112, 60, 6, GetColor(255, 0, 0), TRUE);
+	}*/
+
+	// フェードインが完了次第ノイズ演出
+	if (clearAlpha >= 255.0f)
+	{
+		// 数秒に一瞬ノイズ演出
+		if ((int)(animation_time * 2.5f) % 4 == 0 && (int)(animation_time * 20.0f) % 6 == 0)
+		{
+			titleX += (int)(sin(animation_time * 100) * 10.0f);
+		}
+	}
+
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, (int)clearAlpha);
-	DrawStringToHandle(350, 100, "GAME CLEAR", 0xffffff, font[0]);
+	DrawStringToHandle(titleX, titleY, "GAME CLEAR", 0xffffff, font[0]);
+
+	//SetDrawBlendMode(DX_BLENDMODE_ALPHA, (int)clearAlpha);
+	//DrawStringToHandle(350, 100, "GAME CLEAR", 0xffffff, font[0]);
 
 	unsigned int resultTextColor = 0xffffff;
 	unsigned int cursorColor = 0xff0000;
 	int pushOffsetY = 0;
 
+	// 色・座標判定
 	if (is_selected && transition_timer < 0.6f)
 	{
 		resultTextColor = 0x888888;
@@ -101,8 +133,18 @@ void ResultScene::Draw() const
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, (int)backAlpha);
 	DrawStringToHandle(456, 550, "BACK TO TITLE", resultTextColor, font[1]);
 
-	DrawStringToHandle(410, 550, ">", cursorColor, font[1]);
-	DrawStringToHandle(850, 550, "<", cursorColor, font[1]);
+	int cursorPulse = 0;
+	if (backAlpha >= 255.0f)
+	{
+		cursorPulse = (int)(sin(animation_time * 5.0f) * 8.0f);
+	}
+
+	// カーソル表示
+	DrawStringToHandle(410 + cursorPulse, 550 + pushOffsetY, ">", cursorColor, font[1]);
+	DrawStringToHandle(850 - cursorPulse, 550 + pushOffsetY, "<", cursorColor, font[1]);
+
+	// DrawStringToHandle(410, 550, ">", cursorColor, font[1]);
+	// DrawStringToHandle(850, 550, "<", cursorColor, font[1]);
 }
 
 // 終了時処理
