@@ -176,7 +176,7 @@ void InGameScene::Initialize()
 		}
 	}
 
-	background = LoadGraph("Resource/Images/GameMain/background4.png");   // 背景画像
+	//background = LoadGraph("Resource/Images/GameMain/background4.png");   // 背景画像
 
 	// 音源関連・読み込み
 	dieSE = LoadSoundMem("Resource/Sounds/SE/object/player/light_die01.mp3");
@@ -725,7 +725,7 @@ void InGameScene::Draw() const
 		double scaleX = (double)helpWidth / origW;
 		double scaleY = (double)helpHeight / origH;
 
-		DrawRotaGraph3(x1 + helpWidth / 2, y1 + helpHeight / 2, origW / 2, origH / 2, scaleX, scaleY, 0.0, helpImageHandles[drawImageIndex], TRUE);
+		DrawRotaGraph3(x1 + helpWidth / 2, y1 + helpHeight / 2, origW / 2, origH / 2, scaleX, scaleY, 0.0, helpImageHandles[drawImageIndex], FALSE);
 
 		if (maxTutorialPages > 1)
 		{
