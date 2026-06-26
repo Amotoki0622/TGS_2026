@@ -514,6 +514,24 @@ void Player::Draw() const
     }
 
     effectManager.Draw();
+
+    // =========================
+// 当たり判定の可視化
+// =========================
+    int left = (int)(x - collisionWidth / 2);
+    int top = (int)(y - collisionHeight / 2);
+    int right = (int)(x + collisionWidth / 2);
+    int bottom = (int)(y + collisionHeight / 2);
+
+    // 赤色の枠だけ描画
+    DrawBox(
+        left,
+        top,
+        right,
+        bottom,
+        GetColor(255, 0, 0),
+        FALSE      // FALSE = 枠のみ、TRUE = 塗りつぶし
+    );
 }
 
 // =========================

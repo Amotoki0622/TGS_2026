@@ -67,11 +67,11 @@ void InGameScene::Initialize()
 	int currentLevel = m_stageManager.GetCurrentLevel();
 
 	// デフォルトは 128.0f / ステージ3以降は一回り小さく
-	float currentChipSize = 128.0f;
-	//if (currentLevel >= 4 )
-	//{
-	//	currentChipSize = 100.0f;
-	//}
+	float currentChipSize = 100.0f;
+	if (currentLevel >= 4 )
+	{
+		currentChipSize = 88.0f;
+	}
 
 	// プレイヤーのサイズ・移動量を自動計算してセット
 	player.SetChipSize(currentChipSize);
