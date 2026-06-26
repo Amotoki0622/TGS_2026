@@ -214,13 +214,23 @@ void StageManager::CreateStageObject()
 					break;
 
 				case 'P':
+				{
 					// プレイヤーを生成する処理
 					m_playerSpawnPos = Vector2D(posX, posY);
 
-				/*	if (m_pPlayer != nullptr)
-					{
-						m_pPlayer->SetChipSize(CHIP_SIZE);
-					}*/
+					//if (m_pPlayer != nullptr)
+					//{
+					//		m_pPlayer->SetChipSize(CHIP_SIZE);
+					//}
+
+					//// プレイヤーを生成する処理
+					//Player* new_player;
+
+					//if (new_player != nullptr)
+					//{
+					//	new_player->SetChipSize(CHIP_SIZE);
+					//}
+				}
 
 					break;
 
@@ -311,7 +321,7 @@ void StageManager::CreateStageObject()
 					{
 						m_warpA->SetPosition(posX, posY);
 						//m_warpA->SetSize(CHIP_SIZE, CHIP_SIZE);
-						m_warpA->SetSize(93.0f, 93.0f);
+						m_warpA->SetSize(90.0f, 90.0f);
 
 						m_warpSrcPos = Vector2D(posX, posY);
 						m_hasWarpSrc = true;
@@ -339,7 +349,7 @@ void StageManager::CreateStageObject()
 					{
 						m_warpB->SetPosition(posX, posY);
 						//m_warpB->SetSize(CHIP_SIZE, CHIP_SIZE);
-						m_warpB->SetSize(93.0f, 93.0f);
+						m_warpB->SetSize(90.0f, 90.0f);
 
 						m_warpDstPos = Vector2D(posX, posY);
 						m_hasWarpDst = true;
