@@ -39,7 +39,7 @@ void SceneManager::Initialize()
 	SetGraphMode(D_WIN_MAX_X, D_WIN_MAX_Y, D_COLOR_BIT);
 
 	// ウィンドウタイトルの設定
-	SetWindowText("タイトルが分からないから(仮)と命名");
+	SetWindowText("DUAL ESCAPE");
 
 	// 垂直同期を行わない
 	SetWaitVSyncFlag(FALSE);
