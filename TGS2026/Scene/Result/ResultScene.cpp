@@ -24,6 +24,8 @@ ResultScene::ResultScene()
 // デストラクタ
 ResultScene::~ResultScene()
 {
+	DeleteFontToHandle(font[0]);
+	DeleteFontToHandle(font[1]);
 }
 
 // 初期化処理
@@ -152,8 +154,8 @@ void ResultScene::Finalize()
 {
 	DeleteGraph(background);
 
-	DeleteFontToHandle(font[0]);
-	DeleteFontToHandle(font[1]);
+	//DeleteFontToHandle(font[0]);
+	//DeleteFontToHandle(font[1]);
 
 	StopSoundMem(result_bgm);
 }

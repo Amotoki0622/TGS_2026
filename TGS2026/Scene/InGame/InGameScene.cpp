@@ -861,10 +861,10 @@ void InGameScene::Draw() const
 // 終了時処理
 void InGameScene::Finalize()
 {
-	DeleteFontToHandle(font[0]);
-	DeleteFontToHandle(font[1]);
-	DeleteFontToHandle(font[2]);
-	DeleteFontToHandle(font[3]);
+	//DeleteFontToHandle(font[0]);
+	//DeleteFontToHandle(font[1]);
+	//DeleteFontToHandle(font[2]);
+	//DeleteFontToHandle(font[3]);
 
 	if (pauseBackgroundHandle != -1)
 	{
