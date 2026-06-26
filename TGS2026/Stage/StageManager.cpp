@@ -158,6 +158,8 @@ void StageManager::CreateStageObject()
 	if (CHIP_SIZE > maxChipW) CHIP_SIZE = maxChipW;
 	if (CHIP_SIZE > maxChipH) CHIP_SIZE = maxChipH;
 
+	m_calculatedChipSize = CHIP_SIZE;
+
 	// 画面中央に配置するためのオフセット計算
 	float mapTotalWidth = mapCols * CHIP_SIZE;
 	float mapTotalHeight = mapRows * CHIP_SIZE;

@@ -68,15 +68,6 @@ void Goal::Draw() const
         goal_image[image_count],
         TRUE
     );
-
-    //DrawBox(
-    //    (int)(location.x - box_size.x / 2),
-    //    (int)(location.y - box_size.y / 2),
-    //    (int)(location.x + box_size.x / 2),
-    //    (int)(location.y + box_size.y / 2),
-    //    GetColor(255, 255, 255),
-    //    FALSE
-    //);
 }
 
 // èIóπ

@@ -123,5 +123,12 @@ private:
 
 	public:
 		/*void SetPlayer(Player* player) { m_pPlayer = player; }*/
+
+		// StageManager.h 内のクラス定義に以下を追加
+public:
+	float GetCalculatedChipSize() const { return m_calculatedChipSize; }
+
+private:
+	float m_calculatedChipSize = 100.0f; // 確定したチップサイズを保存する変数
 };
 

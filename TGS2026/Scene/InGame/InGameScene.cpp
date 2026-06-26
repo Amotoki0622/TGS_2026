@@ -66,12 +66,13 @@ void InGameScene::Initialize()
 	// 現在の階層（インデックス）を取得
 	int currentLevel = m_stageManager.GetCurrentLevel();
 
-	// デフォルトは 128.0f / ステージ3以降は一回り小さく
-	float currentChipSize = 100.0f;
-	if (currentLevel >= 4 )
-	{
-		currentChipSize = 88.0f;
-	}
+	//// デフォルトは 128.0f / ステージ3以降は一回り小さく
+	//float currentChipSize = 100.0f;
+	//if (currentLevel >= 4 )
+	//{
+	//	currentChipSize = 88.0f;
+	//}
+	float currentChipSize = m_stageManager.GetCalculatedChipSize();
 
 	// プレイヤーのサイズ・移動量を自動計算してセット
 	player.SetChipSize(currentChipSize);
@@ -470,6 +471,8 @@ eSceneType InGameScene::Update(const float& delta_second)
 	int playerX, playerY;
 	player.GetLocation(playerX, playerY);
 
+	float currentChipSize = m_stageManager.GetCalculatedChipSize();
+
 	for (const auto& obj : allObjects)
 	{
 		Goal* goalObj = dynamic_cast<Goal*>(obj);
@@ -478,8 +481,10 @@ eSceneType InGameScene::Update(const float& delta_second)
 			int goalX, goalY;
 			goalObj->GetLocation(goalX, goalY);
 
+			int diffX = std::abs(playerX - goalX);
+			int diffY = std::abs(playerY - goalY);
 
-			if (playerX == goalX && playerY == goalY)
+			if (diffX < (currentChipSize / 2.0f) && diffY < (currentChipSize / 2.0f))
 			{
 				goalObj->PlayGoalSE();
 				m_stageManager.NextLevel();
