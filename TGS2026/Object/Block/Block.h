@@ -48,7 +48,7 @@ public:
 	bool IsHit(int nextX, int nextY, int width, int height) const override;
 
 	// プレイヤーがキックするとブロックが動く
-	void Push(float moveX, float moveY, const std::vector<GameObject*>& objects);
+	bool Push(float moveX, float moveY, const std::vector<GameObject*>& objects);
 
 	void SetSize(float w, float h)
 	{
