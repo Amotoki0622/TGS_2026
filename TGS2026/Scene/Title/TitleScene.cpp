@@ -85,7 +85,7 @@ void TitleScene::Draw() const
     DrawGraph(0, 0, background, TRUE);
 
     // タイトル
-    DrawStringToHandle(545,250,"TITLE", 0xffffff, font[0]);
+    DrawStringToHandle(360,250,"DUAL ESCAPE", 0xffffff, font[0]);
     
     //  通常時の色（STARTとカーソル）
     unsigned int startTextColor = 0xffffff;   // 通常は白
@@ -106,7 +106,7 @@ void TitleScene::Draw() const
     }
 
     // スタート
-    DrawStringToHandle(556, 550 + pushOffsetY, "GAME START", startTextColor, font[1]);
+    DrawStringToHandle(550, 550 + pushOffsetY, "GAME START", startTextColor, font[1]);
 
     int cursorPulse = (int)(sin(animation_time * 5.0f) * 8.0f);
 

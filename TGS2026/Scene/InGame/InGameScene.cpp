@@ -310,6 +310,8 @@ eSceneType InGameScene::Update(const float& delta_second)
 
 					m_isRestartNotifier = true;
 
+					UpdateStageNameText();
+
 					state = SceneState::Restarting;
 					fade->Start(FadeType::IrisOut, true, 1.5f);
 					isPaused = false;
