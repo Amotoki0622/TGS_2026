@@ -79,19 +79,16 @@ void Player::Update(const float& delta_second)
 // =========================
 // 移動処理
 // =========================
-void Player::Move(const std::vector<GameObject*>& objects) 
+void Player::Move(const std::vector<GameObject*>& objects)
 {
     InputManager* input = InputManager::GetInstance();
 
     if (state == State::Normal)
     {
-        // Bボタン（蹴る）でブロックを動かす
+        // Bボタン（蹴る）が押されたら
         if (input->GetButtonInputState(XINPUT_BUTTON_B) == eInputState::ePress ||
             input->GetKeyInputState(KEY_INPUT_SPACE) == eInputState::ePress)
         {
-            isKicking = true;
-            kickTimer = 0.3f;  // キック画像の描画しかん
-
             // --- 1. 蹴る方向（ベクトル）を決定する ---
             float kickX = 0.0f;
             float kickY = 0.0f;
@@ -125,21 +122,44 @@ void Player::Move(const std::vector<GameObject*>& objects)
             float checkX = (float)x + (kickX != 0 ? (kickX > 0 ? halfSize : -halfSize) : 0.0f);
             float checkY = (float)y + (kickY != 0 ? (kickY > 0 ? halfSize : -halfSize) : 0.0f);
 
+            // --- 3. 【ここを修正】ループの前でフラグ類はセットしない！ ---
+            // 先に全オブジェクトを走査して、目の前に本当に「動かせるブロック」があるか調べます
 
-            // --- 3. 衝突判定とPushの実行 ---
+            Block* targetBlock = nullptr;
+            float hitSize = chipSize * 0.9f;
+
             for (auto& obj : objects) {
                 if (obj == this) continue;
 
-                float hitSize = chipSize * 0.9f;
                 if (obj->IsHit((int)checkX, (int)checkY, hitSize, hitSize))
                 {
-                    Block* targetBlock = dynamic_cast<Block*>(obj);
+                    // 衝突したオブジェクトが Block かどうかをチェック
+                    targetBlock = dynamic_cast<Block*>(obj);
                     if (targetBlock != nullptr)
                     {
-                        targetBlock->Push(kickX, kickY, objects);
-                        return;     // 成功したら終了
+                        // ブロックが見つかったので、ループを抜ける
+                        break;
                     }
                 }
+            }
+
+            // --- 4. ブロックが目の前にあった場合のみ、キック演出とPush処理を実行！ ---
+            if (targetBlock != nullptr)
+            {
+                // 目の前のブロックを実際にPushしてみて、結果（true/false）を受け取る
+                bool pushSuccess = targetBlock->Push(kickX, kickY, objects);
+
+                // 実際に動かせた（成功した）場合のみ、キック演出と手数減算を行う！
+                if (pushSuccess == true)
+                {
+                    isKicking = true;
+                    kickTimer = 0.3f;  // キック画像の描画時間
+                    tekazu--;          // プッシュに成功した時だけ手数を減らす
+                    return;            // キックが成功したので、このターンの処理はここで終了
+                }
+
+                // pushSuccess が false だった場合、この if の中には入らず、
+                // return もされません。そのため、そのまま下の「歩行（通常移動）処理」へと流れます。
             }
         }
     }
@@ -385,7 +405,6 @@ void Player::UpdateAnimation(float delta_second)
         if (isPressed && actionTimer <= 0.0f)
         {
             actionTimer = 0.25f; // 蹴り発動
-            tekazu--;
         }
 
         if (actionTimer > 0.0f)

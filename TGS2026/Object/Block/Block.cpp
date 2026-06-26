@@ -118,113 +118,104 @@ bool Block::IsHit(int nextX, int nextY, int width, int height) const
 
 }
 
-void Block::Push(float moveX, float moveY, const std::vector<GameObject*>& objects) {
-    // 1. 移動先の座標をあらかじめ計算する
-    int nextX = (int)(location.x + moveX);
-    int nextY = (int)(location.y + moveY);
+// =========================================================
+// ブロックを押し出す処理
+// =========================================================
+bool Block::Push(float moveX, float moveY, const std::vector<GameObject*>& objects) {
 
-    // 画面外チェック
+    // 1. 【floatで計算】移動先の座標を float のまま正確に計算する
+    float nextX_f = location.x + moveX;
+    float nextY_f = location.y + moveY;
+
+    // 画面外チェック用のサイズ半分
     float halfW = box_size.x / 2.0f;
     float halfH = box_size.y / 2.0f;
 
-    if (nextX < halfW || nextX > 1280.0f - halfW ||
-        nextY < halfH || nextY > 720.0f - halfH)
+    // 画面外に出そうなら、ここで処理を中断して false（移動失敗）を返す
+    if (nextX_f < halfW || nextX_f > 1280.0f - halfW ||
+        nextY_f < halfH || nextY_f > 720.0f - halfH)
     {
-        return; // 画面外に出そうなら、ここで処理を中断して動かさない
+        return false;
     }
 
     // 2. 移動先に他のオブジェクトがないかチェック
-    bool canMove = true;
     for (const auto& obj : objects) {
         // 自分自身（このブロック）との判定はスキップ
         if (obj == this) continue;
 
-        // 移動先の座標、自分のサイズ(box_size)を使って衝突判定
-        // わずかな計算誤差を防ぐため、サイズを少し（例: 2ピクセル）小さくして判定するのがコツ
-        if (obj->IsHit(nextX, nextY, (int)box_size.x - 2, (int)box_size.y - 2)) {
-            canMove = false;
-            break; // 何か（壁や他のブロック）があったらループを抜ける
+        // ★ IsHit を呼ぶ瞬間に (int) にキャストして渡す
+        // 計算のわずかな誤差を防ぐため、サイズを少し（2ピクセル）小さくして判定
+        if (obj->IsHit((int)nextX_f, (int)nextY_f, (int)box_size.x - 2, (int)box_size.y - 2)) {
+
+            // 壁や他の木箱など、ブロックの移動を遮るものがあったので移動失敗！
+            return false;
         }
     }
 
-    // 3. どこにもぶつからなければ、実際に座標を更新する
-    if (canMove)
+    // 3. 【移動確定】どこにもぶつからなかったので、実際に動かす処理に入る
+    // Blockの元の座標を float で保持（エフェクト用）
+    float oldX = this->location.x;
+    float oldY = this->location.y;
+
+    // エフェクト用の変数準備
+    float spawnX = oldX;
+    float spawnY = oldY;
+    float angle = 0.0f;
+    bool isReversedX = false;
+
+    std::string effectImagePath = "Resource/Images/Effect/Smoke3.png"; // デフォルト
+
+    // --- 移動方向別の「正確な位置調整」と「見た目」の割り出し ---
+    if (moveX != 0.0f)
     {
-        // Blockの元の座標を float で取得
-        float oldX = this->location.x;
-        float oldY = this->location.y;
+        // 【横移動】
+        spawnY = oldY + 20.0f; // 横移動のときは一律で少し下にずらす
 
-        // エフェクト用の変数準備
-        float spawnX = oldX;
-        float spawnY = oldY;
-        float angle = 0.0f;
-        bool isReversedX = false;
-
-        // 画像パスを保存する変数を1つ用意する
-        std::string effectImagePath = "Resource/Images/Effect/Smoke3.png"; // デフォルト
-
-        // --- 移動方向別の「正確な位置調整」と「見た目」の割り出し ---
-        if (moveX != 0)
-        {
-            // 【横移動】
-            spawnY = oldY + 20.0f; // 横移動のときは一律で少し下にずらす
-
-            if (moveX < 0) {
-                // 左移動：プレイヤーの画像基準が「左移動＝反転なし」なら、煙も合わせる
-                isReversedX = false;
-            }
-            else {
-                // 右移動：右を向くので反転させる
-                isReversedX = true;
-            }
-
-            // 横移動のときは、横専用の煙画像をセット！
-            effectImagePath = "Resource/Images/Effect/Smoke.png";
+        if (moveX < 0.0f) {
+            isReversedX = false;
         }
-        else if (moveY != 0)
-        {
-            // 【縦移動】
-            if (moveY < 0)
-            {
-                // 上に動くとき
-                spawnX = oldX;
-                spawnY = oldY + (this->box_size.y / 2.0f) - 20.0f;
-                angle = 0.0f;
-            }
-            else
-            {
-                // 下に動くとき
-                spawnX = oldX;
-                spawnY = oldY - (this->box_size.y / 2.0f) + 20.0f;
-                angle = 0.0f;
-            }
-
-            // 【縦移動】画像が縦向きに回転するため、上下でずらす方向を変える
-            if (moveY < 0)
-            {
-                // 上移動：一歩前の足元なので、少し「下」にずらして縦向き（270度）にする
-                spawnY = oldY + 10.0f;
-                angle = 0.0f;
-            }
-            else
-            {
-                // 下移動：一歩前の足元なので、少し「上」にずらして縦向き（90度）にする
-                spawnY = oldY - 10.0f;
-                angle = 0.0f;
-            }
-
-            // 縦移動のときは、縦専用の煙画像をセット！
-            effectImagePath = "Resource/Images/Effect/Smoke3.png";
+        else {
+            isReversedX = true;
         }
-
-        // 実際に木箱の座標を更新
-        this->location.x = (float)nextX;
-        this->location.y = (float)nextY;
-
-        // 蹴られたときにSEを流す
-        PlaySoundMem(block_se, DX_PLAYTYPE_BACK);
-
-        // 最後の引数に、上で切り替えた「effectImagePath」をそのまま渡す！
-        effectManager.AddEffect(spawnX, spawnY, EffectType::Smoke, effectImagePath, 0.2f, angle, isReversedX);
+        effectImagePath = "Resource/Images/Effect/Smoke.png";
     }
+    else if (moveY != 0.0f)
+    {
+        // 【縦移動】
+        if (moveY < 0.0f)
+        {
+            // 上に動くとき
+            spawnX = oldX;
+            spawnY = oldY + (this->box_size.y / 2.0f) - 20.0f;
+        }
+        else
+        {
+            // 下に動くとき
+            spawnX = oldX;
+            spawnY = oldY - (this->box_size.y / 2.0f) + 20.0f;
+        }
+
+        if (moveY < 0.0f)
+        {
+            spawnY = oldY + 10.0f;
+        }
+        else
+        {
+            spawnY = oldY - 10.0f;
+        }
+        effectImagePath = "Resource/Images/Effect/Smoke3.png";
+    }
+
+    // 実際に木箱の座標を float で更新！
+    this->location.x = nextX_f;
+    this->location.y = nextY_f;
+
+    // 蹴られたときにSEを流す
+    PlaySoundMem(block_se, DX_PLAYTYPE_BACK);
+
+    // エフェクトを発生
+    effectManager.AddEffect(spawnX, spawnY, EffectType::Smoke, effectImagePath, 0.2f, angle, isReversedX);
+
+    // ★無事に動かせたので true（移動成功）をプレイヤーに返す！
+    return true;
 }
