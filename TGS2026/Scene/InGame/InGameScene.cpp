@@ -194,15 +194,18 @@ void InGameScene::Initialize()
 	//	ResourceManager::GetInstance()->GetImages("Resource/Images/Number/number.png")
 	//);
 
-	// 文字列の保存
-	if (m_isRestartNotifier == false)
-	{
-		UpdateStageNameText();
-	}
-	else
-	{
-		m_isRestartNotifier = false;
-	}
+	//// 文字列の保存
+	//if (m_isRestartNotifier == false)
+	//{
+	//	UpdateStageNameText();
+	//}
+	//else
+	//{
+	//	m_isRestartNotifier = false;
+	//}
+
+	UpdateStageNameText();       
+	m_isRestartNotifier = false;
 }
 
 // 更新処理
@@ -262,7 +265,7 @@ eSceneType InGameScene::Update(const float& delta_second)
 			}
 
 			// BackSpaceキー または コントローラーのAボタン でヘルプを閉じる処理
-			if (input->GetKeyInputState(KEY_INPUT_BACK) == eInputState::ePress || input->GetButtonInputState(XINPUT_BUTTON_A) == eInputState::ePress)
+			if (input->GetKeyInputState(KEY_INPUT_BACK) == eInputState::ePress || input->GetButtonInputState(XINPUT_BUTTON_B) == eInputState::ePress)
 			{
 				isHelpOpen = false;
 			}
@@ -306,9 +309,7 @@ eSceneType InGameScene::Update(const float& delta_second)
 					StopSoundMem(beepSE);
 
 					m_isRestartNotifier = true;
-					UpdateStageNameText();
 
-					Initialize();
 					state = SceneState::Restarting;
 					fade->Start(FadeType::IrisOut, true, 1.5f);
 					isPaused = false;
@@ -811,9 +812,11 @@ void InGameScene::Draw() const
 
 		int textWidth = GetDrawStringWidthToHandle(currentMenuText, (int)strlen(currentMenuText), font[1]);
 
+		int cursorPulse = (int)(sin(GetNowCount() / 1000.0f * 5.0f) * 8.0f);
+
 		// カーソル描画
-		DrawStringToHandle(textLeftX - 30, cursorY, ">", activeCursorColor, font[1]);
-		DrawStringToHandle(textLeftX + textWidth + 15, cursorY, "<", activeCursorColor, font[1]);
+		DrawStringToHandle(textLeftX - 30 + cursorPulse, cursorY, ">", activeCursorColor, font[1]);
+		DrawStringToHandle(textLeftX + textWidth + 15 - cursorPulse, cursorY, "<", activeCursorColor, font[1]);
 		
 		// ヘルプ描画
 		if (helpOffsetY < 720.0f)
