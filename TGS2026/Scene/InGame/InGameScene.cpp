@@ -5,6 +5,54 @@
 // コンストラクタ
 InGameScene::InGameScene()
 {
+	font[0] = -1;
+	font[1] = -1;
+	font[2] = -1;
+	font[3] = -1;
+	font[4] = -1;
+	//title_main_bgm = -1;
+	//title_start_se = -1;
+	//background = -1;
+
+	//isBgmStarted = false;
+
+	//// メインBGM
+	//mainBGM = LoadSoundMem("Resource/Sounds/BGM/main/main01.mp3");
+	//ChangeVolumeSoundMem(120, mainBGM);
+
+	//// 警報音
+	//beepSE = LoadSoundMem("Resource/Sounds/SE/object/cam/cam3.mp3");
+	//freq = GetFrequencySoundMem(beepSE);
+	//ChangeVolumeSoundMem(120, beepSE);
+	//SetFrequencySoundMem((int)(freq * 0.6f), beepSE); // 減速
+
+	//// ヘルプ音
+	//pageSE = LoadSoundMem("Resource/Sounds/SE/object/push/paper_push.mp3");
+	//ChangeVolumeSoundMem(130, pageSE);
+
+	//m_stageManager.Initialize();
+
+	//// フォントの設定
+	//font[0] = CreateFontToHandle("廻想体 ネクスト UP B", 100, 6);
+	//font[1] = CreateFontToHandle("廻想体 ネクスト UP B", 32, 6); // ポーズ画面に使用
+	//font[2] = CreateFontToHandle("廻想体 ネクスト UP B", 45, 6); // ポーズ画面に使用
+	//font[3] = CreateFontToHandle("廻想体 ネクスト UP B", 24, 6); // チュートリアルに使用
+
+	//helpImageHandles[0] = LoadGraph("Resource/Images/Hint/shadow_hint.png");
+	//helpImageHandles[1] = LoadGraph("Resource/Images/Hint/kick_hint.png");
+	//helpImageHandles[2] = LoadGraph("Resource/Images/Hint/key_hint.png");
+	//helpImageHandles[3] = LoadGraph("Resource/Images/Hint/spike_trap_hint.png");
+}
+
+// デストラクタ
+InGameScene::~InGameScene()
+{
+	Finalize();
+}
+
+// 初期化処理
+void InGameScene::Initialize()
+{
 	isBgmStarted = false;
 
 	// メインBGM
@@ -33,17 +81,6 @@ InGameScene::InGameScene()
 	helpImageHandles[1] = LoadGraph("Resource/Images/Hint/kick_hint.png");
 	helpImageHandles[2] = LoadGraph("Resource/Images/Hint/key_hint.png");
 	helpImageHandles[3] = LoadGraph("Resource/Images/Hint/spike_trap_hint.png");
-}
-
-// デストラクタ
-InGameScene::~InGameScene()
-{
-	Finalize();
-}
-
-// 初期化処理
-void InGameScene::Initialize()
-{
 
 	allObjects.clear(); // 配列を空っぽにする
 	detectors.clear();
@@ -861,10 +898,15 @@ void InGameScene::Draw() const
 // 終了時処理
 void InGameScene::Finalize()
 {
-	//DeleteFontToHandle(font[0]);
-	//DeleteFontToHandle(font[1]);
-	//DeleteFontToHandle(font[2]);
-	//DeleteFontToHandle(font[3]);
+	// フォントの解放と初期化
+	for (int i = 0; i < 4; ++i)
+	{
+		if (font[i] != -1)
+		{
+			DeleteFontToHandle(font[i]);
+			font[i] = -1;
+		}
+	};
 
 	if (pauseBackgroundHandle != -1)
 	{
@@ -872,10 +914,10 @@ void InGameScene::Finalize()
 		pauseBackgroundHandle = -1;
 	}
 
-	for (auto d : detectors)
-	{
-		delete d;
-	}
+	//for (auto d : detectors)
+	//{
+	//	delete d;
+	//}
 	detectors.clear();
 
 	if (background != -1)
@@ -884,6 +926,11 @@ void InGameScene::Finalize()
 		background = -1;
 	}
 
+	for (auto obj : allObjects)
+	{
+		obj->Finalize();
+		delete obj;
+	}
 	allObjects.clear();
 }
 

@@ -7,25 +7,30 @@
 // コンストラクタ
 ResultScene::ResultScene()
 {
-	font[0] = CreateFontToHandle("廻想体 ネクスト UP B", 125, 6);
-	font[1] = CreateFontToHandle("廻想体 ネクスト UP B", 75, 6);
+	font[0] = -1;
+	font[1] = -1;
+	result_bgm = -1;
+	result_se = -1;
+	background = -1;
 
-	//リザルトBGM
-	result_bgm = LoadSoundMem("Resource/Sounds/BGM/result/result_bgm.mp3");
-	//音量調整
-	ChangeVolumeSoundMem(180, result_bgm);
+	//font[0] = CreateFontToHandle("廻想体 ネクスト UP B", 125, 6);
+	//font[1] = CreateFontToHandle("廻想体 ネクスト UP B", 75, 6);
 
-	//リザルトSE
-	result_se = LoadSoundMem("Resource/Sounds/SE/result/result_se.mp3");
-	//音量調整
-	/*ChangeVolumeSoundMem(130, result_se);*/
+	////リザルトBGM
+	//result_bgm = LoadSoundMem("Resource/Sounds/BGM/result/result_bgm.mp3");
+	////音量調整
+	//ChangeVolumeSoundMem(180, result_bgm);
+
+	////リザルトSE
+	//result_se = LoadSoundMem("Resource/Sounds/SE/result/result_se.mp3");
+	////音量調整
+	///*ChangeVolumeSoundMem(130, result_se);*/
 }
 
 // デストラクタ
 ResultScene::~ResultScene()
 {
-	DeleteFontToHandle(font[0]);
-	DeleteFontToHandle(font[1]);
+	Finalize();
 }
 
 // 初期化処理
@@ -37,6 +42,17 @@ void ResultScene::Initialize()
 	animation_time = 0.0f;
 	clearAlpha = 0.0f;
 	backAlpha = 0.0f;
+
+	font[0] = CreateFontToHandle("廻想体 ネクスト UP B", 125, 6);
+	font[1] = CreateFontToHandle("廻想体 ネクスト UP B", 75, 6);
+
+	// リザルトBGM
+	result_bgm = LoadSoundMem("Resource/Sounds/BGM/result/result_bgm.mp3");
+	ChangeVolumeSoundMem(180, result_bgm);
+
+	// リザルトSE
+	result_se = LoadSoundMem("Resource/Sounds/SE/result/result_se.mp3");
+	/*ChangeVolumeSoundMem(130, result_se);*/
 
 	background = LoadGraph("Resource/Images/result.png");
 }
@@ -86,7 +102,7 @@ eSceneType ResultScene::Update(const float& delta_second)
 
 	return eSceneType::eResult;
 
-	/*return GetNowSceneType();*/
+	return GetNowSceneType();
 }
 
 // 描画処理
@@ -152,12 +168,32 @@ void ResultScene::Draw() const
 // 終了時処理
 void ResultScene::Finalize()
 {
-	DeleteGraph(background);
+	if (background != -1) {
+		DeleteGraph(background);
+		background = -1;
+	}
 
-	//DeleteFontToHandle(font[0]);
-	//DeleteFontToHandle(font[1]);
+	if (font[0] != -1) {
+		DeleteFontToHandle(font[0]);
+		font[0] = -1;
+	}
+	if (font[1] != -1) {
+		DeleteFontToHandle(font[1]);
+		font[1] = -1;
+	}
 
-	StopSoundMem(result_bgm);
+	if (result_bgm != -1) {
+		StopSoundMem(result_bgm);
+		DeleteSoundMem(result_bgm);
+		result_bgm = -1;
+	}
+
+	if (result_se != -1) {
+		StopSoundMem(result_se);
+		DeleteSoundMem(result_se); 
+		result_se = -1;
+	}
+
 }
 
 // 現在のシーン情報を返す

@@ -5,6 +5,27 @@
 // コンストラクタ
 TitleScene::TitleScene()
 {
+    font[0] = -1;
+    font[1] = -1;
+    title_main_bgm = -1;
+    title_start_se = -1;
+    background = -1;
+}
+
+// デストラクタ
+TitleScene::~TitleScene()
+{
+    Finalize();
+}
+
+// 初期化処理
+void TitleScene::Initialize()
+{
+    is_selected = false;
+    transition_timer = 0.0f;
+
+    animation_time = 0.0f;
+
     font[0] = CreateFontToHandle("廻想体 ネクスト UP B", 125, 6);
     font[1] = CreateFontToHandle("廻想体 ネクスト UP B", 45, 6);
 
@@ -17,20 +38,6 @@ TitleScene::TitleScene()
     title_start_se = LoadSoundMem("Resource/Sounds/SE/title/title_start_se.mp3");
     // 音量を設定（例：半分の 128 や、かなり控えめな 80 など）
     ChangeVolumeSoundMem(130, title_start_se);
-}
-
-// デストラクタ
-TitleScene::~TitleScene()
-{
-}
-
-// 初期化処理
-void TitleScene::Initialize()
-{
-    is_selected = false;
-    transition_timer = 0.0f;
-
-    animation_time = 0.0f;
 
     // 背景画像
     background = LoadGraph("Resource/Images/Title.png");
@@ -71,6 +78,12 @@ eSceneType TitleScene::Update(const float& delta_second)
         {
             return eSceneType::eInGame;
         }
+    }
+
+    // 決定（コントローラーB または キーボードO）
+    if (input->GetKeyInputState(KEY_INPUT_O) == eInputState::ePress)
+    {
+        return eSceneType::eResult;
     }
 
     // 2.0秒経つまでは、ずっとタイトルシーンを維持する
@@ -133,15 +146,34 @@ void TitleScene::Draw() const
     //DrawStringToHandle(778, 550, "<", cursorColor, font[1]);
 }
 
-// 終了時処理
+// 終了時処理 (TitleScene)
 void TitleScene::Finalize()
 {
-    DeleteGraph(background);
+    if (background != -1) {
+        DeleteGraph(background);
+        background = -1;
+    }
 
-    //DeleteFontToHandle(font[0]);
-    //DeleteFontToHandle(font[1]);
+    if (font[0] != -1) {
+        DeleteFontToHandle(font[0]);
+        font[0] = -1;
+    }
+    if (font[1] != -1) {
+        DeleteFontToHandle(font[1]);
+        font[1] = -1;
+    }
 
-    StopSoundMem(title_main_bgm);
+    if (title_main_bgm != -1) {
+        StopSoundMem(title_main_bgm);
+        DeleteSoundMem(title_main_bgm); 
+        title_main_bgm = -1;
+    }
+
+    if (title_start_se != -1) {
+        StopSoundMem(title_start_se);
+        DeleteSoundMem(title_start_se);
+        title_start_se = -1;
+    }
 }
 
 // 現在のシーン情報を返す
